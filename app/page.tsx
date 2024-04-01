@@ -1,6 +1,5 @@
 import Navigation from "./components/Navigation";
 import Banner from "./components/home/Banner";
-import { EmblaOptionsType } from "embla-carousel";
 import Carousel from "./components/home/Carousel";
 import c1Image from "@/public/images/c1.webp";
 import c2Image from "@/public/images/c2.webp";
@@ -14,7 +13,6 @@ export default function Home() {
     { image: c3Image },
     { image: c4Image },
   ];
-  const OPTIONS: EmblaOptionsType = { direction: "rtl", loop: true };
 
   return (
     <main className=''>
@@ -22,7 +20,7 @@ export default function Home() {
         <Banner />
         <Navigation />
       </header>
-      <Carousel slides={SLIDES} options={OPTIONS} />
+      <Carousel slides={SLIDES} />
     </main>
   );
 }
