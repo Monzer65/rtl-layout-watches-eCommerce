@@ -8,15 +8,15 @@ import c4Image from "@/public/images/c4.webp";
 
 export default function Home() {
   const SLIDES = [
-    { image: c1Image },
-    { image: c2Image },
-    { image: c3Image },
-    { image: c4Image },
+    { id: 1, image: c1Image },
+    { id: 2, image: c2Image },
+    { id: 3, image: c3Image },
+    { id: 4, image: c4Image },
   ];
 
   return (
     <main className=''>
-      <header className='sticky top-0 right-0 left-0 bg-white mb-4'>
+      <header className='sticky top-0 right-0 left-0 bg-white'>
         <Banner />
         <Navigation />
       </header>
