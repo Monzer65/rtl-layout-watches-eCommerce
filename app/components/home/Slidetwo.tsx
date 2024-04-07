@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
@@ -16,31 +16,57 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScrollLeft, setStartScrollLeft] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
-  const [hovered, setHovered] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
 
-  const slideWidth = carouselRef.current?.offsetWidth || 0;
+  const slideWidth = carouselRef.current?.offsetWidth || 1000;
 
-  const duplicatedSlides = [slides[slides.length - 1], ...slides, slides[0]];
+  const duplicatedSlides = useMemo(() => {
+    return [slides[slides.length - 1], ...slides, slides[0]];
+  }, [slides]);
+
+  const firstSlide = (
+    carouselRef.current?.querySelector(".slide") as HTMLElement
+  )?.offsetWidth;
+
+  // useEffect(() => {
+  //   const nextBtn = nextBtnRef.current;
+  //   const prevBtn = prevBtnRef.current;
+
+  //   if (!nextBtn || !prevBtnRef) return;
+
+  //   nextBtn.addEventListener("click", () => {
+  //     carouselRef.current?.scrollBy({ left: -firstSlide, behavior: "smooth" });
+  //   });
+
+  //   prevBtn.addEventListener("click", () => {
+  //     carouselRef.current?.scrollBy({ left: firstSlide, behavior: "smooth" });
+  //   });
+
+  //   return () => {
+  //     nextBtn.removeEventListener("click", () => {
+  //       carouselRef.current?.scrollBy({
+  //         left: -firstSlide,
+  //         behavior: "smooth",
+  //       });
+  //     });
+  //     prevBtn.removeEventListener("click", () => {
+  //       carouselRef.current?.scrollBy({ left: firstSlide, behavior: "smooth" });
+  //     });
+  //   };
+  // }, [firstSlide]);
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === 0 ? slides.length - 1 : prevSlide - 1
-    );
+    console.log(" prev clicked");
     carouselRef.current?.scrollBy({ left: slideWidth, behavior: "smooth" });
   };
 
-  const handleNextSlide = useCallback(() => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === slides.length - 1 ? 0 : prevSlide + 1
-    );
+  const handleNextSlide = () => {
+    console.log(" next clicked");
     carouselRef.current?.scrollBy({ left: -slideWidth, behavior: "smooth" });
-  }, [slideWidth, slides.length]);
+  };
 
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -76,7 +102,9 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
     const carousel = carouselRef.current;
     if (!carousel) return;
 
+    // In RTL, when scrollLeft is 0, it means we're at the right end
     const isAtRightEnd = carousel.scrollLeft === 0;
+    // In RTL, scrollLeft is negative as you scroll left, so we compare against the negative value
     const isAtLeftEnd =
       Math.ceil(carousel.scrollLeft) ===
       -(carousel.scrollWidth - carousel.offsetWidth);
@@ -84,57 +112,20 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
     if (isAtRightEnd) {
       console.log("You've reached right end");
       carousel.classList.add("no-transition");
+      // This will move the scroll position to the end of the slides (last slide)
       carousel.scrollLeft = -(carousel.scrollWidth - 2 * carousel.offsetWidth);
       carousel.classList.remove("no-transition");
     } else if (isAtLeftEnd) {
       console.log("You've reached left end");
       carousel.classList.add("no-transition");
+      // This will move the scroll position to the beginning of the slides (first slide)
       carousel.scrollLeft = -carousel.offsetWidth;
       carousel.classList.remove("no-transition");
     }
   };
 
-  const handleToggleAutoplay = () => {
-    setAutoplay((prevAutoplay) => !prevAutoplay);
-  };
-
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
-
-  const handleDotClick = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  useEffect(() => {
-    const initialSlideIndex = 1;
-    const initialSlidePosition = slideWidth * initialSlideIndex;
-
-    if (carouselRef.current) {
-      carouselRef.current.scrollLeft = initialSlidePosition;
-      setCurrentSlide(initialSlideIndex);
-    }
-  }, [slideWidth]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (autoplay && !hovered) {
-      interval = setInterval(() => {
-        handleNextSlide();
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [autoplay, hovered, handleNextSlide]);
-
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       className='w-full relative rounded-md mt-1 focus:outline-none focus:ring focus:ring-blue-400'
       tabIndex={0}
       onKeyDown={handleKeyDown}
@@ -170,23 +161,11 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
                 alt={`Slide ${index + 1}`}
                 width={1440}
                 height={350}
-                className='w-full max-h-[300px] object-cover'
+                className='w-full max-h-[300px]'
               />
             </Link>
           );
         })}
-      </div>
-
-      <div className='absolute bottom-4 left-0 right-0 flex justify-center'>
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`w-4 h-4 mx-1 rounded-full bg-gray-300 ${
-              index === currentSlide ? "bg-blue-400" : "bg-gray-300"
-            }`}
-            onClick={() => handleDotClick(index)}
-          ></button>
-        ))}
       </div>
 
       <button
@@ -236,13 +215,6 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
             d='m8.25 4.5 7.5 7.5-7.5 7.5'
           />
         </svg>
-      </button>
-
-      <button
-        className='absolute bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full z-10'
-        onClick={handleToggleAutoplay}
-      >
-        {autoplay ? "Pause" : "Play"}
       </button>
     </div>
   );

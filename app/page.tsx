@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <main className=''>
-      <header className='sticky top-0 right-0 left-0 bg-white'>
+      <header className='sticky top-0 right-0 left-0 bg-white z-10'>
         <Banner />
         <Navigation />
       </header>
