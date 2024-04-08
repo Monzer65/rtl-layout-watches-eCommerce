@@ -16,31 +16,40 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScrollLeft, setStartScrollLeft] = useState(0);
+  const [slideWidth, setSlideWidth] = useState(0);
+
   const [autoplay, setAutoplay] = useState(true);
   const [hovered, setHovered] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
 
-  const slideWidth = carouselRef.current?.offsetWidth || 0;
-
   const duplicatedSlides = [slides[slides.length - 1], ...slides, slides[0]];
 
+  useEffect(() => {
+    const setInitialSlideWidth = () => {
+      if (carouselRef.current) {
+        const width = carouselRef.current.offsetWidth;
+        setSlideWidth(width);
+
+        carouselRef.current.scrollTo({ left: -width, behavior: "instant" });
+      }
+    };
+    setInitialSlideWidth();
+    window.addEventListener("resize", setInitialSlideWidth);
+    return () => {
+      window.removeEventListener("resize", setInitialSlideWidth);
+    };
+  }, []);
+
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === 0 ? slides.length - 1 : prevSlide - 1
-    );
     carouselRef.current?.scrollBy({ left: slideWidth, behavior: "smooth" });
   };
 
   const handleNextSlide = useCallback(() => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === slides.length - 1 ? 0 : prevSlide + 1
-    );
     carouselRef.current?.scrollBy({ left: -slideWidth, behavior: "smooth" });
-  }, [slideWidth, slides.length]);
+  }, [slideWidth]);
 
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -59,17 +68,6 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
   const handleDragEnd = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
-    e.preventDefault();
-    if (!carouselRef.current) return;
-
-    if (e.key === "ArrowRight") {
-      carouselRef.current.scrollLeft += slideWidth;
-    } else if (e.key === "ArrowLeft") {
-      carouselRef.current.scrollLeft -= slideWidth;
-    }
   };
 
   const infinitScroll = () => {
@@ -106,27 +104,13 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
     setHovered(false);
   };
 
-  const handleDotClick = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  useEffect(() => {
-    const initialSlideIndex = 1;
-    const initialSlidePosition = slideWidth * initialSlideIndex;
-
-    if (carouselRef.current) {
-      carouselRef.current.scrollLeft = initialSlidePosition;
-      setCurrentSlide(initialSlideIndex);
-    }
-  }, [slideWidth]);
-
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (autoplay && !hovered) {
       interval = setInterval(() => {
         handleNextSlide();
-      }, 1000);
+      }, 3000);
     }
     return () => clearInterval(interval);
   }, [autoplay, hovered, handleNextSlide]);
@@ -137,7 +121,6 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       onMouseLeave={handleMouseLeave}
       className='w-full relative rounded-md mt-1 focus:outline-none focus:ring focus:ring-blue-400'
       tabIndex={0}
-      onKeyDown={handleKeyDown}
       role='button'
       aria-live='polite'
     >
@@ -162,8 +145,8 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
               className={`slide snap-center ${
                 isDragging ? "cursor-grab select-none" : ""
               }`}
-              tabIndex={-1}
               draggable={false}
+              tabIndex={-1}
             >
               <Image
                 src={slide.image}
@@ -171,31 +154,64 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
                 width={1440}
                 height={350}
                 className='w-full max-h-[300px] object-cover'
+                tabIndex={-1}
               />
             </Link>
           );
         })}
       </div>
 
-      <div className='absolute bottom-4 left-0 right-0 flex justify-center'>
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`w-4 h-4 mx-1 rounded-full bg-gray-300 ${
-              index === currentSlide ? "bg-blue-400" : "bg-gray-300"
-            }`}
-            onClick={() => handleDotClick(index)}
-          ></button>
-        ))}
+      <div className='absolute bottom-4 left-0 right-0 flex justify-center items-center'>
+        <button
+          className='mr-4 bg-orange-700 text-white rounded-full z-10 focus:outline-none focus:ring focus:ring-blue-400'
+          onClick={handleToggleAutoplay}
+          tabIndex={0}
+        >
+          {autoplay ? (
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='w-6 h-6'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='w-6 h-6'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
+              />
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z'
+              />
+            </svg>
+          )}
+        </button>
       </div>
 
       <button
         ref={nextBtnRef}
-        onKeyDown={handleKeyDown}
         onClick={handleNextSlide}
         type='button'
         aria-label='next slide button'
-        className='absolute left-0 top-0 bottom-0 font-bold opacity-20 hover:opacity-100 transform bg-gray-100 py-2 px-4 transition-opacity focus:outline-none focus:ring focus:ring-blue-400 focus:opacity-100'
+        className='absolute left-0 top-0 bottom-0 font-bold opacity-20 hover:opacity-100 transform bg-gray-100 px-[0.75%] transition-opacity focus:outline-none focus:ring focus:ring-blue-400 focus:opacity-100'
         tabIndex={0}
       >
         <svg
@@ -215,11 +231,10 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       </button>
       <button
         ref={prevBtnRef}
-        onKeyDown={handleKeyDown}
         onClick={handlePrevSlide}
         type='button'
         aria-label='next slide button'
-        className='absolute right-0 top-0 bottom-0 font-bold opacity-20 hover:opacity-100 transform bg-gray-100 py-2 px-4 transition-opacity focus:outline-none focus:ring focus:ring-blue-400 focus:opacity-100'
+        className='absolute right-0 top-0 bottom-0 font-bold opacity-20 hover:opacity-100 transform bg-gray-100 px-[0.75%] transition-opacity focus:outline-none focus:ring focus:ring-blue-400 focus:opacity-100'
         tabIndex={0}
       >
         <svg
@@ -236,13 +251,6 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
             d='m8.25 4.5 7.5 7.5-7.5 7.5'
           />
         </svg>
-      </button>
-
-      <button
-        className='absolute bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full z-10'
-        onClick={handleToggleAutoplay}
-      >
-        {autoplay ? "Pause" : "Play"}
       </button>
     </div>
   );
