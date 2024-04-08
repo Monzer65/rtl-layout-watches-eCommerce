@@ -20,6 +20,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
 
   const [autoplay, setAutoplay] = useState(true);
   const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
@@ -37,10 +38,6 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       }
     };
     setInitialSlideWidth();
-    window.addEventListener("resize", setInitialSlideWidth);
-    return () => {
-      window.removeEventListener("resize", setInitialSlideWidth);
-    };
   }, []);
 
   const handlePrevSlide = () => {
@@ -107,21 +104,19 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (autoplay && !hovered) {
+    if (autoplay && !hovered && !focused) {
+      // Add !focused to condition
       interval = setInterval(() => {
         handleNextSlide();
       }, 3000);
     }
     return () => clearInterval(interval);
-  }, [autoplay, hovered, handleNextSlide]);
+  }, [autoplay, hovered, handleNextSlide, focused]);
 
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className='w-full relative rounded-md mt-1 focus:outline-none focus:ring focus:ring-blue-400'
+      className='w-full relative rounded-md '
       tabIndex={0}
-      role='button'
       aria-live='polite'
     >
       <div
@@ -161,9 +156,11 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
         })}
       </div>
 
-      <div className='absolute bottom-4 left-0 right-0 flex justify-center items-center'>
+      <div className='absolute bottom-4 left-0 right-0 flex justify-center items-center '>
         <button
-          className='mr-4 bg-orange-700 text-white rounded-full z-10 focus:outline-none focus:ring focus:ring-blue-400'
+          className={`mr-4 text-white rounded-full z-10 ${
+            autoplay ? "bg-rose-500" : "bg-blue-500"
+          }`}
           onClick={handleToggleAutoplay}
           tabIndex={0}
         >
@@ -209,9 +206,13 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       <button
         ref={nextBtnRef}
         onClick={handleNextSlide}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         type='button'
         aria-label='next slide button'
-        className='absolute left-0 top-0 bottom-0 font-bold opacity-20 hover:opacity-100 transform bg-gray-100 px-[0.75%] transition-opacity focus:outline-none focus:ring focus:ring-blue-400 focus:opacity-100'
+        className='absolute top-0 bottom-0 left-0 bg-opacity-20 font-bold hover:bg-opacity-100 transform bg-gray-100 px-[0.75%] transition-bg-opacity focus:bg-opacity-100'
         tabIndex={0}
       >
         <svg
@@ -220,7 +221,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-6 h-6'
+          className='w-6 h-6 opacity-100 bg-gray-100 rounded-full'
         >
           <path
             strokeLinecap='round'
@@ -232,9 +233,13 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       <button
         ref={prevBtnRef}
         onClick={handlePrevSlide}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         type='button'
         aria-label='next slide button'
-        className='absolute right-0 top-0 bottom-0 font-bold opacity-20 hover:opacity-100 transform bg-gray-100 px-[0.75%] transition-opacity focus:outline-none focus:ring focus:ring-blue-400 focus:opacity-100'
+        className='absolute right-0 top-0 bottom-0 font-bold bg-opacity-20 hover:bg-opacity-100 transform bg-gray-100 px-[0.75%] transition-bg-opacity focus:bg-opacity-100'
         tabIndex={0}
       >
         <svg
@@ -243,7 +248,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-6 h-6'
+          className='w-6 h-6 opacity-100 bg-gray-100 rounded-full'
         >
           <path
             strokeLinecap='round'

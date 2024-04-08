@@ -8,6 +8,10 @@
   }
 }
 
+* :focus {
+  outline-color: orangered;
+}
+
 .carousel::-webkit-scrollbar {
   display: none;
 }
