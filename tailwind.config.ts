@@ -13,6 +13,14 @@ const config: Config = {
           "url('../public/images/advertising-banner-background.jpeg')",
       },
     },
+    animation: {
+      infinite_scroll: "infinite_scroll 22s linear infinite",
+    },
+    keyframes: {
+      infinite_scroll: {
+        "100%": { transform: "translate(calc(50% + 0.5rem))" },
+      },
+    },
   },
   plugins: [],
 };

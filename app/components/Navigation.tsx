@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "@/public/images/logo.png";
+import logo from "@/public/images/logo.svg";
 import Link from "next/link";
 import Search from "./Search";
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
@@ -14,7 +14,7 @@ const Navigation = () => {
             src={logo}
             alt='logo'
             width={200}
-            className='max-w-[100px] sm:max-w-[150px] lg:max-w-full absolute top-4 left-8 lg:static'
+            className='max-w-[100px] sm:max-w-[150px] lg:max-w-full absolute top-8 left-8 lg:static max-[330px]:hidden'
           />
         </Link>
         <Search placeholder='جستجو...' />

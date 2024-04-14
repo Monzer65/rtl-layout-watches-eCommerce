@@ -6,6 +6,7 @@ import Link from "next/link";
 interface Slide {
   id: number;
   image: StaticImageData;
+  url: string;
 }
 
 interface SliderProps {
@@ -65,6 +66,20 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
   const handleDragEnd = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
+
+    const threshold = slideWidth * 0.3;
+    const deltaX = e.pageX - startX;
+
+    if (deltaX < threshold) {
+      handleNextSlide();
+    } else if (deltaX > -threshold) {
+      handlePrevSlide();
+    } else {
+      carouselRef.current!.scrollTo({
+        left: startScrollLeft,
+        behavior: "smooth",
+      });
+    }
   };
 
   const infinitScroll = () => {
@@ -104,18 +119,17 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (autoplay && !hovered && !focused) {
-      // Add !focused to condition
+    if (autoplay && !hovered && !focused && !isDragging) {
       interval = setInterval(() => {
         handleNextSlide();
-      }, 3000);
+      }, 5000);
     }
     return () => clearInterval(interval);
-  }, [autoplay, hovered, handleNextSlide, focused]);
+  }, [autoplay, hovered, handleNextSlide, focused, isDragging]);
 
   return (
     <div
-      className='w-full relative rounded-md '
+      className='w-full relative rounded-md my-4 shadow-lg shadow-gray-600'
       tabIndex={0}
       aria-live='polite'
     >
@@ -135,9 +149,9 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
         {duplicatedSlides.map((slide, index) => {
           return (
             <Link
-              href={"/"}
+              href={slide.url}
               key={index}
-              className={`slide snap-center ${
+              className={`slide snap-center scroll-mx-60 ${
                 isDragging ? "cursor-grab select-none" : ""
               }`}
               draggable={false}
@@ -148,7 +162,9 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
                 alt={`Slide ${index + 1}`}
                 width={1440}
                 height={350}
+                placeholder={"blur"}
                 className='w-full max-h-[300px] object-cover'
+                draggable={false}
                 tabIndex={-1}
               />
             </Link>
@@ -156,7 +172,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
         })}
       </div>
 
-      <div className='absolute bottom-4 left-0 right-0 flex justify-center items-center '>
+      <div className='absolute bottom-1 sm:bottom-2 md:bottom-3 lg:bottom-4 left-1/2 '>
         <button
           className={`mr-4 text-white rounded-full z-10 ${
             autoplay ? "bg-rose-500" : "bg-blue-500"
@@ -171,7 +187,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='w-6 h-6'
+              className='w-4 h-4 sm:w-5  sm:h-5 md:w-6 md:h-6'
             >
               <path
                 strokeLinecap='round'
@@ -186,7 +202,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='w-6 h-6'
+              className='w-4 h-4 sm:w-5  sm:h-5 md:w-6 md:h-6'
             >
               <path
                 strokeLinecap='round'
@@ -212,7 +228,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
         onBlur={() => setFocused(false)}
         type='button'
         aria-label='next slide button'
-        className='absolute top-0 bottom-0 left-0 bg-opacity-20 font-bold hover:bg-opacity-100 transform bg-gray-100 px-[0.75%] transition-bg-opacity focus:bg-opacity-100'
+        className='absolute top-0 bottom-0 left-0 bg-opacity-10 font-bold hover:bg-opacity-100 transform bg-gray-100 px-[0.75%] transition-bg-opacity focus:bg-opacity-100'
         tabIndex={0}
       >
         <svg
@@ -221,7 +237,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-6 h-6 opacity-100 bg-gray-100 rounded-full'
+          className='w-4 h-4 sm:w-5  sm:h-5 md:w-6 md:h-6 opacity-100 bg-gray-100 rounded-full'
         >
           <path
             strokeLinecap='round'
@@ -239,7 +255,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
         onBlur={() => setFocused(false)}
         type='button'
         aria-label='next slide button'
-        className='absolute right-0 top-0 bottom-0 font-bold bg-opacity-20 hover:bg-opacity-100 transform bg-gray-100 px-[0.75%] transition-bg-opacity focus:bg-opacity-100'
+        className='absolute right-0 top-0 bottom-0 font-bold bg-opacity-10 hover:bg-opacity-100 transform bg-gray-100 px-[0.75%] transition-bg-opacity focus:bg-opacity-100'
         tabIndex={0}
       >
         <svg
@@ -248,7 +264,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-6 h-6 opacity-100 bg-gray-100 rounded-full'
+          className='w-4 h-4 sm:w-5  sm:h-5 md:w-6 md:h-6 opacity-100 bg-gray-100 rounded-full'
         >
           <path
             strokeLinecap='round'
