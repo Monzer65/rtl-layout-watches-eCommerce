@@ -21,7 +21,7 @@ const MainCategories = ({
               height={200}
               className='max-h-[200px] object-cover rounded-full'
             />
-            <h2 className='font-semibold text-sm sm:text-base md:text-lg lg:text-xl mt-2 bg-neutral-600 text-white rounded-lg px-2'>
+            <h2 className='font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base mt-1 sm:mt-2'>
               {item.title}
             </h2>
           </Link>
