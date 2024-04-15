@@ -22,6 +22,11 @@ import kids from "@/public/images/categories/kids.webp";
 import Brands from "./components/home/Brands";
 import MainCategories from "./components/home/MainCategories";
 import WonderDeals from "./components/home/WonderDeals";
+import sample from "@/public/images/sample.png";
+import sample_1 from "@/public/images/sample_1.jpg";
+import wonderDealsImage from "@/public/images/wonderDeals.svg";
+import discountImage from "@/public/images/discount.svg";
+// import HorizontalScroll from "./components/home/SampleCarousel";
 
 export default function Home() {
   const SLIDES = [
@@ -29,6 +34,150 @@ export default function Home() {
     { id: 2, image: c2Image, url: "/" },
     { id: 3, image: c3Image, url: "/" },
     { id: 4, image: c4Image, url: "/" },
+  ];
+
+  const mainCategories = [
+    { title: "زنانه", src: womens, url: "/" },
+    { title: "مردانه", src: mens, url: "/" },
+    { title: "بچگانه", src: kids, url: "/" },
+  ];
+
+  const products = [
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 18,
+      priceAfterDiscount: 13,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko Astron GPS Solar SSH145J1",
+      detailUrl: "",
+      imageSrc: sample_1,
+      priceBeforeDiscount: 15,
+      priceAfterDiscount: 12,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 23000,
+      priceAfterDiscount: 17000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 1324000,
+      priceAfterDiscount: 1300000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15,
+      priceAfterDiscount: 12,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15,
+      priceAfterDiscount: 12,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15,
+      priceAfterDiscount: 12,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
+    {
+      title: "Seiko SSB321",
+      detailUrl: "",
+      imageSrc: sample,
+      priceBeforeDiscount: 15000000,
+      priceAfterDiscount: 12200000,
+      itemsLeft: 5,
+      deliveryMethod: "ارسال سریع",
+    },
   ];
 
   const brandImages = [
@@ -45,12 +194,6 @@ export default function Home() {
     { src: brand11, url: "/" },
   ];
 
-  const mainCategories = [
-    { title: "زنانه", src: womens, url: "/" },
-    { title: "مردانه", src: mens, url: "/" },
-    { title: "بچگانه", src: kids, url: "/" },
-  ];
-
   return (
     <main className=''>
       <header className='sticky top-0 right-0 left-0 bg-white z-10'>
@@ -60,7 +203,12 @@ export default function Home() {
       <main className='px-8'>
         <Carousel slides={SLIDES} />
         <MainCategories mainCategories={mainCategories} />
-        <WonderDeals />
+        <WonderDeals
+          products={products}
+          wonderDealsImage={wonderDealsImage}
+          discountImage={discountImage}
+        />
+        {/* <HorizontalScroll /> */}
         <Brands brandImages={brandImages} />
       </main>
     </main>

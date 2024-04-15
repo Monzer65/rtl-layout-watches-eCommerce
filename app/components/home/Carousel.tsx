@@ -49,21 +49,21 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
     carouselRef.current?.scrollBy({ left: -slideWidth, behavior: "smooth" });
   }, [slideWidth]);
 
-  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleDragStart = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setIsDragging(true);
     setStartX(e.pageX);
     setStartScrollLeft(carouselRef.current!.scrollLeft);
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (!isDragging) return;
     const deltaX = e.pageX - startX;
     carouselRef.current!.scrollLeft = startScrollLeft - deltaX;
   };
 
-  const handleDragEnd = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleDragEnd = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setIsDragging(false);
 

@@ -12,6 +12,11 @@
   outline-color: orangered;
 }
 
+.disabled {
+  pointer-events: none;
+  cursor: pointer;
+}
+
 .carousel::-webkit-scrollbar {
   display: none;
 }
