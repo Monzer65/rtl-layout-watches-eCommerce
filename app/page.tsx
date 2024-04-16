@@ -26,7 +26,6 @@ import sample from "@/public/images/sample.png";
 import sample_1 from "@/public/images/sample_1.jpg";
 import wonderDealsImage from "@/public/images/wonderDeals.svg";
 import discountImage from "@/public/images/discount.svg";
-// import HorizontalScroll from "./components/home/SampleCarousel";
 
 export default function Home() {
   const SLIDES = [
@@ -208,7 +207,6 @@ export default function Home() {
           wonderDealsImage={wonderDealsImage}
           discountImage={discountImage}
         />
-        {/* <HorizontalScroll /> */}
         <Brands brandImages={brandImages} />
       </main>
     </main>

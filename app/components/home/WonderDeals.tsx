@@ -22,32 +22,92 @@ const WonderDeals = ({
   discountImage: string;
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [disabled, setDisabled] = useState(false);
   const mouseCoords = useRef({
     startX: 0,
     scrollLeft: 0,
   });
   const [slideWidth, setSlideWidth] = useState(0);
+  const [scrollEnd, setScrollEnd] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const linkRef = useRef<HTMLAnchorElement>(null);
+  const prevBtnRef = useRef<HTMLButtonElement>(null);
+  const nextBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    handleBtnsVisibilityOnScroll();
     const setInitialSlideWidth = () => {
       if (carouselRef.current) {
-        const carouselWidth = carouselRef.current.offsetWidth;
-        setSlideWidth(carouselWidth);
+        const firstSlide = carouselRef.current.querySelector(
+          ".slide"
+        ) as HTMLElement;
+        if (firstSlide) {
+          const newSlideWidth = firstSlide.offsetWidth;
+          setSlideWidth(newSlideWidth);
+        }
       }
     };
+
     setInitialSlideWidth();
+
+    const handleResize = () => {
+      setInitialSlideWidth();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
-  const handlePrevSlide = () => {
-    carouselRef.current?.scrollBy({ left: slideWidth, behavior: "smooth" });
+  useEffect(() => {
+    const carouselElement = carouselRef.current;
+    const handleScroll = () => {
+      handleBtnsVisibilityOnScroll();
+    };
+    if (carouselElement) {
+      carouselElement.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      if (carouselElement) {
+        carouselElement.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  const handleBtnsVisibilityOnScroll = () => {
+    if (carouselRef.current && prevBtnRef.current && nextBtnRef.current) {
+      const currentScrollPosition = carouselRef.current.scrollLeft;
+      const isAtRightEnd = currentScrollPosition === 0;
+      const isAtLeftEnd =
+        Math.ceil(currentScrollPosition) ===
+        -(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
+      if (isAtRightEnd) {
+        console.log("0 pos");
+        prevBtnRef.current.style.display = "none";
+      } else if (isAtLeftEnd) {
+        console.log("max pos");
+        nextBtnRef.current.style.display = "none";
+      } else {
+        prevBtnRef.current.style.display = "block";
+        nextBtnRef.current.style.display = "block";
+      }
+    }
   };
 
-  const handleNextSlide = useCallback(() => {
-    carouselRef.current?.scrollBy({ left: -slideWidth, behavior: "smooth" });
-  }, [slideWidth]);
+  const handlePrevSlide = () => {
+    if (carouselRef.current) {
+      carouselRef.current.classList.add("snap-mandatory", "snap-x");
+      carouselRef.current.scrollBy({ left: slideWidth, behavior: "smooth" });
+    }
+  };
+
+  const handleNextSlide = () => {
+    if (carouselRef.current) {
+      carouselRef.current.classList.add("snap-mandatory", "snap-x");
+      carouselRef.current.scrollBy({ left: -slideWidth, behavior: "smooth" });
+    }
+  };
 
   const handleDragStart = (e: React.MouseEvent<HTMLElement>) => {
     const slider = carouselRef.current;
@@ -109,7 +169,7 @@ const WonderDeals = ({
       >
         <Link
           href={"/"}
-          className='flex flex-col items-center justify-center gap-1 md:gap-2 flex-none max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base p-2'
+          className='slide flex flex-col items-center justify-center gap-1 md:gap-2 flex-none max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base p-2 snap-end'
         >
           <Image
             src={wonderDealsImage}
@@ -151,7 +211,7 @@ const WonderDeals = ({
               key={index}
               href={item.detailUrl}
               ref={linkRef}
-              className={`grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 p-2 rounded-md shadow-lg shadow-red-900 `}
+              className={`grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 p-2 rounded-md shadow-lg shadow-red-900 snap-start`}
             >
               <Image
                 src={item.imageSrc}
@@ -197,7 +257,7 @@ const WonderDeals = ({
           );
         })}
 
-        <div className='flex flex-col justify-center items-center flex-[0_0_auto] w-[100px] sm:w-[130px] md:w-[170px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 p-2 rounded-md shadow-lg shadow-red-900'>
+        <div className='flex flex-col justify-center items-center flex-[0_0_auto] w-[100px] sm:w-[130px] md:w-[170px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 p-2 rounded-md shadow-lg shadow-red-900 snap-start'>
           <Link href={"/"} className='grid gap-2 font-semibold'>
             <span>
               <svg
@@ -221,6 +281,7 @@ const WonderDeals = ({
       </div>
 
       <button
+        ref={nextBtnRef}
         onClick={handleNextSlide}
         aria-label='next products group button'
         className='absolute top-1/2 -left-4 font-bold -translate-y-1/2 bg-gray-100 border border-gray-200 p-1 rounded-full'
@@ -241,6 +302,7 @@ const WonderDeals = ({
         </svg>
       </button>
       <button
+        ref={prevBtnRef}
         onClick={handlePrevSlide}
         aria-label='previous product group button'
         className='absolute -right-4 top-1/2 -translate-y-1/2 font-bold bg-gray-100 border border-gray-200 p-1 rounded-full'
