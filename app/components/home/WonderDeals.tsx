@@ -2,7 +2,7 @@
 
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const WonderDeals = ({
   products,
@@ -27,7 +27,6 @@ const WonderDeals = ({
     scrollLeft: 0,
   });
   const [slideWidth, setSlideWidth] = useState(0);
-  const [scrollEnd, setScrollEnd] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const linkRef = useRef<HTMLAnchorElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
@@ -46,15 +45,11 @@ const WonderDeals = ({
         }
       }
     };
-
     setInitialSlideWidth();
-
     const handleResize = () => {
       setInitialSlideWidth();
     };
-
     window.addEventListener("resize", handleResize);
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -127,7 +122,7 @@ const WonderDeals = ({
     const x = e.pageX - slider.clientWidth;
     const walkX = (x - mouseCoords.current.startX) * 1.5;
     slider.scrollLeft = mouseCoords.current.scrollLeft - walkX;
-    document.body.querySelectorAll("a").forEach((anchortag) => {
+    slider.querySelectorAll("a").forEach((anchortag) => {
       anchortag.style.pointerEvents = "none";
     });
   };
@@ -139,7 +134,7 @@ const WonderDeals = ({
     setIsDragging(false);
     if (!carouselRef.current) return;
     slider.style.cursor = "default";
-    document.body.querySelectorAll("a").forEach((anchortag) => {
+    slider.querySelectorAll("a").forEach((anchortag) => {
       anchortag.style.pointerEvents = "";
     });
   };
@@ -284,7 +279,7 @@ const WonderDeals = ({
         ref={nextBtnRef}
         onClick={handleNextSlide}
         aria-label='next products group button'
-        className='absolute top-1/2 -left-4 font-bold -translate-y-1/2 bg-gray-100 border border-gray-200 p-1 rounded-full'
+        className='absolute top-1/2 -left-4 font-bold -translate-y-1/2 bg-gray-100 border border-gray-400 hover:bg-gray-200 p-1 rounded-full'
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -305,7 +300,7 @@ const WonderDeals = ({
         ref={prevBtnRef}
         onClick={handlePrevSlide}
         aria-label='previous product group button'
-        className='absolute -right-4 top-1/2 -translate-y-1/2 font-bold bg-gray-100 border border-gray-200 p-1 rounded-full'
+        className='absolute -right-4 top-1/2 -translate-y-1/2 font-bold bg-gray-100 hover:bg-gray-200 border border-gray-400 p-1 rounded-full'
         tabIndex={0}
       >
         <svg

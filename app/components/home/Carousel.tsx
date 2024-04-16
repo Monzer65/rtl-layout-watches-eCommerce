@@ -61,6 +61,11 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
     if (!isDragging) return;
     const deltaX = e.pageX - startX;
     carouselRef.current!.scrollLeft = startScrollLeft - deltaX;
+    if (carouselRef.current) {
+      carouselRef.current.querySelectorAll("a").forEach((anchortag) => {
+        anchortag.style.pointerEvents = "none";
+      });
+    }
   };
 
   const handleDragEnd = (e: React.MouseEvent<HTMLElement>) => {
@@ -78,6 +83,11 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       carouselRef.current!.scrollTo({
         left: startScrollLeft,
         behavior: "smooth",
+      });
+    }
+    if (carouselRef.current) {
+      carouselRef.current.querySelectorAll("a").forEach((anchortag) => {
+        anchortag.style.pointerEvents = "";
       });
     }
   };
