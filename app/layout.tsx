@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notonaskh } from "@/app/components/fonts";
 import "./globals.css";
+import Navigation from "./components/Navigation";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -14,7 +15,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='fa' dir='rtl' className='scroll-smooth'>
-      <body className={notonaskh.className}>{children}</body>
+      <body className={notonaskh.className}>
+        <header className='sticky top-0 right-0 left-0 bg-white z-10'>
+          {/* <Banner /> */}
+          <Navigation />
+        </header>
+        {children}
+      </body>
     </html>
   );
 }

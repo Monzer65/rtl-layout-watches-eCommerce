@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { LatLngExpression } from "leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
-import "leaflet-defaulticon-compatibility";
+// import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+// import { LatLngExpression } from "leaflet";
+// import "leaflet/dist/leaflet.css";
+// import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
+// import "leaflet-defaulticon-compatibility";
 import Image, { StaticImageData } from "next/image";
 
 const Footer = ({
@@ -14,7 +14,7 @@ const Footer = ({
 }: {
   social: { src: StaticImageData; url: string }[];
 }) => {
-  const position = [35.3144, 46.9923] as LatLngExpression;
+  // const position = [35.3144, 46.9923] as LatLngExpression;
 
   return (
     <div className=''>
@@ -116,7 +116,7 @@ const Footer = ({
             })}
           </div>
           <p>آدرس: ..............</p>
-          <MapContainer
+          {/* <MapContainer
             center={position}
             zoom={13}
             scrollWheelZoom={false}
@@ -137,7 +137,7 @@ const Footer = ({
                 آدرس دفتر مرکزی <br /> تلفن یا اطلاعات دیگر
               </Popup>
             </Marker>
-          </MapContainer>
+          </MapContainer> */}
         </section>
       </div>
       <div className='text-xs text-center bg-gray-100 py-8'>

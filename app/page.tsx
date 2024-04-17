@@ -64,6 +64,7 @@ export default function Home() {
       priceAfterDiscount: 13,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko Astron GPS Solar SSH145J1",
@@ -73,6 +74,7 @@ export default function Home() {
       priceAfterDiscount: 12,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -82,6 +84,7 @@ export default function Home() {
       priceAfterDiscount: 17000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -91,6 +94,7 @@ export default function Home() {
       priceAfterDiscount: 1300000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -100,6 +104,7 @@ export default function Home() {
       priceAfterDiscount: 12,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -109,6 +114,7 @@ export default function Home() {
       priceAfterDiscount: 12,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -118,6 +124,7 @@ export default function Home() {
       priceAfterDiscount: 12,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -127,6 +134,7 @@ export default function Home() {
       priceAfterDiscount: 12200000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -136,6 +144,7 @@ export default function Home() {
       priceAfterDiscount: 12200000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -145,6 +154,7 @@ export default function Home() {
       priceAfterDiscount: 12200000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
@@ -154,42 +164,47 @@ export default function Home() {
       priceAfterDiscount: 12200000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "جدید ترینها",
     },
     {
       title: "Seiko SSB321",
       detailUrl: "",
       imageSrc: sample,
       priceBeforeDiscount: 15000000,
-      priceAfterDiscount: 12200000,
+      priceAfterDiscount: 11000000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "پرفروشترینها",
     },
     {
       title: "Seiko SSB321",
       detailUrl: "",
       imageSrc: sample,
       priceBeforeDiscount: 15000000,
-      priceAfterDiscount: 12200000,
+      priceAfterDiscount: 9500000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "پرفروشترینها",
     },
     {
       title: "Seiko SSB321",
       detailUrl: "",
       imageSrc: sample,
       priceBeforeDiscount: 15000000,
-      priceAfterDiscount: 12200000,
+      priceAfterDiscount: 13224000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "پرفروشترینها",
     },
     {
       title: "Seiko SSB321",
       detailUrl: "",
       imageSrc: sample,
       priceBeforeDiscount: 15000000,
-      priceAfterDiscount: 12200000,
+      priceAfterDiscount: 14200000,
       itemsLeft: 5,
       deliveryMethod: "ارسال سریع",
+      type: "پرفروشترینها",
     },
   ];
 
@@ -227,10 +242,6 @@ export default function Home() {
   return (
     <>
       <div className=''>
-        <header className='sticky top-0 right-0 left-0 bg-white z-10'>
-          {/* <Banner /> */}
-          <Navigation />
-        </header>
         <main className='px-8'>
           <Carousel slides={SLIDES} />
           <MainCategories mainCategories={mainCategories} />

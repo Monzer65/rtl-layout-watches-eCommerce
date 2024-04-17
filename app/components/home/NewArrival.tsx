@@ -14,6 +14,7 @@ const NewArrival = ({
     priceAfterDiscount: number;
     itemsLeft: number;
     deliveryMethod: string;
+    type: string;
   }[];
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -73,10 +74,8 @@ const NewArrival = ({
         Math.ceil(currentScrollPosition) ===
         -(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
       if (isAtRightEnd) {
-        console.log("0 pos");
         prevBtnRef.current.style.display = "none";
       } else if (isAtLeftEnd) {
-        console.log("max pos");
         nextBtnRef.current.style.display = "none";
       } else {
         prevBtnRef.current.style.display = "block";
@@ -140,12 +139,31 @@ const NewArrival = ({
     return result;
   };
 
+  const buttonTypes = ["جدید ترینها", "پرفروشترینها"];
+
+  const [active, setActive] = useState(buttonTypes[0]);
+
   return (
     <div className='my-8 sm:my-16'>
       <div className='flex justify-between items-center border-b-2 sm:border-b-4 pb-2 px-4 border-black'>
-        <h2 className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl'>
-          تازه ترینها
-        </h2>
+        <div className='flex gap-2'>
+          {buttonTypes.map((type, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setActive(type);
+                console.log(type);
+              }}
+              className={`font-semibold border rounded-md px-2 py-1 hover:scale-105 active:scale-100 text-base sm:text-lg md:text-xl lg:text-2xl ${
+                active === type
+                  ? "bg-gray-700 text-white opacity-100"
+                  : "bg-gray-50 text-gray-700 opacity-50"
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
         <Link
           href={"/"}
           className='flex items-center justify-center text-[14px] sm:text-sm md:text-base lg:text-lg hover:scale-105'
@@ -178,47 +196,42 @@ const NewArrival = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleDragEnd}
         >
-          {products.map((item, index) => {
-            const discount = discountPercentage(
-              item.priceBeforeDiscount,
-              item.priceAfterDiscount
-            );
-            return (
-              <Link
-                key={index}
-                href={item.detailUrl}
-                ref={linkRef}
-                className={`slide grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-gray-500 text-[10px] sm:text-xs md:text-sm lg:text-base bg-white p-2 rounded-md ${
-                  index === 0 ? "snap-end" : "snap-start"
-                } `}
-              >
-                <Image
-                  src={item.imageSrc}
-                  alt='sample'
-                  draggable={"false"}
-                  className='h-[70px] sm:h-[100px] md:h-[130px] lg:h-[150px] object-contain'
-                />
-                <p className='text-center leading-4'>{item.title}</p>
+          {products
+            .filter((item) => item.type === active)
+            .map((item, index) => {
+              return (
+                <Link
+                  key={index}
+                  href={item.detailUrl}
+                  ref={linkRef}
+                  className={`slide grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-gray-500 text-[10px] sm:text-xs md:text-sm lg:text-base bg-white p-2 rounded-md ${
+                    index === 0 ? "snap-end" : "snap-start"
+                  } `}
+                >
+                  <Image
+                    src={item.imageSrc}
+                    alt='sample'
+                    draggable={"false"}
+                    className='h-[70px] sm:h-[100px] md:h-[130px] lg:h-[150px] object-contain'
+                  />
+                  <p className='text-center leading-4'>{item.title}</p>
 
-                <div className='text-center'>
-                  <p className=''>
-                    <span className='font-bold ml-1'>
-                      {item.priceAfterDiscount.toLocaleString()}
-                    </span>
-                    <span className='text-[8px] sm:text-xs'>تومان</span>
-                    {/* <span className='text-white text-[8px] sm:text-xs mr-2 font-semibold bg-red-500 rounded-lg px-[0.25rem] '>
-                      {discount}%
-                    </span> */}
-                  </p>
-                  <p className='line-through decoration-red-500'>
-                    <span className='text-[8px] sm:text-xs'>
-                      {item.priceBeforeDiscount.toLocaleString()}
-                    </span>
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+                  <div className='text-center'>
+                    <p className=''>
+                      <span className='font-bold ml-1'>
+                        {item.priceAfterDiscount.toLocaleString()}
+                      </span>
+                      <span className='text-[8px] sm:text-xs'>تومان</span>
+                    </p>
+                    <p className='line-through decoration-red-500'>
+                      <span className='text-[8px] sm:text-xs'>
+                        {item.priceBeforeDiscount.toLocaleString()}
+                      </span>
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
         </div>
 
         <button
