@@ -78,10 +78,8 @@ const WonderDeals = ({
         Math.ceil(currentScrollPosition) ===
         -(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
       if (isAtRightEnd) {
-        console.log("0 pos");
         prevBtnRef.current.style.display = "none";
       } else if (isAtLeftEnd) {
-        console.log("max pos");
         nextBtnRef.current.style.display = "none";
       } else {
         prevBtnRef.current.style.display = "block";
@@ -106,8 +104,7 @@ const WonderDeals = ({
 
   const handleDragStart = (e: React.MouseEvent<HTMLElement>) => {
     const slider = carouselRef.current;
-    const link = linkRef.current;
-    if (!slider || !link) return;
+    if (!slider) return;
     setIsDragging(true);
     const startX = e.pageX - slider.clientWidth;
     const scrollLeft = slider.scrollLeft;
@@ -129,11 +126,10 @@ const WonderDeals = ({
 
   const handleDragEnd = (e: React.MouseEvent<HTMLElement>) => {
     const slider = carouselRef.current;
-    const link = linkRef.current;
-    if (!slider || !link) return;
+    if (!slider) return;
     setIsDragging(false);
     if (!carouselRef.current) return;
-    slider.style.cursor = "default";
+    slider.style.cursor = "grab";
     slider.querySelectorAll("a").forEach((anchortag) => {
       anchortag.style.pointerEvents = "";
     });
@@ -149,14 +145,12 @@ const WonderDeals = ({
 
   return (
     <div
-      className='w-full relative rounded-md my-4 shadow-lg shadow-gray-600'
+      className='w-full relative rounded-md mb-8 shadow-lg shadow-gray-600'
       tabIndex={0}
       aria-live='polite'
     >
       <div
-        className={`relative text-gray-700 bg-red-500 rounded-lg p-2 sm:p-4 flex gap-2 sm:gap-4 overflow-x-auto overscroll-x-contain ${
-          isDragging ? "cursor-grab" : "cursor-default"
-        }`}
+        className={`relative no-scrollbar text-gray-700 bg-red-500 rounded-lg py-2 sm:py-4 flex gap-2 sm:gap-4 overflow-x-auto overscroll-x-contain`}
         ref={carouselRef}
         onMouseDown={handleDragStart}
         onMouseMove={handleMouseMove}
@@ -252,7 +246,7 @@ const WonderDeals = ({
           );
         })}
 
-        <div className='flex flex-col justify-center items-center flex-[0_0_auto] w-[100px] sm:w-[130px] md:w-[170px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 p-2 rounded-md shadow-lg shadow-red-900 snap-start'>
+        <div className='flex flex-col justify-center items-center flex-[0_0_auto] w-[100px] sm:w-[130px] md:w-[170px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 py-2 rounded-md shadow-lg shadow-red-900 ml-2 snap-start'>
           <Link href={"/"} className='grid gap-2 font-semibold'>
             <span>
               <svg

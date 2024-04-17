@@ -12,10 +12,21 @@
   outline-color: orangered;
 }
 
-/* .disabled {
-  pointer-events: none;
-  cursor: pointer;
-} */
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.truncated {
+  mask: linear-gradient(transparent, white 0%, white 10%, transparent);
+  -webkit-mask: linear-gradient(transparent, white 0%, white 10%, transparent);
+}
 
 .carousel::-webkit-scrollbar {
   display: none;

@@ -26,6 +26,20 @@ import sample from "@/public/images/sample.png";
 import sample_1 from "@/public/images/sample_1.jpg";
 import wonderDealsImage from "@/public/images/wonderDeals.svg";
 import discountImage from "@/public/images/discount.svg";
+import NewArrival from "./components/home/NewArrival";
+import MiddleGrid from "./components/home/MiddleGrid";
+import ShortDesc from "./components/home/ShortDesc";
+import etemad from "@/public/images/etemad.webp";
+import kasbokar from "@/public/images/kasbokar.webp";
+import supportImage_1 from "@/public/images/support_1.png";
+import supportImage_2 from "@/public/images/suppport_2.png";
+import supportImage_3 from "@/public/images/support_3.png";
+import telegramIcon from "@/public/images/telegram.svg";
+import whatsappIcon from "@/public/images/whatsapp.svg";
+import instagramIcon from "@/public/images/instagram.svg";
+import Footer from "./components/Footer";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const SLIDES = [
@@ -193,22 +207,64 @@ export default function Home() {
     { src: brand11, url: "/" },
   ];
 
+  const namadImages = [
+    { src: etemad, url: "" },
+    { src: kasbokar, url: "" },
+  ];
+
+  const supportImages = [
+    { src: supportImage_1, title: "پشتیبانی 24 ساعته", url: "" },
+    { src: supportImage_2, title: "ضمانت اصالت کالا", url: "" },
+    { src: supportImage_3, title: "ارسال سریع به تمامی نقاط", url: "" },
+  ];
+
+  const social = [
+    { src: telegramIcon, url: "" },
+    { src: whatsappIcon, url: "" },
+    { src: instagramIcon, url: "" },
+  ];
+
   return (
-    <main className=''>
-      <header className='sticky top-0 right-0 left-0 bg-white z-10'>
-        {/* <Banner /> */}
-        <Navigation />
-      </header>
-      <main className='px-8'>
-        <Carousel slides={SLIDES} />
-        <MainCategories mainCategories={mainCategories} />
-        <WonderDeals
-          products={products}
-          wonderDealsImage={wonderDealsImage}
-          discountImage={discountImage}
-        />
-        <Brands brandImages={brandImages} />
-      </main>
-    </main>
+    <>
+      <div className=''>
+        <header className='sticky top-0 right-0 left-0 bg-white z-10'>
+          {/* <Banner /> */}
+          <Navigation />
+        </header>
+        <main className='px-8'>
+          <Carousel slides={SLIDES} />
+          <MainCategories mainCategories={mainCategories} />
+          <WonderDeals
+            products={products}
+            wonderDealsImage={wonderDealsImage}
+            discountImage={discountImage}
+          />
+          <MiddleGrid />
+          <NewArrival products={products} />
+          <Brands brandImages={brandImages} />
+        </main>
+      </div>
+      <footer>
+        <section className='flex justify-between p-8 border-t'>
+          {supportImages.map((item, index) => {
+            return (
+              <Link key={index} href={item.url} className='text-center'>
+                <Image
+                  src={item.src}
+                  alt='support image'
+                  height={50}
+                  className='max-h-[50px] object-contain m-auto'
+                />
+                <p className='mt-2'>{item.title}</p>
+              </Link>
+            );
+          })}
+        </section>
+        <section className='px-8'>
+          <ShortDesc namadImages={namadImages} />
+        </section>
+        <Footer social={social} />
+      </footer>
+    </>
   );
 }
