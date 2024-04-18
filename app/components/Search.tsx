@@ -22,14 +22,14 @@ export default function Search({ placeholder }: { placeholder: string }) {
 
   return (
     <div
-      className='relative flex flex-1 flex-shrink-0 text-xs sm:text-sm md:text-base'
+      className='relative flex flex-1 flex-shrink-0 text-sm md:text-base'
       id='searchbox'
     >
       <label htmlFor='search' className='sr-only'>
         Search
       </label>
       <input
-        className='peer block w-full rounded-md border border-gray-200 py-1 sm:py-2 md:py-3 pr-6 sm:pr-8 md:pr-10 outline-2 placeholder:text-gray-500'
+        className='peer block w-full rounded-md border border-gray-200 py-2 pr-8 md:pr-10 outline-2 placeholder:text-gray-600 bg-gray-50'
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);
@@ -43,7 +43,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='h-3 w-3 sm:h-4 sm:w-4 md:h-6 md:w-6 text-gray-500'
+          className='h-4 w-4 md:h-6 md:w-6 text-gray-600'
         >
           <path
             strokeLinecap='round'

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import logo from "@/public/images/logo.svg";
 import Link from "next/link";
-import Search from "./Search";
+import Search from "../Search";
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { HomeIcon } from "@heroicons/react/24/outline";

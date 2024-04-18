@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      transitionProperty: {
+        maxHeight: "max-height",
+        spacing: "margin, padding",
+      },
       backgroundImage: {
         banner_bg_pattern:
           "url('../public/images/advertising-banner-background.jpeg')",

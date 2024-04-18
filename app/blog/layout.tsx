@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notonaskh } from "@/app/components/fonts";
-import "./globals.css";
+import "./blog.css";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -12,9 +12,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang='fa' dir='rtl'>
-      <body className={notonaskh.className}>{children}</body>
-    </html>
-  );
+  return <div className={notonaskh.className}>{children}</div>;
 }
