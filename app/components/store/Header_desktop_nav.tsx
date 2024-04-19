@@ -3,6 +3,7 @@
 import {
   ArrowRightEndOnRectangleIcon,
   Bars4Icon,
+  ChevronDownIcon,
   HomeIcon,
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
@@ -26,14 +27,71 @@ const Header_nav = () => {
     return () => document.removeEventListener("scroll", handleScroll);
   }, [scrollPos, visible]);
 
+  const items = [
+    { name: "Home", url: "/" },
+    {
+      name: "Tutorials",
+      children: [
+        { name: "Beginner", url: "/tutorials/beginner" },
+        { name: "Intermediate", url: "/tutorials/intermediate" },
+        { name: "Advanced", url: "/tutorials/advanced" },
+      ],
+    },
+    {
+      name: "Services",
+      children: [
+        { name: "item 1", url: "/services/item_1" },
+        { name: "item 2", url: "/services/item_2" },
+        { name: "item 3", url: "/services/item_3" },
+        { name: "item 4", url: "/services/item_4" },
+      ],
+    },
+  ];
+
+  const renderItems = () =>
+    items.map((item, index) => (
+      <li key={index} className='group'>
+        {item.url ? (
+          <Link href={item.url} className='text-gray-300'>
+            {item.name}
+          </Link>
+        ) : (
+          <span className='flex gap-1 items-center justify-center text-gray-300 hover:cursor-default'>
+            {item.name}
+            <ChevronDownIcon className='h-6 w-6' />
+          </span>
+        )}
+        {item.children && renderChildren(item.children)}
+      </li>
+    ));
+
+  const renderChildren = (children: { name: string; url: string }[]) => (
+    <ul
+      className='overflow-hidden max-h-0 group-hover:max-h-[500px] transition-maxHeight ease-out
+    duration-500'
+    >
+      {children.map((child, index) => (
+        <li key={index} className='flex flex-col gap-1'>
+          <Link
+            href={child.url}
+            className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-[6px] text-sm font-medium'
+          >
+            {child.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <nav
-      className={`gap-2 transition-maxHeight ease-out
+      className={`relative gap-2 transition-maxHeight ease-out
       duration-500 ${
-        visible ? "max-h-20" : "max-h-0"
+        visible ? "max-h-[500px]" : "max-h-0"
       } overflow-hidden px-8 hidden md:flex bg-gray-800`}
     >
-      <Link
+      <ul className='flex gap-4 list-none py-4'>{renderItems()}</ul>
+      {/* <Link
         href={"/link-1"}
         className='bg-gray-900 text-white rounded-md px-3 py-2 my-2 text-sm font-medium" aria-current="page"'
       >
@@ -56,7 +114,7 @@ const Header_nav = () => {
         className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 my-2 text-sm font-medium'
       >
         Link 4
-      </Link>
+      </Link> */}
     </nav>
   );
 };

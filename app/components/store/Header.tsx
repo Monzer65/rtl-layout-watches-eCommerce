@@ -42,9 +42,9 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
       } bottom-0 md:bottom-auto inset-x-0 shadow-[0px_0px_5px_rgba(50,50,50,0.75)] md:shadow-[0_3px_5px_rgba(50,50,50,0.75)] bg-white z-10`}
     >
       {open && (
-        <div className='md:hidden sticky inset-0 h-[calc(100%_-_4.25rem)] z-10'>
+        <nav className='md:hidden sticky inset-0 h-[calc(100%_-_4.25rem)] z-10'>
           <Header_mobile_nav />
-        </div>
+        </nav>
       )}
       <div
         className={`flex items-center justify-between gap-2 md:px-8 md:py-4 md:border-b`}
