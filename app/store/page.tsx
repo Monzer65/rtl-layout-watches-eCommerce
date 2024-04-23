@@ -18,6 +18,14 @@ import mens from "@/public/images/categories/men.webp";
 import kids from "@/public/images/categories/kids.webp";
 import sample from "@/public/images/sample.png";
 import sample_1 from "@/public/images/sample_1.jpg";
+import Carousel from "../components/store/home/Carousel";
+import MainCategories from "../components/store/home/MainCategories";
+import WonderDeals from "../components/store/home/WonderDeals";
+import MiddleGrid from "../components/store/home/MiddleGrid";
+import NewArrival from "../components/store/home/NewArrival";
+import Brands from "../components/store/home/Brands";
+import wonderDealsImage from "@/public/images/wonderDeals.svg";
+import discountImage from "@/public/images/discount.svg";
 
 const slides = [
   { id: 1, image: c1Image, url: "/" },
@@ -201,18 +209,17 @@ const brandImages = [
 
 const Store = () => {
   return (
-    <main className='px-8'>
-      {/* <Carousel slides={slides} />
-          <MainCategories mainCategories={mainCategories} />
-          <WonderDeals
-            products={products}
-            wonderDealsImage={wonderDealsImage}
-            discountImage={discountImage}
-          />
-          <MiddleGrid />
-          <NewArrival products={products} />
-          <Brands brandImages={brandImages} /> */}
-      فروشگاه فروشگاه فروشگاه فروشگاه فروشگاه
+    <main className='px-8 md:pt-[8.5rem] pb-4'>
+      <Carousel slides={slides} />
+      <MainCategories mainCategories={mainCategories} />
+      <WonderDeals
+        products={products}
+        wonderDealsImage={wonderDealsImage}
+        discountImage={discountImage}
+      />
+      <MiddleGrid />
+      <NewArrival products={products} />
+      <Brands brandImages={brandImages} />
     </main>
   );
 };

@@ -15,7 +15,6 @@ import instagramIcon from "@/public/images/instagram.svg";
 import Header from "../components/store/Header";
 import Footer from "../components/store/Footer";
 import Search from "../components/Search";
-import Header_mobile_nav from "../components/store/Header_mobile_nav";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -46,9 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div
-      className={`pt-0 pb-20 md:pt-40 md:pb-0 relative ${notonaskh.className}`}
-    >
+    <div className={`pt-0 pb-16 md:pb-0 relative ${notonaskh.className}`}>
       <div className='sticky top-0 right-0 left-0 md:hidden z-10 py-2 shadow-md bg-white'>
         <Search placeholder='جستجو...' />
       </div>

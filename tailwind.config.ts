@@ -10,7 +10,9 @@ const config: Config = {
     extend: {
       transitionProperty: {
         maxHeight: "max-height",
+        height: "height",
         spacing: "margin, padding",
+        scale: "scale",
       },
       backgroundImage: {
         banner_bg_pattern:

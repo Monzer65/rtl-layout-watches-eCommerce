@@ -18,7 +18,7 @@ const ShortDesc = ({
   };
 
   return (
-    <div className='flex flex-col md:flex-row gap-8 items-center border-y py-8'>
+    <div className='flex flex-col md:flex-row gap-8 items-center md:items-start border-y py-4'>
       <div className='flex flex-col flex-1 items-center'>
         <div>
           <h2 className='font-bold text-xl sm:text-2xl'>
@@ -70,7 +70,7 @@ const ShortDesc = ({
           {showMore ? "کمتر" : "بیشتر"}
         </button>
       </div>
-      <div className='flex gap-2'>
+      <div className='flex md:flex-col gap-2'>
         {namadImages.map((item, index) => {
           return (
             <Link key={index} href={item.url} className='border p-2 rounded-sm'>
@@ -79,7 +79,7 @@ const ShortDesc = ({
                 alt={`namad image ${index + 1}`}
                 width={100}
                 height={100}
-                className='w-[100px] h-[100px] object-contain'
+                className='w-[60px] md:w-[100px] h-[60px] md:h-[100px] object-contain'
               />
             </Link>
           );

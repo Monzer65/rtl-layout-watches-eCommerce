@@ -147,8 +147,8 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
         ref={carouselRef}
         className={`w-full grid grid-flow-col auto-cols-[100%] overflow-x-auto rounded-md carousel ${
           isDragging
-            ? "scroll-auto snap-none"
-            : "scroll-smooth snap-x snap-mandatory"
+            ? "scroll-auto snap-none cursor-grabbing"
+            : "scroll-smooth snap-x snap-mandatory cursor-grab"
         }`}
         tabIndex={-1}
         onMouseDown={handleDragStart}
@@ -162,7 +162,7 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
               href={slide.url}
               key={index}
               className={`slide snap-center scroll-mx-60 ${
-                isDragging ? "cursor-grab select-none" : ""
+                isDragging ? " select-none" : ""
               }`}
               draggable={false}
               tabIndex={-1}

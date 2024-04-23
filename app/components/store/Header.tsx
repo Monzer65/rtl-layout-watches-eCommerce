@@ -39,10 +39,10 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
     <header
       className={`shadow-lg fixed ${
         open ? "top-0" : "top-auto"
-      } bottom-0 md:bottom-auto inset-x-0 shadow-[0px_0px_5px_rgba(50,50,50,0.75)] md:shadow-[0_3px_5px_rgba(50,50,50,0.75)] bg-white z-10`}
+      } bottom-0 md:bottom-auto inset-x-0 shadow-inner shadow-gray-300 md:shadow-[0_3px_5px_rgba(50,50,50,0.75)] bg-white z-10`}
     >
       {open && (
-        <nav className='md:hidden sticky inset-0 h-[calc(100%_-_4.25rem)] z-10'>
+        <nav className='md:hidden sticky inset-0 h-[calc(100%_-_4.25rem)] z-10 overflow-auto'>
           <Header_mobile_nav />
         </nav>
       )}
@@ -59,11 +59,11 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
         <div className='hidden md:block flex-1 max-w-[640px]'>
           <Search placeholder='جستجو...' />
         </div>
-        <div className='flex gap-2 items-center justify-between w-full md:w-auto px-8 py-2 md:p-0'>
+        <div className='grid grid-cols-4 md:flex md:gap-2 md:items-center md:justify-between w-full md:w-auto md:px-8 md:p-0 [&>*]:hover:opacity-50 md:[&>*]:hover:opacity-100'>
           <button
             className={`${
               open ? "" : ""
-            } flex flex-col md:hidden gap-1 items-center rounded-md`}
+            } flex flex-col md:hidden gap-1 items-center rounded-md hover:!opacity-100 py-2`}
             onClick={() => setOpen(!open)}
           >
             {/* <span className='absolute -inset-0.5' /> */}
@@ -82,23 +82,23 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
           </button>
           <Link
             href={"/"}
-            className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 md:py-2'
+            className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
           >
             <ArrowRightEndOnRectangleIcon className='h-6 w-6 text-gray-500' />
             <p className='md:hidden lg:block'>ورود | ثبت نام</p>
           </Link>
           <Link
             href={"/"}
-            className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 md:py-2'
+            className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
           >
             <ShoppingBagIcon className='h-6 w-6 text-gray-500' />
             <p className='md:hidden lg:block'>سبد خرید </p>
           </Link>
           <Link
             href={"/"}
-            className='flex flex-col md:hidden gap-1 items-center rounded-md'
+            className='flex flex-col md:hidden gap-1 items-center rounded-md hover:!opacity-100 py-2'
           >
-            <HomeIcon className='h-6 w-6 text-gray-500 ' />
+            <HomeIcon className='h-6 w-6 text-gray-500' />
             خانه
           </Link>
         </div>

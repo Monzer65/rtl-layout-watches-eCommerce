@@ -17,14 +17,13 @@ const MiddleGrid = () => {
           <Link
             href={item.url}
             key={index}
-            className={`item snap-center scroll-mx-60`}
+            className={`group w-full h-full overflow-clip`}
           >
             <Image
               src={item.src}
               alt={`Item ${index + 1}`}
-              height={350}
               placeholder={"blur"}
-              className='w-full max-h-[200px] sm:max-h-[300px] object-cover rounded-md'
+              className='object-cover rounded-md group-hover:scale-125 duration-[5s] ease'
             />
           </Link>
         );
