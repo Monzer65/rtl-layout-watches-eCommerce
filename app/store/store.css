@@ -1,20 +1,24 @@
-::-webkit-scrollbar {
+.filters::-webkit-scrollbar {
+  display: none;
   width: 10px;
   height: 10px;
 }
+.filters:hover::-webkit-scrollbar {
+  display: block;
+}
 
-::-webkit-scrollbar-track {
+.filters::-webkit-scrollbar-track {
   border-radius: 100vh;
   background: #f7f4ed;
 }
 
-::-webkit-scrollbar-thumb {
+.filters::-webkit-scrollbar-thumb {
   background: #505050;
   border-radius: 100vh;
   border: 3px solid #f6f7ed;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.filters::-webkit-scrollbar-thumb:hover {
   background: #222222;
 }
 
