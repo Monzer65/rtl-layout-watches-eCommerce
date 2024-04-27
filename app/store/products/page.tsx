@@ -1,6 +1,11 @@
 "use client";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import {
+  AdjustmentsHorizontalIcon,
+  BarsArrowDownIcon,
+  ChevronLeftIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 import PriceRange from "./filters/PriceRangeOptions";
 import Options from "./filters/CheckboxOptions";
 import productImage from "@/public/images/sample.png";
@@ -88,26 +93,46 @@ const products = [
 ];
 
 const Products = () => {
-  const [openFilters, setOpenFilters] = useState<{ [key: number]: boolean }>(
+  const [openOptions, setOpenOptions] = useState<{ [key: number]: boolean }>(
     {}
   );
   const [checkedOptions, setCheckedOptions] = useState<{
     [key: string]: boolean;
   }>({});
 
-  const toggleFilter = (index: number) => {
-    setOpenFilters((prevState) => ({
+  const [openFilters, setOpenFilters] = useState(false);
+  const [openSort, setOpenSort] = useState(false);
+
+  const toggleOptions = (index: number) => {
+    setOpenOptions((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
     }));
   };
 
-  const toggleOption = (option: string) => {
+  const toggleCheckOption = (option: string) => {
     setCheckedOptions((prevState) => ({
       ...prevState,
       [option]: !prevState[option],
     }));
   };
+
+  const toggleSort = () => {
+    setOpenSort(!openSort);
+  };
+
+  const toggleFilters = () => {
+    setOpenFilters(!openFilters);
+  };
+
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setOpenFilters(false);
+  //     setOpenSort(false);
+  //   };
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
   const filters = [
     {
@@ -120,7 +145,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={brands}
         />
       ),
@@ -131,7 +156,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={models}
         />
       ),
@@ -142,7 +167,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={caseSizes}
         />
       ),
@@ -153,7 +178,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={caseShape}
         />
       ),
@@ -164,7 +189,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={caseMaterials}
         />
       ),
@@ -175,7 +200,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={caseColors}
         />
       ),
@@ -186,7 +211,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={bandMaterials}
         />
       ),
@@ -197,7 +222,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={bandColors}
         />
       ),
@@ -208,7 +233,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={dialColors}
         />
       ),
@@ -219,7 +244,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={movements}
         />
       ),
@@ -230,7 +255,7 @@ const Products = () => {
       options: (
         <Options
           checkedOptions={checkedOptions}
-          onToggleOption={toggleOption}
+          onToggleOption={toggleCheckOption}
           options={others}
         />
       ),
@@ -238,36 +263,109 @@ const Products = () => {
     },
   ];
 
+  const sorts = [
+    "ارزانترین",
+    "گرانترین",
+    "بیشترین تخفیف",
+    "جدیدترین",
+    "پرفروشترین",
+  ];
+
   return (
     <main className='px-8 grid lg:grid-cols-5 relative'>
-      <div className='filters min-h-[50px] max-h-[500px] lg:sticky top-36 right-0 overflow-y-auto px-2 pt-2 pb-8 [&>*:not(:last-child)]:border-b [&>*]:p-2 border border-gray-600 rounded-xl'>
+      <div
+        className={`${
+          openFilters ? "block" : "hidden"
+        } lg:hidden fixed inset-0 bg-gray-600 opacity-70 z-30`}
+        onClick={() => setOpenFilters(false)}
+      ></div>
+      <div
+        className={`filters fixed inset-x-0 lg:block transition-all duration-500 ${
+          openFilters ? "max-h-[350px] bottom-0" : "max-h-0 -bottom-44"
+        } bg-white lg:bg-none lg:max-w-[350px] min-h-[50px] lg:max-h-[500px] lg:sticky lg:top-36 lg:right-0 z-40 lg:z-auto overflow-y-auto px-2 pt-2 pb-8 [&>*:not(:last-child)]:border-b [&>*]:p-2 lg:border border-gray-600 lg:rounded-xl`}
+      >
         <div className='flex justify-between'>
           <h3 className='text-xl font-semibold'>فیلترها</h3>
           <button className='text-sm'>حذف همه فیلترها</button>
+          <button onClick={() => setOpenFilters(false)} className='lg:hidden'>
+            <XMarkIcon className='w-8' />
+          </button>
         </div>
         {filters.map((filter, i) => {
           return (
             <div key={i}>
               <button
-                onClick={() => toggleFilter(i)}
+                onClick={() => toggleOptions(i)}
                 className='w-full flex items-center justify-between'
               >
                 <p>{filter.title}</p>
                 <ChevronLeftIcon
                   className={`w-4 duration-300  ${
-                    openFilters[i] ? "rotate-90" : ""
+                    openOptions[i] ? "rotate-90" : ""
                   }`}
                 />
               </button>
-              {openFilters[i] && (
+              {openOptions[i] && (
                 <div className='text-sm py-4'>{filter.options}</div>
               )}
             </div>
           );
         })}
       </div>
-      <div className='min-h-screen w-full lg:col-span-4 '>
-        <div className='px-4'>sorting goes here</div>
+      <div className='min-h-screen w-full lg:col-span-4'>
+        <div className='flex justify-between px-4 mb-4'>
+          <div className='flex gap-2 items-center'>
+            <button
+              onClick={toggleFilters}
+              className='flex gap-1 ml-4 lg:hidden'
+            >
+              <AdjustmentsHorizontalIcon className='w-6' />
+              فیلتر
+            </button>
+            <button
+              onClick={toggleSort}
+              className='flex gap-1 md:pointer-events-none'
+            >
+              <BarsArrowDownIcon className='w-6' />
+              مرتب سازی<span className='hidden md:inline-block'>:</span>
+            </button>
+            <div
+              className={`${
+                openSort ? "block" : "hidden"
+              } md:hidden fixed inset-0 bg-gray-600 opacity-70 z-30`}
+              onClick={() => setOpenSort(false)}
+            ></div>
+            <div
+              className={`flex flex-col md:hidden fixed inset-x-0 bg-white p-4 z-40 transition-all duration-500 ${
+                openSort ? "max-h-[350px] bottom-0" : "max-h-0 -bottom-44"
+              }`}
+            >
+              <div className='flex justify-between'>
+                <p>مرتب سازی بر اساس:</p>
+                <button onClick={() => setOpenSort(false)}>
+                  <XMarkIcon className='w-5' />
+                </button>
+              </div>
+              {sorts.map((item, index) => (
+                <button
+                  key={index}
+                  className='text-sm md:text-gray-400 text-start border-b py-4'
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            {sorts.map((item, index) => (
+              <button
+                key={index}
+                className='hidden md:block text-sm text-gray-400 hover:border-b'
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+          <p className='text-sm text-gray-400'>124 کالا</p>
+        </div>
         <div className='grid grid-cols-[repeat(auto-fit_,_minmax(250px_,_1fr))] gap-2 lg:px-4 pb-4'>
           {products.map((item, index) => (
             <div
