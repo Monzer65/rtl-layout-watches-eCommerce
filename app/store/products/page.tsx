@@ -5,13 +5,12 @@ import {
   ChevronLeftIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PriceRange from "./filters/PriceRangeOptions";
 import Options from "./filters/CheckboxOptions";
-import productImage from "@/public/images/sample.png";
-import productImage_1 from "@/public/images/sample_1.jpg";
 import Image from "next/image";
 import Link from "next/link";
+import { products } from "@/app/data";
 
 const brands = [
   "Rolex",
@@ -73,24 +72,6 @@ const waterResistance = [
   "10 ATM",
 ];
 const others = ["Calendar", "Chronometer", "Solar power"];
-
-const products = [
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-  { title: "Seiko model", imgSrc: productImage_1, price: 250000 },
-];
 
 const Products = () => {
   const [openOptions, setOpenOptions] = useState<{ [key: number]: boolean }>(
@@ -372,7 +353,7 @@ const Products = () => {
               key={index}
               className='min-h-[200px] p-2 border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-transform duration-300 ease-in-out'
             >
-              <Link href={"/"}>
+              <Link href={`/store/products/${item.id}`}>
                 <Image
                   src={item.imgSrc}
                   alt={`product ${item.title}`}

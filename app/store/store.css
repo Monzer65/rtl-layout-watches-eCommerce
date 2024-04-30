@@ -46,3 +46,13 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   pointer-events: auto;
 }
+
+.halftone {
+  background-image: radial-gradient(
+    circle at center,
+    hsl(240, 100%, 80%) 0.05rem,
+    transparent 0
+  );
+  background-size: 0.2rem 0.2rem;
+  background-repeat: round;
+}
