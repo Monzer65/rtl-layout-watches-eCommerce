@@ -6,8 +6,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import PriceRange from "./filters/PriceRangeOptions";
-import Options from "./filters/CheckboxOptions";
+import PriceRange from "../../components/store/products/filters/PriceRangeOptions";
+import Options from "../../components/store/products/filters/CheckboxOptions";
 import Image from "next/image";
 import Link from "next/link";
 import { products } from "@/app/data";

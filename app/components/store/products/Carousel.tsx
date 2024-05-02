@@ -1,4 +1,5 @@
 "use client";
+
 import { HeartIcon, ShareIcon } from "@heroicons/react/24/outline";
 import Image, { StaticImageData } from "next/image";
 import { MouseEvent, MouseEventHandler, useRef, useState } from "react";
@@ -17,7 +18,7 @@ const ImageThumbnail = ({
   <Image
     src={image}
     alt={`Thumbnail ${index + 1}`}
-    className={`w-[50px] object-cover cursor-pointer p-1 rounded-lg ${
+    className={`w-[70px] h-[70px] object-contain cursor-pointer p-1 rounded-lg ${
       isActive ? "border-2 border-red-600" : "border border-gray-500"
     }`}
     onClick={onClick}
@@ -35,10 +36,12 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
     const zoomImage = zoomedImageRef.current;
     const lens = lensRef.current;
 
-    if (!zoomImage || !lens) return;
+    if (!zoomImage || !lens || !zoomImage.parentElement) return;
 
     lens.style.display = display ? "block" : "none";
     zoomImage.style.display = display ? "block" : "none";
+    zoomImage.parentElement.style.width = display ? "400px" : "0";
+    zoomImage.parentElement.style.height = display ? "400px" : "0";
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -54,8 +57,8 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
     const lensHalfWidth = lensWidth / 2;
     const lensHalfHeight = lensHeight / 2;
 
-    let lensX = e.pageX - left - lensHalfWidth;
-    let lensY = e.pageY - top - lensHalfHeight;
+    let lensX = e.pageX - left - lensHalfWidth - window.scrollX;
+    let lensY = e.pageY - top - lensHalfHeight - window.scrollY;
 
     lensX = Math.max(0, Math.min(lensX, width - lensWidth));
     lensY = Math.max(0, Math.min(lensY, height - lensHeight));
@@ -63,7 +66,7 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
     lens.style.left = `${lensX}px`;
     lens.style.top = `${lensY}px`;
 
-    const scaleFactor = 1.45;
+    const scaleFactor = 1.35;
     const bgX = (lensX / width) * 100 * scaleFactor;
     const bgY = (lensY / height) * 100 * scaleFactor;
 
@@ -78,13 +81,15 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
           onMouseEnter={() => toggleElementsDisplay(true)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => toggleElementsDisplay(false)}
-          className='relative '
+          className='lg:relative border rounded-md'
         >
           {images && images.length > 0 && (
             <Image
               src={images[currentImageIndex]}
               alt={`Product Image ${currentImageIndex + 1}`}
-              className='w-[350px] h-[350px] object-contain cursor-pointer m-auto'
+              width={400}
+              height={400}
+              className='w-[400px] h-[400px] object-contain cursor-pointer m-auto'
             />
           )}
           <div className='absolute flex flex-col gap-4 right-2 top-2 '>
@@ -98,7 +103,7 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
           <div className='hidden lg:block pointer-events-none'>
             <div
               ref={lensRef}
-              className='halftone hidden w-[100px] h-[100px] absolute'
+              className='halftone hidden w-[100px] h-[100px] absolute rounded-md'
             ></div>
           </div>
         </div>
@@ -115,15 +120,13 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
           ))}
         </div>
       </div>
-      <div className='hidden lg:block absolute md:-left-full md:top-0'>
+      <div className='hidden lg:block absolute md:-left-[400px] md:top-0'>
         <div
           ref={zoomedImageRef}
-          className='hidden  bg-left-top bg-no-repeat shadow-xl shadow-black'
+          className='w-full h-full hidden bg-left-top bg-contain bg-no-repeat shadow-lg shadow-gray-500 border rounded-md  bg-white'
           style={{
             backgroundImage: `url(${images && images[currentImageIndex].src})`,
-            backgroundSize: "300% 300%",
-            width: "350px",
-            height: "350px",
+            backgroundSize: "350% 350%",
           }}
         ></div>
       </div>
