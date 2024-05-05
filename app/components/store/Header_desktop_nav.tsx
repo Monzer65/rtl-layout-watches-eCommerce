@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ArrowRightEndOnRectangleIcon,
-  Bars4Icon,
-  ChevronDownIcon,
-  HomeIcon,
-  ShoppingBagIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
