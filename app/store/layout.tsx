@@ -39,11 +39,14 @@ const social = [
   { src: instagramIcon, url: "" },
 ];
 
-export default function RootLayout({
+export default async function StoreLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const { getUser } = getKindeServerSession();
+  // const user = await getUser();
+  // const isAuthenticated = user != null;
   return (
     <div className={`pt-0 pb-16 md:pb-0 relative ${notonaskh.className}`}>
       <div className='sticky top-0 right-0 left-0 md:hidden z-10 py-2 shadow-md bg-white'>

@@ -32,6 +32,7 @@ const ReviewForm = () => {
         <button
           type='button'
           onClick={() => {
+            if (powerInput.trim().length < 2) return;
             setPowerList((currentList) => [...currentList, powerInput]);
           }}
           aria-label='adding power points'
@@ -65,6 +66,7 @@ const ReviewForm = () => {
         <button
           type='button'
           onClick={() => {
+            if (weaknessInput.trim().length < 2) return;
             setWeaknessList((currentList) => [...currentList, weaknessInput]);
           }}
           aria-label='adding power points'

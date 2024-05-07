@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "از میان تمام برندهای ساعت موجود در دنیا انتخاب کنید.",
 };
 
-export default function RootLayout({
+export default function BlogLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

@@ -10,12 +10,25 @@ import {
   XMarkIcon,
   HomeIcon,
   ShoppingBagIcon,
+  ArrowRightStartOnRectangleIcon,
+  KeyIcon,
+  UserIcon,
+  DocumentChartBarIcon,
 } from "@heroicons/react/24/outline";
 import Header_mobile_nav from "./Header_mobile_nav";
-import { useEffect, useState } from "react";
+import { ReactEventHandler, useEffect, useRef, useState } from "react";
+import {
+  RegisterLink,
+  LoginLink,
+  LogoutLink,
+} from "@kinde-oss/kinde-auth-nextjs/components";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 const Header = ({ logo }: { logo: StaticImageData }) => {
   const [open, setOpen] = useState(false);
+  const [dashNavOpen, setDashNavOpen] = useState(false);
+  const DashBtnRef = useRef<HTMLButtonElement>(null);
+  const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,16 +37,29 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
       } else {
         setOpen(true);
       }
+      setDashNavOpen(false);
     };
 
     handleResize();
 
     window.addEventListener("resize", handleResize);
-
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
       window.removeEventListener("resize", handleResize);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleClickOutside = (e: any) => {
+    const dashbtn = DashBtnRef.current;
+    if (dashbtn && !dashbtn.contains(e.target)) {
+      setDashNavOpen(false);
+    }
+  };
+
+  const handleDashNav = () => {
+    setDashNavOpen(!dashNavOpen);
+  };
 
   return (
     <header
@@ -49,13 +75,9 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
       <div
         className={`flex items-center justify-between gap-2 md:px-8 md:py-4 md:border-b`}
       >
-        <Image
-          src={logo}
-          alt='logo'
-          width={100}
-          height={100}
-          className='hidden md:block'
-        />
+        <Link href={"/store"} className='hidden md:block'>
+          <Image src={logo} alt='logo' width={100} height={100} />
+        </Link>
         <div className='hidden md:block flex-1 max-w-[640px]'>
           <Search placeholder='جستجو...' />
         </div>
@@ -80,13 +102,92 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
               </>
             )}
           </button>
-          <Link
-            href={"/"}
-            className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
-          >
-            <ArrowRightEndOnRectangleIcon className='h-6 w-6 text-gray-500' />
-            <p className='md:hidden lg:block'>ورود | ثبت نام</p>
-          </Link>
+          {!isAuthenticated ? (
+            <div className='flex justify-center gap-2 md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'>
+              {isLoading ? (
+                <div>درحال بارگزاری...</div>
+              ) : (
+                <>
+                  <LoginLink
+                    postLoginRedirectURL='/store/products'
+                    className='flex flex-col lg:flex-row gap-1 items-center'
+                  >
+                    <ArrowRightEndOnRectangleIcon className='h-6 w-6 text-gray-500' />
+                    <p className='md:hidden lg:block'>ورود</p>
+                  </LoginLink>
+                  |
+                  <RegisterLink
+                    postLoginRedirectURL='/store/products'
+                    className='flex flex-col lg:flex-row gap-1 items-center'
+                  >
+                    <KeyIcon className='h-6 w-6 text-gray-500' />
+                    <p className='md:hidden lg:block'>ثبت نام</p>
+                  </RegisterLink>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className='relative md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'>
+              {isLoading ? (
+                <div>درحال بارگزاری...</div>
+              ) : (
+                <button
+                  type='button'
+                  ref={DashBtnRef}
+                  onClick={handleDashNav}
+                  aria-label='dashboard button'
+                  className=' flex flex-col md:flex-row gap-1 w-full'
+                >
+                  <div className='flex flex-col md:flex-row justify-center w-full'>
+                    <UserIcon className='hidden md:block h-6 w-6 text-gray-500' />
+                    {user?.picture ? (
+                      <Image
+                        src={user?.picture}
+                        alt='user image'
+                        width={25}
+                        height={25}
+                        className='rounded-full max-w-full m-auto md:mr-2'
+                      />
+                    ) : (
+                      <UserIcon className=' md:hidden h-6 w-6 text-gray-500' />
+                    )}
+                    <p className='md:hidden lg:block m-auto mt-1 lg:mt-0 lg:mr-1'>
+                      {user?.given_name}
+                    </p>
+                  </div>
+
+                  <>
+                    <div
+                      className={`${
+                        dashNavOpen ? "block" : "hidden"
+                      } md:hidden fixed inset-x-0 top-0 bottom-16 bg-gray-600 opacity-70 z-30`}
+                      onClick={() => setDashNavOpen(false)}
+                    ></div>
+                    <div
+                      className={`rounded-md flex flex-col absolute inset-x-0 bg-white z-40 transition-all duration-500 overflow-hidden shadow-lg ${
+                        dashNavOpen
+                          ? "max-h-[350px] bottom-16 md:top-12 md:bottom-auto"
+                          : "max-h-0 -bottom-44  md:hidden md:bottom-auto"
+                      }`}
+                    >
+                      <Link
+                        href={"/store/dashboard"}
+                        className='flex gap-1 justify-center border-b p-2 hover:bg-gray-100'
+                      >
+                        <DocumentChartBarIcon className='w-5' />
+                        داشبورد
+                      </Link>
+                      <LogoutLink className='flex gap-1 justify-center p-2 hover:bg-gray-100'>
+                        <ArrowRightStartOnRectangleIcon className='w-5' />
+                        خروج
+                      </LogoutLink>
+                    </div>
+                  </>
+                </button>
+              )}
+            </div>
+          )}
+
           <Link
             href={"/"}
             className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'

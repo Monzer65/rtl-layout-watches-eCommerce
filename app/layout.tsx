@@ -14,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='fa' dir='rtl'>
-      <body className={notonaskh.className}>{children}</body>
+      <body className={notonaskh.className}>
+        <main>{children}</main>
+      </body>
     </html>
   );
 }

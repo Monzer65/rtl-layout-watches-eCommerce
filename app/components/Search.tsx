@@ -1,9 +1,12 @@
 "use client";
 
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 export default function Search({ placeholder }: { placeholder: string }) {
+  const [searchQuery, setSearchQuery] = useState("");
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -17,13 +20,26 @@ export default function Search({ placeholder }: { placeholder: string }) {
       params.delete("query");
       params.delete("page");
     }
-    replace(`${pathname}?${params.toString()}`);
-  }, 300);
+    if (pathname.endsWith("/products")) {
+      replace(`${pathname}?${params.toString()}`);
+    } else if (
+      !pathname.endsWith("/products") &&
+      pathname.includes("/products")
+    ) {
+      replace(`/store/products?${params.toString()}`);
+    } else {
+      replace(`${pathname}/products?${params.toString()}`);
+    }
+  }, 0);
 
   return (
-    <div
+    <form
       className='relative flex flex-1 flex-shrink-0 text-sm md:text-base'
       id='searchbox'
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSearch(searchQuery);
+      }}
     >
       <label htmlFor='search' className='sr-only'>
         Search
@@ -32,26 +48,16 @@ export default function Search({ placeholder }: { placeholder: string }) {
         className='peer block w-full rounded-md border border-gray-200 py-2 pr-8 md:pr-10 outline-2 placeholder:text-gray-600 bg-gray-50'
         placeholder={placeholder}
         onChange={(e) => {
-          handleSearch(e.target.value);
+          setSearchQuery(e.target.value);
         }}
         defaultValue={searchParams.get("query")?.toString()}
       />
-      <div className='absolute right-3 top-[50%] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900'>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='h-4 w-4 md:h-6 md:w-6 text-gray-600'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z'
-          />
-        </svg>
-      </div>
-    </div>
+      <button
+        type='submit'
+        className='absolute right-3 top-[50%] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900'
+      >
+        <MagnifyingGlassIcon className='h-4 w-4 md:h-6 md:w-6' />
+      </button>
+    </form>
   );
 }

@@ -140,6 +140,7 @@ const Header_mobile_nav = () => {
       ))}
     </ul>
   );
+
   return (
     <div className='min-h-full bg-gray-800' id='mobile-menu'>
       <ul className='space-y-1 px-2 pb-3 pt-2 list-none'>{renderItems()}</ul>
