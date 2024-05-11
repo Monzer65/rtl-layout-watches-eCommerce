@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 const convertBreadcrumb = (string: string) => {
   if (string === "store") string = "خانه";
   if (string === "products") string = "محصولات";
+  if (string === "CART") string = "سبد خرید";
   return string
     .replace(/-/g, " ")
     .replace(/oe/g, "ö")

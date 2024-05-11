@@ -16,19 +16,22 @@ import {
   DocumentChartBarIcon,
 } from "@heroicons/react/24/outline";
 import Header_mobile_nav from "./Header_mobile_nav";
-import { ReactEventHandler, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   RegisterLink,
   LoginLink,
   LogoutLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { CartContext } from "@/app/contexts/CartContext";
+import { usePathname, useRouter } from "next/navigation";
 
 const Header = ({ logo }: { logo: StaticImageData }) => {
   const [open, setOpen] = useState(false);
   const [dashNavOpen, setDashNavOpen] = useState(false);
   const DashBtnRef = useRef<HTMLButtonElement>(null);
   const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
+  const { cartItems, dispatch } = useContext(CartContext)!;
 
   useEffect(() => {
     const handleResize = () => {
@@ -164,7 +167,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                       onClick={() => setDashNavOpen(false)}
                     ></div>
                     <div
-                      className={`rounded-md flex flex-col absolute inset-x-0 bg-white z-40 transition-all duration-500 overflow-hidden shadow-lg ${
+                      className={`rounded-md flex flex-col absolute inset-x-0 bg-white z-40  transition-maxHeight duration-1000 overflow-hidden shadow-lg ${
                         dashNavOpen
                           ? "max-h-[350px] bottom-16 md:top-12 md:bottom-auto"
                           : "max-h-0 -bottom-44  md:hidden md:bottom-auto"
@@ -189,11 +192,17 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
           )}
 
           <Link
-            href={"/"}
-            className='flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
+            href={"/store/cart"}
+            passHref
+            className='relative flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
           >
             <ShoppingBagIcon className='h-6 w-6 text-gray-500' />
             <p className='md:hidden lg:block'>سبد خرید </p>
+            {cartItems && cartItems.length >= 1 && (
+              <span className='absolute right-[calc(50%_-_2.25rem)] md:right-0 md:top-0 w-6 h-6 flex items-center justify-center bg-red-600 text-white text-xs rounded-full'>
+                {cartItems.length}
+              </span>
+            )}
           </Link>
           <Link
             href={"/"}

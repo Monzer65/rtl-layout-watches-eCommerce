@@ -1,12 +1,7 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { redirect } from "next/navigation";
-
-export default async function Dashboard() {
-  const { isAuthenticated } = getKindeServerSession();
-
-  if (!(await isAuthenticated())) {
-    redirect("/api/auth/login");
-  }
-
-  return <div className='mt-64'>Protected content</div>;
+export default function Dashboard() {
+  return (
+    <div className=''>
+      <h1 className='text-xl font-bold'>اطلاعات شخصی</h1>
+    </div>
+  );
 }

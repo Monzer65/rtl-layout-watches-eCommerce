@@ -2,7 +2,9 @@
 import {
   CheckBadgeIcon,
   GiftIcon,
+  MinusIcon,
   PencilSquareIcon,
+  PlusIcon,
   StarIcon,
   TruckIcon,
 } from "@heroicons/react/24/outline";
@@ -46,9 +48,28 @@ const BasicInfo = ({
           <p className='text-gray-400 text-sm'>6200 نظر</p>
         </button>
       </div>
-      <button className='w-full max-w-[500px] py-2 bg-green-400 rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-500 active:scale-95'>
-        خرید
-      </button>
+      <div className=' max-w-[500px]'>
+        <div className='flex gap-4 item-center justify-between mb-2'>
+          <button className='grow py-2 bg-blue-400 rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-500 active:scale-95'>
+            افزودن به سبد خرید
+          </button>
+          <div
+            dir='ltr'
+            className='flex items-center gap-3 bg-white px-2 py-1 rounded-md shadow-md border'
+          >
+            <button>
+              <MinusIcon className='w-5' />
+            </button>
+            <span>3</span>
+            <button>
+              <PlusIcon className='w-5' />
+            </button>
+          </div>
+        </div>
+        <button className='w-full py-2 bg-green-400 rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-500 active:scale-95'>
+          خرید
+        </button>
+      </div>
 
       <div className='rounded-md bg-gray-100 my-8 p-2 max-w-[500px]'>
         <p className='flex gap-1 items-center'>

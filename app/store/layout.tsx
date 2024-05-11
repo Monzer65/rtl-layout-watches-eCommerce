@@ -15,6 +15,7 @@ import instagramIcon from "@/public/images/instagram.svg";
 import Header from "../components/store/Header";
 import Footer from "../components/store/Footer";
 import Search from "../components/Search";
+import CartProvider from "../contexts/CartContext";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -41,24 +42,26 @@ const social = [
 
 export default async function StoreLayout({
   children,
-}: Readonly<{
+  modal,
+}: {
   children: React.ReactNode;
-}>) {
-  // const { getUser } = getKindeServerSession();
-  // const user = await getUser();
-  // const isAuthenticated = user != null;
+  modal: React.ReactNode;
+}) {
   return (
-    <div className={`pt-0 pb-16 md:pb-0 relative ${notonaskh.className}`}>
-      <div className='sticky top-0 right-0 left-0 md:hidden z-10 py-2 shadow-md bg-white'>
-        <Search placeholder='جستجو...' />
+    <CartProvider>
+      <div className={`pt-0 pb-16 md:pb-0 relative ${notonaskh.className}`}>
+        <div className='sticky top-0 right-0 left-0 md:hidden z-10 py-2 shadow-md bg-white'>
+          <Search placeholder='جستجو...' />
+        </div>
+        <Header logo={logo} />
+        {modal}
+        {children}
+        <Footer
+          namadImages={namadImages}
+          supportImages={supportImages}
+          social={social}
+        />
       </div>
-      <Header logo={logo} />
-      {children}
-      <Footer
-        namadImages={namadImages}
-        supportImages={supportImages}
-        social={social}
-      />
-    </div>
+    </CartProvider>
   );
 }

@@ -60,3 +60,17 @@ input[type="range"]::-moz-range-thumb {
 .comment-to-block {
   display: block;
 }
+
+#cart-modal-children::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+#cart-modal-children::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #f7f4ed;
+}
+#cart-modal-children::-webkit-scrollbar-thumb {
+  background: #727272;
+  border-radius: 100vh;
+  border: 3px solid #f6f7ed;
+}
