@@ -1,4 +1,5 @@
 "use client";
+import { CartContext } from "@/app/contexts/CartContext";
 import {
   CheckBadgeIcon,
   GiftIcon,
@@ -9,16 +10,31 @@ import {
   TruckIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useContext, useState } from "react";
+import AddToCart from "../AddToCart";
 
 const BasicInfo = ({
+  id,
   title,
   shortDesc,
   price,
 }: {
-  title: string | undefined;
-  shortDesc: string | undefined;
-  price: number | undefined;
+  id: number;
+  title: string;
+  shortDesc: string;
+  price: number;
 }) => {
+  const { cartItems, dispatch } = useContext(CartContext)!;
+  const currentProduct = {
+    id,
+    title,
+    description: shortDesc,
+    price,
+    quantity: 1,
+    status: true,
+  };
+  const [q, setQ] = useState(1);
+
   return (
     <div className='md:px-4 md:flex-1'>
       <div className='mb-2'>
@@ -50,18 +66,23 @@ const BasicInfo = ({
       </div>
       <div className=' max-w-[500px]'>
         <div className='flex gap-4 item-center justify-between mb-2'>
-          <button className='grow py-2 bg-blue-400 rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-500 active:scale-95'>
-            افزودن به سبد خرید
-          </button>
+          <AddToCart
+            id={id}
+            title={title}
+            shortDesc={shortDesc}
+            price={price}
+            btnText={"افزودن به سبد خرید"}
+            quantity={q}
+          />
           <div
             dir='ltr'
             className='flex items-center gap-3 bg-white px-2 py-1 rounded-md shadow-md border'
           >
-            <button>
+            <button onClick={() => setQ(() => (q <= 1 ? 1 : q - 1))}>
               <MinusIcon className='w-5' />
             </button>
-            <span>3</span>
-            <button>
+            <span>{q}</span>
+            <button onClick={() => setQ(() => (q >= 10 ? 10 : q + 1))}>
               <PlusIcon className='w-5' />
             </button>
           </div>

@@ -3,6 +3,7 @@ import {
   AdjustmentsHorizontalIcon,
   BarsArrowDownIcon,
   ChevronLeftIcon,
+  ShoppingBagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
@@ -11,6 +12,7 @@ import Options from "../../components/store/products/filters/CheckboxOptions";
 import Image from "next/image";
 import Link from "next/link";
 import { products } from "@/app/data";
+import AddToCart from "@/app/components/store/products/AddToCart";
 
 const brands = [
   "Rolex",
@@ -362,6 +364,14 @@ const Products = () => {
                 <h3 className='text-lg font-bold my-2 mx-4'>{item.title}</h3>
               </Link>
               <p className='text-base text-gray-800 my-2 mx-4'>{item.price}</p>
+              <AddToCart
+                id={item.id}
+                title={item.title}
+                shortDesc={item.shortDesc}
+                price={item.price}
+                quantity={1}
+                btnText={"افزودن به سبد"}
+              />
             </div>
           ))}
         </div>

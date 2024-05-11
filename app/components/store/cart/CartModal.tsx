@@ -35,7 +35,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
       />
       <div
         ref={MainModalContainerRef}
-        className='fixed md:absolute inset-x-0 md:inset-x-auto md:left-12 bottom-0 md:bottom-auto md:top-[4rem] p-4 md:rounded-lg bg-white shadow-lg border z-50'
+        className='fixed inset-x-0 md:inset-x-auto md:left-12 bottom-0 md:bottom-auto md:top-[4rem] p-4 md:rounded-lg bg-white shadow-lg border z-50'
       >
         <div className='flex justify-between items-center gap-4 border-b'>
           <h1 className='text-xl font-bold text-center'>سبد خرید</h1>

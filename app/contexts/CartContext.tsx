@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode, useReducer } from "react";
+import { createContext, ReactNode, useEffect, useReducer } from "react";
 import { CartAction, cartReducer } from "./CartReducer";
 
 export interface ICart {
@@ -22,24 +22,14 @@ export const CartContext = createContext<{
 } | null>(null);
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, dispatch] = useReducer(cartReducer, [
-    {
-      id: 1,
-      title: "item 1",
-      description: "this is a description",
-      price: 23123,
-      quantity: 1,
-      status: false,
-    },
-    {
-      id: 2,
-      title: "item 2",
-      description: "this is a description",
-      price: 455345,
-      quantity: 1,
-      status: true,
-    },
-  ]);
+  const [cartItems, dispatch] = useReducer(cartReducer, [], () => {
+    const localData = localStorage.getItem("cart");
+    return localData ? JSON.parse(localData) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   return (
     <CartContext.Provider value={{ cartItems, dispatch }}>

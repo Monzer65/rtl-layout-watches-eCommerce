@@ -26,6 +26,7 @@ const ProductDetail = ({ params }: { params: { id: string } }) => {
       <div className='grid md:flex justify-center gap-4'>
         <Carousel images={product?.images} />
         <BasicInfo
+          id={product.id}
           title={product?.title}
           shortDesc={product?.shortDesc}
           price={product?.price}

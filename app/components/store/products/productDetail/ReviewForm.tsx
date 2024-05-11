@@ -1,5 +1,5 @@
 "use client";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import StarRating from "./StarRating";
 import { useState } from "react";
 
@@ -42,8 +42,22 @@ const ReviewForm = () => {
         </button>
         <ul className='my-2 pr-8 list-disc marker:text-green-700 marker:bg-gray-100'>
           {powerList.map((item, index) => (
-            <li key={item} className='px-2 py-1 bg-gray-100 mt-1 rounded-md'>
+            <li key={index} className='px-2 py-1 bg-gray-100 mt-1 rounded-md'>
               {item}
+              <button
+                type='button'
+                onClick={() => {
+                  setPowerList((currentList) => {
+                    const newList = [...currentList];
+                    newList.splice(index, 1);
+                    return newList;
+                  });
+                }}
+                aria-label='remove power point'
+                className='ml-2 text-red-600 float-left'
+              >
+                <XCircleIcon className='w-6' />
+              </button>
             </li>
           ))}
         </ul>
@@ -69,15 +83,29 @@ const ReviewForm = () => {
             if (weaknessInput.trim().length < 2) return;
             setWeaknessList((currentList) => [...currentList, weaknessInput]);
           }}
-          aria-label='adding power points'
+          aria-label='adding weakness points'
           className='absolute left-4 top-[28px]'
         >
           <PlusCircleIcon className='w-8 text-green-600' />
         </button>
         <ul className='my-2 list-disc pr-8 marker:text-red-500'>
           {weaknessList.map((item, index) => (
-            <li key={item} className='px-2 py-1 bg-gray-100 mt-1 rounded-md'>
+            <li key={index} className='px-2 py-1 bg-gray-100 mt-1 rounded-md'>
               {item}
+              <button
+                type='button'
+                onClick={() => {
+                  setWeaknessList((currentList) => {
+                    const newList = [...currentList];
+                    newList.splice(index, 1);
+                    return newList;
+                  });
+                }}
+                aria-label='remove weakness point'
+                className='ml-2 text-red-600 float-left'
+              >
+                <XCircleIcon className='w-6' />
+              </button>
             </li>
           ))}
         </ul>

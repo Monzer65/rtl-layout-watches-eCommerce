@@ -194,6 +194,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
           <Link
             href={"/store/cart"}
             passHref
+            scroll={false}
             className='relative flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
           >
             <ShoppingBagIcon className='h-6 w-6 text-gray-500' />
