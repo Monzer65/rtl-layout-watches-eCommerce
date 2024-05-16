@@ -27,12 +27,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div
-        className='md:hidden absolute inset-0 bg-black opacity-25 z-40'
-        onClick={() => {
-          router.back();
-        }}
-      />
+      <div className='md:hidden absolute inset-0 bg-black opacity-25 z-40' />
       <div
         ref={MainModalContainerRef}
         className='fixed inset-x-0 md:inset-x-auto md:left-12 bottom-0 md:bottom-auto md:top-[4rem] p-4 md:rounded-lg bg-white shadow-lg border z-50'
@@ -47,7 +42,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
             <XMarkIcon className='w-6' />
           </button>
         </div>
-        <div id='cart-modal-children' className='max-h-[300px] overflow-auto'>
+        <div id='cart-modal-children' className='max-h-[250px] overflow-auto'>
           {children}
         </div>
       </div>

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { notonaskh } from "@/app/components/fonts";
 import "./blog.css";
+import BlogHeader from "../components/blog/Header";
+import BlogFooter from "../components/blog/Footer";
+import BreadCrumb from "../components/blog/BreadCrumbs";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -12,5 +15,14 @@ export default function BlogLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className={notonaskh.className}>{children}</div>;
+  return (
+    <div className={notonaskh.className}>
+      <BlogHeader />
+      <div>
+        <BreadCrumb />
+      </div>
+      {children}
+      <BlogFooter />
+    </div>
+  );
 }

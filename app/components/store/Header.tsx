@@ -24,7 +24,7 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { CartContext } from "@/app/contexts/CartContext";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const Header = ({ logo }: { logo: StaticImageData }) => {
   const [open, setOpen] = useState(false);
@@ -32,6 +32,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
   const DashBtnRef = useRef<HTMLButtonElement>(null);
   const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
   const { cartItems, dispatch } = useContext(CartContext)!;
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleResize = () => {
@@ -195,7 +196,9 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
             href={"/store/cart"}
             passHref
             scroll={false}
-            className='relative flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'
+            className={`relative flex flex-col lg:flex-row gap-1 items-center md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100 ${
+              pathname.includes("/cart") ? "pointer-events-none" : ""
+            }`}
           >
             <ShoppingBagIcon className='h-6 w-6 text-gray-500' />
             <p className='md:hidden lg:block'>سبد خرید </p>

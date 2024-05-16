@@ -1,14 +1,15 @@
 "use client";
 
-import { ChevronLeftIcon, HomeIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const convertBreadcrumb = (string: string) => {
-  if (string === "store") string = "خانه";
-  if (string === "products") string = "محصولات";
-  if (string === "cart") string = "سبد خرید";
+  if (string === "blog") string = "خانه";
+  if (string === "admin-area") string = "کنترل";
+  if (string === "dashboard") string = "داشبورد";
+  if (string === "magazine") string = "مجله";
+  if (string === "news") string = "اخبار";
   return string
     .replace(/-/g, " ")
     .replace(/oe/g, "ö")
@@ -46,23 +47,17 @@ const BreadCrumb = () => {
         {breadcrumbs.map((breadcrumb, i) => {
           return (
             <li key={breadcrumb.href} className={`flex items-center gap-1`}>
-              {i > 0 ? <ChevronLeftIcon className='w-4' /> : null}
-              <div
-              // className={`${
-              //   i === breadcrumbs.length - 1 ? "bg-blue-300" : "bg-gray-300 "
-              // } px-2 py-1 rounded-md h-full`}
-              >
+              {i > 0 ? <span className='ml-1'>/</span> : null}
+              <div>
                 {i === breadcrumbs.length - 1 ? (
                   <div className='flex items-center gap-1'>
-                    {i === 0 ? <HomeIcon className='w-5 ml-1' /> : null}
                     {convertBreadcrumb(breadcrumb.breadcrumb)}
                   </div>
                 ) : (
                   <Link
                     href={breadcrumb.href}
-                    className='flex items-center gap-1'
+                    className='flex items-center gap-1 underline'
                   >
-                    {i === 0 ? <HomeIcon className='w-5 ml-1' /> : null}
                     {convertBreadcrumb(breadcrumb.breadcrumb)}
                   </Link>
                 )}

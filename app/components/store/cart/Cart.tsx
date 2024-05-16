@@ -7,12 +7,13 @@ import {
   MinusIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const Cart = () => {
   const { cartItems, dispatch } = useContext(CartContext)!;
 
   return (
-    <div className='my-4'>
+    <div className='my-4 text-xs sm:text-sm md:text-base relative'>
       {cartItems && cartItems.length >= 1 ? (
         <>
           <p className='text-sm text-gray-400'>{cartItems.length} آیتم</p>
@@ -25,7 +26,9 @@ const Cart = () => {
                 >
                   <div className='flex items-center justify-between gap-4'>
                     <div>
-                      <h2 className='text-lg font-semibold'>{item.title}</h2>
+                      <h2 className='text-base sm:text-lg font-semibold'>
+                        {item.title}
+                      </h2>
                       <p className='text-gray-500'>{item.description}</p>
                       <p className='text-gray-700'>قیمت واحد: {item.price}</p>
                       <p className='text-gray-700'>
@@ -43,7 +46,7 @@ const Cart = () => {
                           })
                         }
                       >
-                        <PlusIcon className='w-6' />
+                        <PlusIcon className='w-4 sm:w-5 md:w-6' />
                       </button>
                       <span>{item.quantity} عدد</span>
                       <button
@@ -55,7 +58,7 @@ const Cart = () => {
                           })
                         }
                       >
-                        <MinusIcon className='w-6' />
+                        <MinusIcon className='w-4 sm:w-5 md:w-6' />
                       </button>
                     </div>
                   </div>
@@ -70,20 +73,34 @@ const Cart = () => {
                 </div>
               </>
             ))}
-            <p className='font-semibold text-xl text-gray-700 border-t pt-2'>
-              <span>مجموع:</span>{" "}
-              {cartItems.reduce((accumulator, item) => {
-                return accumulator + item.price * item.quantity;
-              }, 0)}
-            </p>
-            <p className='text-sm text-gray-400 font-normal'>
-              بدون احتساب هزینه های پست
-            </p>
+            <div className='sticky bottom-0 inset-x-0 p-2 bg-white '>
+              <div>
+                <p className='font-semibold text-xl text-gray-700 border-t pt-2'>
+                  <span>مجموع:</span>{" "}
+                  {cartItems.reduce((accumulator, item) => {
+                    return accumulator + item.price * item.quantity;
+                  }, 0)}
+                </p>
+                <p className='text-sm text-gray-400 font-normal'>
+                  بدون احتساب هزینه های پست
+                </p>
+              </div>
+              <div className='w-full mt-4 text-center text-white font-semibold bg-green-500 rounded-md hover:bg-green-600'>
+                <Link
+                  href={"/store/cart/payment"}
+                  className='py-1 px-2 w-full block'
+                >
+                  پرداخت
+                </Link>
+              </div>
+            </div>
           </div>
         </>
       ) : (
         <>
-          <p className='text-lg font-semibold text-center'>سبد شما خالی است!</p>
+          <p className='text-base sm:text-lg font-semibold text-center'>
+            سبد شما خالی است!
+          </p>
           <FaceFrownIcon className='w-8 m-auto mt-4' />
         </>
       )}
