@@ -22,8 +22,8 @@ const Blog = async () => {
       </ul> */}
 
       <TopMagzine magazines={magazines} />
-      <div className='my-16 mx-auto border-t max-w-[800px]'></div>
-      <LastNews news={news} />
+      {/* <div className='my-16 mx-auto border-t max-w-[800px]'></div> */}
+      {/* <LastNews news={news} /> */}
     </main>
   );
 };

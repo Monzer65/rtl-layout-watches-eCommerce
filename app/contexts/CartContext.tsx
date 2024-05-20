@@ -23,7 +23,7 @@ export const CartContext = createContext<{
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, dispatch] = useReducer(cartReducer, [], () => {
-    const localData = localStorage.getItem("cart");
+    const localData = localStorage?.getItem("cart");
     return localData ? JSON.parse(localData) : [];
   });
 

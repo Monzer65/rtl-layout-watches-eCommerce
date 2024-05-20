@@ -4,8 +4,7 @@ import {
   BookOpenIcon,
   BuildingStorefrontIcon,
   MagnifyingGlassIcon,
-  NewspaperIcon,
-  UserCircleIcon,
+  // NewspaperIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -16,6 +15,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import logo from "@/public/images/logo-1.svg";
 
 const separatorImg = separator;
 const navLinks = [
@@ -29,11 +29,11 @@ const navLinks = [
     href: "/blog/magazine",
     icon: BookOpenIcon,
   },
-  {
-    title: "اخبار",
-    href: "/blog/news",
-    icon: NewspaperIcon,
-  },
+  // {
+  //   title: "اخبار",
+  //   href: "/blog/news",
+  //   icon: NewspaperIcon,
+  // },
   {
     title: "داشبورد",
     href: "/blog/dashboard",
@@ -42,7 +42,7 @@ const navLinks = [
   },
   {
     title: "ادمین",
-    href: "/blog/admin-area",
+    href: "/admin-area",
     icon: "",
     requirePermissions: ["update: data"],
   },
@@ -61,7 +61,9 @@ const BlogHeader = () => {
       <div className='bg-black text-white text-center py-1'>تبلیغ</div>
       <div className=' flex justify-between items-center px-8 py-4 border-b border-black bg-white'>
         <div className='flex gap-2 items-center'>
-          <Link href={"/blog"}>Brand</Link>
+          <Link href={"/blog"}>
+            <Image src={logo} alt='logo' width={100} />
+          </Link>
           <button aria-label='menu button' className='block'>
             <MagnifyingGlassIcon className='w-6' />
           </button>

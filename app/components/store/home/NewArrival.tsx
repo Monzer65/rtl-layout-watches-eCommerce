@@ -106,6 +106,7 @@ const NewArrival = ({
     const scrollLeft = slider.scrollLeft;
     mouseCoords.current = { startX, scrollLeft };
     slider.style.cursor = "grabbing";
+    slider.classList.remove("snap-mandatory", "snap-x");
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -190,7 +191,7 @@ const NewArrival = ({
 
       <div className='w-full relative' tabIndex={0} aria-live='polite'>
         <div
-          className={`no-scrollbar relative text-gray-700 py-2 sm:py-4 flex gap-2 sm:gap-4 overflow-x-auto overscroll-x-contain`}
+          className={`no-scrollbar relative text-gray-700 py-2 sm:py-4 flex gap-2 sm:gap-4 overflow-x-auto overscroll-x-contain hover:cursor-grab`}
           ref={carouselRef}
           onMouseDown={handleDragStart}
           onMouseMove={handleMouseMove}

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notonaskh } from "@/app/components/fonts";
 import "./store.css";
 
-import logo from "@/public/images/logo.svg";
+import logo from "@/public/images/logo-1.svg";
 import namad_1 from "@/public/images/namad_1.webp";
 import namad_2 from "@/public/images/namad_2.png";
 import namad_3 from "@/public/images/namad_3.webp";

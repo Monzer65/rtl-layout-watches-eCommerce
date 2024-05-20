@@ -172,7 +172,6 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
                 alt={`Slide ${index + 1}`}
                 width={1440}
                 height={350}
-                placeholder={"blur"}
                 className='w-full max-h-[300px] object-cover'
                 draggable={false}
                 tabIndex={-1}

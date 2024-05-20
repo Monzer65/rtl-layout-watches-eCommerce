@@ -72,15 +72,21 @@ const WonderDeals = ({
 
   const handleBtnsVisibilityOnScroll = () => {
     if (carouselRef.current && prevBtnRef.current && nextBtnRef.current) {
-      const currentScrollPosition = carouselRef.current.scrollLeft;
-      const isAtRightEnd = currentScrollPosition === 0;
+      const { scrollLeft, scrollWidth, offsetWidth } = carouselRef.current;
+      const isNoOverflow = scrollWidth <= offsetWidth;
+      const isAtRightEnd = scrollLeft === 0;
       const isAtLeftEnd =
-        Math.ceil(currentScrollPosition) ===
-        -(carouselRef.current.scrollWidth - carouselRef.current.offsetWidth);
-      if (isAtRightEnd) {
+        Math.ceil(scrollLeft) === -(scrollWidth - offsetWidth);
+
+      if (isNoOverflow) {
         prevBtnRef.current.style.display = "none";
-      } else if (isAtLeftEnd) {
         nextBtnRef.current.style.display = "none";
+      } else if (isAtLeftEnd) {
+        prevBtnRef.current.style.display = "block";
+        nextBtnRef.current.style.display = "none";
+      } else if (isAtRightEnd) {
+        nextBtnRef.current.style.display = "block";
+        prevBtnRef.current.style.display = "none";
       } else {
         prevBtnRef.current.style.display = "block";
         nextBtnRef.current.style.display = "block";
@@ -110,6 +116,7 @@ const WonderDeals = ({
     const scrollLeft = slider.scrollLeft;
     mouseCoords.current = { startX, scrollLeft };
     slider.style.cursor = "grabbing";
+    slider.classList.remove("snap-mandatory", "snap-x");
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -150,14 +157,14 @@ const WonderDeals = ({
       aria-live='polite'
     >
       <div
-        className={`relative no-scrollbar text-gray-700 bg-red-500 rounded-lg py-2 sm:py-4 flex gap-2 sm:gap-4 overflow-x-auto overscroll-x-contain`}
+        className={`relative no-scrollbar text-gray-700 bg-red-500 rounded-lg py-2 sm:py-4 flex gap-2 sm:gap-4 overflow-x-auto overscroll-x-contain hover:cursor-grab`}
         ref={carouselRef}
         onMouseDown={handleDragStart}
         onMouseMove={handleMouseMove}
         onMouseUp={handleDragEnd}
       >
         <Link
-          href={"/"}
+          href={"/store/products?q=wonder-deals"}
           className='slide flex flex-col items-center justify-center gap-1 md:gap-2 flex-none max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base p-2 snap-end'
         >
           <Image

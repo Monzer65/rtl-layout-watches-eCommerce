@@ -30,7 +30,8 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
   const [open, setOpen] = useState(false);
   const [dashNavOpen, setDashNavOpen] = useState(false);
   const DashBtnRef = useRef<HTMLButtonElement>(null);
-  const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
+  const { user, isAuthenticated, isLoading, permissions } =
+    useKindeBrowserClient();
   const { cartItems, dispatch } = useContext(CartContext)!;
   const pathname = usePathname();
 
@@ -181,6 +182,15 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                         <DocumentChartBarIcon className='w-5' />
                         داشبورد
                       </Link>
+                      {permissions.permissions.includes("update: data") && (
+                        <Link
+                          href={"/admin-area"}
+                          className='flex gap-1 justify-center border-b p-2 hover:bg-gray-100'
+                        >
+                          <DocumentChartBarIcon className='w-5' />
+                          ادمین
+                        </Link>
+                      )}
                       <LogoutLink className='flex gap-1 justify-center p-2 hover:bg-gray-100'>
                         <ArrowRightStartOnRectangleIcon className='w-5' />
                         خروج

@@ -1,32 +1,5 @@
 import productImage from "@/public/images/sample.png";
 import productImage_1 from "@/public/images/sample_1.jpg";
-// import clientPromise from "./lib/dbConnection";
-// import { Collection, Db, MongoClient } from "mongodb";
-
-// let client: MongoClient;
-// let db: Db;
-// let movies: Collection;
-
-// async function init() {
-//   if (db) return;
-//   try {
-//     client = await clientPromise;
-//     db = client.db("sample_mflix");
-//     movies = db.collection("movies");
-//   } catch (error) {
-//     throw new Error("Failed to connect to database!");
-//   }
-// }
-
-// export async function getMovies() {
-//   try {
-//     if (!movies) await init();
-//     const result = await movies.find({}).limit(10).toArray();
-//     return { movies: result };
-//   } catch (error) {
-//     return { error: "failed to catch movies" };
-//   }
-// }
 
 export const products = [
   {
