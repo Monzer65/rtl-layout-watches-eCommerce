@@ -17,12 +17,12 @@ import {
 } from "@heroicons/react/24/outline";
 import Header_mobile_nav from "./Header_mobile_nav";
 import { useContext, useEffect, useRef, useState } from "react";
-import {
-  RegisterLink,
-  LoginLink,
-  LogoutLink,
-} from "@kinde-oss/kinde-auth-nextjs/components";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+// import {
+//   RegisterLink,
+//   LoginLink,
+//   LogoutLink,
+// } from "@kinde-oss/kinde-auth-nextjs/components";
+// import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { CartContext } from "@/app/contexts/CartContext";
 import { usePathname } from "next/navigation";
 
@@ -30,8 +30,8 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
   const [open, setOpen] = useState(false);
   const [dashNavOpen, setDashNavOpen] = useState(false);
   const DashBtnRef = useRef<HTMLButtonElement>(null);
-  const { user, isAuthenticated, isLoading, permissions } =
-    useKindeBrowserClient();
+  // const { user, isAuthenticated, isLoading, permissions } =
+  //   useKindeBrowserClient();
   const { cartItems, dispatch } = useContext(CartContext)!;
   const pathname = usePathname();
 
@@ -107,7 +107,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
               </>
             )}
           </button>
-          {!isAuthenticated ? (
+          {/* {!isAuthenticated ? (
             <div className='flex justify-center gap-2 md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'>
               {isLoading ? (
                 <div>درحال بارگزاری...</div>
@@ -200,7 +200,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                 </button>
               )}
             </div>
-          )}
+          )} */}
 
           <Link
             href={"/store/cart"}

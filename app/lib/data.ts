@@ -6,12 +6,12 @@ let client: MongoClient;
 let db: Db;
 let products: Collection;
 
-async function init() {
+export async function init(collection: string) {
   if (db) return;
   try {
     client = await clientPromise;
     db = client.db("fakeData");
-    products = db.collection("products");
+    products = db.collection(collection);
   } catch (error) {
     throw new Error("Failed to connect to database!");
   }
@@ -19,7 +19,7 @@ async function init() {
 
 export async function getProducts() {
   try {
-    if (!products) await init();
+    if (!products) await init("products");
     const result = await products.find({}).limit(10).toArray();
     return { products: result };
   } catch (error) {

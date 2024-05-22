@@ -6,7 +6,7 @@ import {
   PowerIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
+// import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -52,11 +52,11 @@ const StoreNavLinks = () => {
       })}
       <div className='hidden h-auto w-full grow bg-[#d8dee9] md:block'></div>
 
-      <LogoutLink className='group flex h-[48px] grow items-center justify-center gap-2 rounded-md md:rounded-none bg-[#d8dee9] text-[#4c566a] text-sm font-medium hover:bg-[#5e81ac]  md:flex-none md:justify-start md:py-2 md:px-3 md:border-t'>
+      {/* <LogoutLink className='group flex h-[48px] grow items-center justify-center gap-2 rounded-md md:rounded-none bg-[#d8dee9] text-[#4c566a] text-sm font-medium hover:bg-[#5e81ac]  md:flex-none md:justify-start md:py-2 md:px-3 md:border-t'>
         {" "}
         <PowerIcon className='w-6 group-hover:text-red-400' />{" "}
         <span className='hidden md:block group-hover:text-white'>خروج</span>
-      </LogoutLink>
+      </LogoutLink> */}
     </>
   );
 };

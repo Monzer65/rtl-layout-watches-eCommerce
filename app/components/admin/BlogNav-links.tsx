@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
   PowerIcon,
 } from "@heroicons/react/24/outline";
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
+// import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -49,11 +49,11 @@ const BlogNavLinks = () => {
       })}
       <div className='hidden h-auto w-full grow rounded-md md:rounded-none bg-gray-50 md:block'></div>
 
-      <LogoutLink className='flex h-[48px] grow items-center justify-center gap-2 rounded-md md:rounded-none bg-gray-50 text-sm font-medium hover:bg-gray-800 hover:text-red-400 md:flex-none md:justify-start md:py-2 md:px-3'>
+      {/* <LogoutLink className='flex h-[48px] grow items-center justify-center gap-2 rounded-md md:rounded-none bg-gray-50 text-sm font-medium hover:bg-gray-800 hover:text-red-400 md:flex-none md:justify-start md:py-2 md:px-3'>
         {" "}
         <PowerIcon className='w-6' />{" "}
         <span className='hidden md:block'>خروج</span>
-      </LogoutLink>
+      </LogoutLink> */}
     </>
   );
 };
