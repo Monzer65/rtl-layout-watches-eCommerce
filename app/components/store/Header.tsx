@@ -17,14 +17,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Header_mobile_nav from "./Header_mobile_nav";
 import { useContext, useEffect, useRef, useState } from "react";
-// import {
-//   RegisterLink,
-//   LoginLink,
-//   LogoutLink,
-// } from "@kinde-oss/kinde-auth-nextjs/components";
-// import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { CartContext } from "@/app/contexts/CartContext";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/app/contexts/UserContext";
 
 const Header = ({ logo }: { logo: StaticImageData }) => {
   const [open, setOpen] = useState(false);
@@ -32,6 +27,9 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
   const DashBtnRef = useRef<HTMLButtonElement>(null);
   // const { user, isAuthenticated, isLoading, permissions } =
   //   useKindeBrowserClient();
+  const { user, loading } = useUser();
+  const userPermissions = user ? user.roles : [];
+
   const { cartItems, dispatch } = useContext(CartContext)!;
   const pathname = usePathname();
 
@@ -107,33 +105,33 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
               </>
             )}
           </button>
-          {/* {!isAuthenticated ? (
+          {!user ? (
             <div className='flex justify-center gap-2 md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'>
-              {isLoading ? (
+              {loading ? (
                 <div>درحال بارگزاری...</div>
               ) : (
                 <>
-                  <LoginLink
-                    postLoginRedirectURL='/store/products'
+                  <Link
+                    href={"/login"}
                     className='flex flex-col lg:flex-row gap-1 items-center'
                   >
                     <ArrowRightEndOnRectangleIcon className='h-6 w-6 text-gray-500' />
                     <p className='md:hidden lg:block'>ورود</p>
-                  </LoginLink>
+                  </Link>
                   |
-                  <RegisterLink
-                    postLoginRedirectURL='/store/products'
+                  <Link
+                    href={"/signup"}
                     className='flex flex-col lg:flex-row gap-1 items-center'
                   >
                     <KeyIcon className='h-6 w-6 text-gray-500' />
                     <p className='md:hidden lg:block'>ثبت نام</p>
-                  </RegisterLink>
+                  </Link>
                 </>
               )}
             </div>
           ) : (
             <div className='relative md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'>
-              {isLoading ? (
+              {loading ? (
                 <div>درحال بارگزاری...</div>
               ) : (
                 <button
@@ -145,7 +143,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                 >
                   <div className='flex flex-col md:flex-row justify-center w-full'>
                     <UserIcon className='hidden md:block h-6 w-6 text-gray-500' />
-                    {user?.picture ? (
+                    {/* {user?.picture ? (
                       <Image
                         src={user?.picture}
                         alt='user image'
@@ -155,9 +153,10 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                       />
                     ) : (
                       <UserIcon className=' md:hidden h-6 w-6 text-gray-500' />
-                    )}
+                    )} */}
+                    <UserIcon className=' md:hidden h-6 w-6 text-gray-500' />
                     <p className='md:hidden lg:block m-auto mt-1 lg:mt-0 lg:mr-1'>
-                      {user?.given_name}
+                      {user?.email}
                     </p>
                   </div>
 
@@ -182,7 +181,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                         <DocumentChartBarIcon className='w-5' />
                         داشبورد
                       </Link>
-                      {permissions.permissions.includes("update: data") && (
+                      {userPermissions.includes("admin") && (
                         <Link
                           href={"/admin-area"}
                           className='flex gap-1 justify-center border-b p-2 hover:bg-gray-100'
@@ -191,16 +190,19 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                           ادمین
                         </Link>
                       )}
-                      <LogoutLink className='flex gap-1 justify-center p-2 hover:bg-gray-100'>
+                      <Link
+                        href={"/logout"}
+                        className='flex gap-1 justify-center p-2 hover:bg-gray-100'
+                      >
                         <ArrowRightStartOnRectangleIcon className='w-5' />
                         خروج
-                      </LogoutLink>
+                      </Link>
                     </div>
                   </>
                 </button>
               )}
             </div>
-          )} */}
+          )}
 
           <Link
             href={"/store/cart"}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { CartContext } from "@/app/contexts/CartContext";
 import {
   FaceFrownIcon,
@@ -19,11 +19,8 @@ const Cart = () => {
           <p className='text-sm text-gray-400'>{cartItems.length} آیتم</p>
           <div className='grid grid-cols-1 gap-4 mt-4'>
             {cartItems.map((item) => (
-              <>
-                <div
-                  key={item.id}
-                  className='bg-white rounded-lg p-4 shadow-md'
-                >
+              <React.Fragment key={item.id}>
+                <div className='bg-white rounded-lg p-4 shadow-md'>
                   <div className='flex items-center justify-between gap-4'>
                     <div>
                       <h2 className='text-base sm:text-lg font-semibold'>
@@ -71,7 +68,7 @@ const Cart = () => {
                     حذف
                   </button>
                 </div>
-              </>
+              </React.Fragment>
             ))}
             <div className='sticky bottom-0 inset-x-0 p-2 bg-white '>
               <div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notonaskh } from "@/app/components/fonts";
 import "./globals.css";
+import { UserProvider } from "./contexts/UserContext";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang='fa' dir='rtl'>
       <body className={notonaskh.className}>
-        <main>{children}</main>
+        <UserProvider>
+          <main>{children}</main>
+        </UserProvider>
       </body>
     </html>
   );

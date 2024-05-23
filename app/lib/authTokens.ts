@@ -5,8 +5,8 @@ const accessSecret = process.env.ACCESS_SECRET;
 const refreshSecret = process.env.REFRESH_SECRET;
 const accessKey = new TextEncoder().encode(accessSecret);
 const refreshKey = new TextEncoder().encode(refreshSecret);
-export const accessExpires = new Date(Date.now() + 100 * 1000); //100 seconds
-export const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); //7days
+export const accessExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+export const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
 export async function encryptAccess(payload: any): Promise<string> {
   return await new SignJWT(payload)

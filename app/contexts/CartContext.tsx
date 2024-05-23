@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, ReactNode, useEffect, useReducer } from "react";
 import { CartAction, cartReducer } from "./CartReducer";
 
@@ -23,12 +22,18 @@ export const CartContext = createContext<{
 
 const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, dispatch] = useReducer(cartReducer, [], () => {
-    const localData = localStorage?.getItem("cart");
-    return localData ? JSON.parse(localData) : [];
+    if (typeof window !== "undefined") {
+      const localData = localStorage.getItem("cart");
+      return localData ? JSON.parse(localData) : [];
+    } else {
+      return [];
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    }
   }, [cartItems]);
 
   return (

@@ -13,10 +13,13 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken")?.value;
 
   let isVerifiedAccessToken = false;
+  let userRoles = [];
 
   if (accessToken) {
     try {
-      isVerifiedAccessToken = await decryptAccess(accessToken);
+      const decodedAccess = await decryptAccess(accessToken);
+      isVerifiedAccessToken = true;
+      userRoles = decodedAccess.user.roles || [];
     } catch (err) {
       console.log("Error decrypting access token:", err);
     }
@@ -24,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  if (!isVerifiedAccessToken && refreshToken) {
+  if (!accessToken && refreshToken) {
     try {
       const decodedRefresh = await decryptRefresh(refreshToken);
 
@@ -52,7 +55,8 @@ export async function middleware(request: NextRequest) {
         path: "/",
       });
 
-      isVerifiedAccessToken = true; // Assume the new access token is valid
+      isVerifiedAccessToken = true;
+      userRoles = decodedRefresh.user.roles || [];
     } catch (err) {
       console.log("Error obtaining new tokens:", err);
     }
@@ -64,18 +68,19 @@ export async function middleware(request: NextRequest) {
     if (!isVerifiedAccessToken) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
+    if (!userRoles.includes("admin")) {
+      return NextResponse.redirect(new URL("/unauthorized", request.url));
+    }
   }
 
-  // Protect /.../dashboard/... routes
   if (pathname.includes("/dashboard")) {
     if (!isVerifiedAccessToken) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
+    if (!userRoles.includes("user")) {
+      return NextResponse.redirect(new URL("/unauthorized", request.url));
+    }
   }
-
-  // if (!isVerifiedAccessToken && !pathname.startsWith("/login")) {
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
 
   if (isVerifiedAccessToken && pathname.startsWith("/login")) {
     return NextResponse.redirect(new URL("/blog/dashboard", request.url));

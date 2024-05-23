@@ -4,18 +4,16 @@ import {
   BookOpenIcon,
   BuildingStorefrontIcon,
   MagnifyingGlassIcon,
-  // NewspaperIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import separator from "@/public/images/vertical-separator.svg";
-import { useState } from "react";
+import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-// import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-// import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import logo from "@/public/images/logo-1.svg";
+import { useUser } from "@/app/contexts/UserContext";
 
 const separatorImg = separator;
 const navLinks = [
@@ -29,32 +27,26 @@ const navLinks = [
     href: "/blog/magazine",
     icon: BookOpenIcon,
   },
-  // {
-  //   title: "اخبار",
-  //   href: "/blog/news",
-  //   icon: NewspaperIcon,
-  // },
   {
     title: "داشبورد",
     href: "/blog/dashboard",
     icon: UserIcon,
-    requirePermissions: ["Read: data"],
+    requirePermissions: ["user"],
   },
   {
     title: "ادمین",
     href: "/admin-area",
     icon: "",
-    requirePermissions: ["update: data"],
+    requirePermissions: ["admin"],
   },
 ];
 
 const BlogHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  // const { user, isLoading, isAuthenticated, permissions } =
-  //   useKindeBrowserClient();
+  const { user, loading } = useUser();
 
-  // const userPermissions = permissions.permissions || [];
+  const userPermissions = user ? user.roles : [];
 
   return (
     <header className='sticky top-0'>
@@ -94,44 +86,43 @@ const BlogHeader = () => {
           </div>
           {navLinks.map((link, index) => {
             const LinkIcon = link.icon;
-            // const isPermitted =
-            //   !link.requirePermissions ||
-            //   link.requirePermissions.every((permission) =>
-            //     userPermissions.includes(permission)
-            //   );
+            const isPermitted =
+              !link.requirePermissions ||
+              link.requirePermissions.every((permission) =>
+                userPermissions.includes(permission)
+              );
 
             return (
-              // isPermitted && (
-              <>
-                <Link
-                  key={link.title}
-                  href={link.href}
-                  className={`flex gap-1 items-center px-3 py-1 text-gray-500 font-bold hover:underline hover:text-gray-800 ${
-                    pathname === link.href && "bg-sky-100 text-gray-800"
-                  }`}
-                >
-                  {LinkIcon && <LinkIcon className='w-6 sm:w-4' />}
-                  {link.title}
-                </Link>
-                <Image
-                  src={separatorImg}
-                  alt='separator'
-                  width={4}
-                  height={16}
-                  className='hidden sm:block h-4 w-1'
-                />
-              </>
-              // )
+              isPermitted && (
+                <React.Fragment key={index}>
+                  <Link
+                    href={link.href}
+                    className={`flex gap-1 items-center px-3 py-1 text-gray-500 font-bold hover:underline hover:text-gray-800 ${
+                      pathname === link.href && "bg-sky-100 text-gray-800"
+                    }`}
+                  >
+                    {LinkIcon && <LinkIcon className='w-6 sm:w-4' />}
+                    {link.title}
+                  </Link>
+                  <Image
+                    src={separatorImg}
+                    alt='separator'
+                    width={4}
+                    height={16}
+                    className='hidden sm:block h-4 w-1'
+                  />
+                </React.Fragment>
+              )
             );
           })}
 
-          {/* {isLoading ? (
+          {loading ? (
             <p className='animate-ping'>...</p>
-          ) : !isAuthenticated && !user ? (
-            <LoginLink>ورود</LoginLink>
+          ) : !user ? (
+            <Link href={"/login"}>ورود</Link>
           ) : (
-            <LogoutLink>خروج</LogoutLink>
-          )} */}
+            <Link href={"/logout"}>خروج</Link>
+          )}
         </nav>
       </div>
     </header>

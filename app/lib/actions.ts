@@ -54,5 +54,7 @@ export async function authenticate(
 }
 
 export async function logout() {
-  cookies().set("session", "", { expires: new Date(0) });
+  cookies().delete("accessToken");
+  cookies().delete("refreshToken");
+  redirect("/");
 }

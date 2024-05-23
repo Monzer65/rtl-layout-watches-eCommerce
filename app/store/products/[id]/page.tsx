@@ -6,6 +6,7 @@ import ReviewButton from "@/app/components/store/products/productDetail/ReviewBu
 import ReviewForm from "@/app/components/store/products/productDetail/ReviewForm";
 import Reviews from "@/app/components/store/products/productDetail/Reviews";
 import { products, reviews } from "@/app/data";
+import { Suspense } from "react";
 
 const ProductDetail = ({ params }: { params: { id: string } }) => {
   const product = products.find(({ id }) => id === Number(params.id));
@@ -56,7 +57,9 @@ const ProductDetail = ({ params }: { params: { id: string } }) => {
         <RatingInfo />
       </div>
       <div className='my-4'>
-        <Reviews relatedReviews={relatedReviews} />
+        <Suspense fallback={<p>loading reviews...</p>}>
+          <Reviews relatedReviews={relatedReviews} />
+        </Suspense>
 
         <div id='comment-section' className='max-w-[600px]'>
           <h4 className='font-semibold text-lg mt-8 mb-4'>
@@ -65,6 +68,9 @@ const ProductDetail = ({ params }: { params: { id: string } }) => {
           <ReviewForm />
         </div>
       </div>
+      <Suspense fallback={<p>loading products...</p>}>
+        <p>محصولات مشابه ...</p>
+      </Suspense>
     </main>
   );
 };
