@@ -123,7 +123,7 @@ export async function login(_currentState: unknown, formData: FormData) {
       return "رمز عبور یا ایمیل اشتباه است";
     }
 
-    const accessExpires = new Date(Date.now() + 10 * 1000);
+    const accessExpires = new Date(Date.now() + 10 * 60 * 1000);
     const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     const session = await encrypt({

@@ -51,10 +51,22 @@ export async function updateSession(request: NextRequest) {
   const session = request.cookies.get("session")?.value;
 
   if (!session) {
-    return handleRefreshToken(request);
+    return await handleRefreshToken(request);
   }
-  return NextResponse.next();
-  // return new NextResponse("Session is valid", { status: 200 });
+
+  try {
+    const res = NextResponse.next();
+    const decoded = await decrypt(session);
+    // Invalid refresh token
+    if (!decoded) {
+      return new NextResponse("Session could not be decoded", { status: 403 });
+    }
+    // If session is valid, proceed with the response
+    return res;
+  } catch (error) {
+    console.error("Error decoding session:", error);
+    return new NextResponse("Failed to verify session", { status: 403 });
+  }
 }
 
 async function handleRefreshToken(request: NextRequest) {
@@ -67,16 +79,16 @@ async function handleRefreshToken(request: NextRequest) {
     });
   }
 
-  const decodedRefresh = await decryptRefresh(refreshToken);
-
-  if (!decodedRefresh) {
-    // Invalid refresh token
-    return new NextResponse("Refresh Token is not valid", {
-      status: 401,
-    });
-  }
-
   try {
+    const decodedRefresh = await decryptRefresh(refreshToken);
+
+    if (!decodedRefresh) {
+      // Invalid refresh token
+      return new NextResponse("Refresh Token is not valid", {
+        status: 403,
+      });
+    }
+
     const response = await fetch(
       "http://localhost:3000/api/auth/refresh-token",
       {
@@ -100,16 +112,29 @@ async function handleRefreshToken(request: NextRequest) {
 
     const { newAccessToken, newRefreshToken } = await response.json();
 
+    if (!newAccessToken || !newRefreshToken) {
+      return new NextResponse("Failed to generate new tokens", { status: 500 });
+    }
+
+    // console.log("new access token:", newAccessToken);
+    // console.log("new refresh token:", newRefreshToken);
+
     const res = NextResponse.next();
 
     res.cookies.set("session", newAccessToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       expires: accessExpires,
+      path: "/",
     });
 
     res.cookies.set("refreshToken", newRefreshToken, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       expires: refreshExpires,
+      path: "/",
     });
 
     return res;
@@ -118,67 +143,6 @@ async function handleRefreshToken(request: NextRequest) {
     return new NextResponse("Failed to refresh session", { status: 500 });
   }
 }
-
-// export async function updateSession(request: NextRequest) {
-//   const session = request.cookies.get("session")?.value;
-//   if (!session) {
-//     const refreshSession = request.cookies.get("refreshToken")?.value;
-//     if (!refreshSession) return;
-
-//     try {
-//       const decoded = await decryptRefresh(refreshSession);
-
-//       const response = await fetch(
-//         "http://localhost:3000/api/auth/refresh-token",
-//         {
-//           method: "POST",
-//           credentials: "include",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ refreshToken: refreshSession }),
-//         }
-//       );
-
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch new access token");
-//       }
-
-//       const data = await response.json();
-//       const newAccessToken = data.newAccessToken;
-//       console.log("newAccessToken:", newAccessToken);
-
-//       // Update the session cookie with the new access token
-//       const accessExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-//       const res = NextResponse.next();
-//       res.cookies.set({
-//         name: "session",
-//         value: newAccessToken,
-//         httpOnly: true,
-//         expires: accessExpires,
-//       });
-//       return res;
-
-//       // Redirect or update the state as necessary
-//     } catch (error) {
-//       console.error("Failed to refresh session:", error);
-//       // Handle error appropriately, e.g., by redirecting to login or notifying the user
-//     }
-//     redirect("/login");
-//   } else {
-//     const parsed = await decrypt(session);
-//     parsed.expires = new Date(Date.now() + 10 * 1000);
-//     const res = NextResponse.next();
-//     res.cookies.set({
-//       name: "session",
-//       value: await encrypt(parsed),
-//       httpOnly: true,
-//       expires: parsed.expires,
-//     });
-//     return res;
-//   }
-// }
 
 // const jwtConfig = {
 //   secret: new TextEncoder().encode(process.env.ACCESS_SECRET),
