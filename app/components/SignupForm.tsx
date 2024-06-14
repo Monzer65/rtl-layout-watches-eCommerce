@@ -17,10 +17,7 @@ export default function SignupForm() {
   }, []);
 
   return (
-    <form
-      action={dispatch}
-      className='max-w-md mx-auto p-6 bg-white shadow-md rounded-lg'
-    >
+    <form action={dispatch} className='p-6 bg-white shadow-md rounded-lg'>
       <div className='mb-4'>
         <label htmlFor='email' className='sr-only'>
           email
@@ -41,7 +38,19 @@ export default function SignupForm() {
         <input
           type='password'
           name='password'
-          placeholder='پسورد'
+          placeholder='رمز عبور'
+          required
+          className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+        />
+      </div>
+      <div className='mb-4'>
+        <label htmlFor='confirm_Password' className='sr-only'>
+          confirm Password
+        </label>
+        <input
+          type='password'
+          name='confirm_Password'
+          placeholder='تکرار رمز عبور'
           required
           className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
         />

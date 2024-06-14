@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { authenticate } from "../lib/actions";
+import { login } from "../lib/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import Spinner from "./Spinner";
 import { useEffect, useRef } from "react";
 
 export default function LoginForm() {
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  const [errorMessage, dispatch] = useFormState(login, undefined);
   const emailRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -17,10 +17,7 @@ export default function LoginForm() {
   }, []);
 
   return (
-    <form
-      action={dispatch}
-      className='max-w-md mx-auto p-6 bg-white shadow-md rounded-lg'
-    >
+    <form action={dispatch} className='p-6 bg-white shadow-md rounded-lg'>
       <div className='mb-4'>
         <label htmlFor='email' className='sr-only'>
           email
@@ -41,7 +38,7 @@ export default function LoginForm() {
         <input
           type='password'
           name='password'
-          placeholder='پسورد'
+          placeholder='رمز عبور'
           required
           className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
         />
