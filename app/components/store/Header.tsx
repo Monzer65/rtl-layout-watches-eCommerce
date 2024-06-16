@@ -27,8 +27,8 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
   const DashBtnRef = useRef<HTMLButtonElement>(null);
   // const { user, isAuthenticated, isLoading, permissions } =
   //   useKindeBrowserClient();
-  const { user, loading } = useUser();
-  const userPermissions = user ? user.roles : [];
+  const { userInfo, loading } = useUser();
+  const userPermissions = userInfo ? userInfo.roles : [];
 
   const { cartItems, dispatch } = useContext(CartContext)!;
   const pathname = usePathname();
@@ -105,7 +105,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
               </>
             )}
           </button>
-          {!user ? (
+          {!userInfo ? (
             <div className='flex justify-center gap-2 md:border border-gray-200 rounded-md md:px-4 py-2 hover:!opacity-100'>
               {loading ? (
                 <div>درحال بارگزاری...</div>
@@ -156,7 +156,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
                     )} */}
                     <UserIcon className=' md:hidden h-6 w-6 text-gray-500' />
                     <p className='md:hidden lg:block m-auto mt-1 lg:mt-0 lg:mr-1'>
-                      {user?.email}
+                      {userInfo?.username}
                     </p>
                   </div>
 

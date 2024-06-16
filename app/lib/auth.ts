@@ -2,70 +2,62 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify, SignJWT } from "jose";
 
-const ACCESS_SECRET = process.env.ACCESS_SECRET;
-const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
-const accessExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
-const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+const accessKey = new TextEncoder().encode(accessTokenSecret);
+const refreshKey = new TextEncoder().encode(refreshTokenSecret);
 
-const key = new TextEncoder().encode(ACCESS_SECRET);
-const refreshKey = new TextEncoder().encode(REFRESH_SECRET);
-
-export async function encrypt(payload: any) {
+export async function generateAccessToken(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(accessExpires)
-    .sign(key);
+    .setExpirationTime(new Date(Date.now() + 10 * 60 * 1000))
+    .sign(accessKey);
 }
 
-export async function encryptRefresh(payload: any) {
+export async function generateRefreshToken(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(refreshExpires)
+    .setExpirationTime(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
     .sign(refreshKey);
 }
 
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
+export async function decodeAccessToken(input: string): Promise<any> {
+  const { payload } = await jwtVerify(input, accessKey, {
     algorithms: ["HS256"],
   });
   return payload;
 }
 
-export async function decryptRefresh(input: string): Promise<any> {
+export async function decodeRefreshToken(input: string): Promise<any> {
   const { payload } = await jwtVerify(input, refreshKey, {
     algorithms: ["HS256"],
   });
   return payload;
 }
 
-export async function getSession() {
-  const session = cookies().get("session")?.value;
-  if (!session) return null;
-  return await decrypt(session);
-}
+export async function verifyAndRenewSession(request: NextRequest) {
+  const accessToken = request.cookies.get("accessToken");
 
-export async function updateSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-
-  if (!session) {
+  if (!accessToken || !accessToken.value) {
     return await handleRefreshToken(request);
   }
 
   try {
-    const res = NextResponse.next();
-    const decoded = await decrypt(session);
-    // Invalid refresh token
-    if (!decoded) {
-      return new NextResponse("Session could not be decoded", { status: 403 });
+    const decodedAccessToken = await decodeAccessToken(accessToken.value);
+
+    if (!decodedAccessToken || decodedAccessToken.expires < Date.now()) {
+      console.log("Session expired at:", decodedAccessToken.expires);
+      return await handleRefreshToken(request);
     }
-    // If session is valid, proceed with the response
-    return res;
+
+    // If accessToken is valid, proceed with the response
+    return NextResponse.next();
   } catch (error) {
-    console.error("Error decoding session:", error);
-    return new NextResponse("Failed to verify session", { status: 403 });
+    console.error("Error decoding accessToken:", error);
+    return await handleRefreshToken(request);
   }
 }
 
@@ -80,10 +72,15 @@ async function handleRefreshToken(request: NextRequest) {
   }
 
   try {
-    const decodedRefresh = await decryptRefresh(refreshToken);
+    const decodedRefresh = await decodeRefreshToken(refreshToken);
 
-    if (!decodedRefresh) {
-      // Invalid refresh token
+    if (!decodedRefresh || decodedRefresh.expires < Date.now()) {
+      // Invalid or expired refresh token
+      console.log(
+        "Refresh token expired or invalid at:",
+        decodedRefresh?.expires
+      );
+
       return new NextResponse("Refresh Token is not valid", {
         status: 403,
       });
@@ -116,32 +113,61 @@ async function handleRefreshToken(request: NextRequest) {
       return new NextResponse("Failed to generate new tokens", { status: 500 });
     }
 
+    const accessExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const refreshExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    // Debugging logs
     // console.log("new access token:", newAccessToken);
     // console.log("new refresh token:", newRefreshToken);
 
+    // continue processing the request as usual
     const res = NextResponse.next();
 
-    res.cookies.set("session", newAccessToken, {
+    // Set the session (access token) cookie
+    res.cookies.set("accessToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      expires: accessExpires,
+      expires: accessExpiry, // Correct format
       path: "/",
     });
 
+    // Set the refresh token cookie
     res.cookies.set("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      expires: refreshExpires,
+      expires: refreshExpiry, // Correct format
       path: "/",
     });
-
     return res;
   } catch (error) {
     console.error(error);
     return new NextResponse("Failed to refresh session", { status: 500 });
   }
+}
+
+export async function getSession(): Promise<any | null> {
+  const getCookieValue = async (
+    cookieName: string,
+    maxRetries: number,
+    delay: number
+  ): Promise<string | null> => {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const cookieValue = cookies().get(cookieName)?.value;
+      if (cookieValue) {
+        return cookieValue;
+      }
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+    return null;
+  };
+
+  const accessToken = await getCookieValue("accessToken", 10, 1000);
+  if (!accessToken) return null;
+
+  const res = await decodeAccessToken(accessToken);
+  return res;
 }
 
 // const jwtConfig = {

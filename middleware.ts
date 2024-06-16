@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateSession } from "./app/lib/auth";
+import { verifyAndRenewSession } from "./app/lib/auth";
 
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request);
+  const response = await verifyAndRenewSession(request);
 
   if (response.status === 401 || response.status === 500) {
     return NextResponse.redirect(new URL("/login", request.url));

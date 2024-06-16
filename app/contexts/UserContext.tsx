@@ -6,55 +6,48 @@ import {
   useEffect,
   useState,
 } from "react";
+import { getSession } from "../lib/auth";
 
 interface User {
-  _id: string;
-  email: string;
+  username: string;
   roles: string[];
 }
 
 interface UserData {
-  user: User | null;
+  userInfo: User | null;
   loading: boolean;
 }
 
-const UserContext = createContext<UserData>({ user: null, loading: true });
+const UserContext = createContext<UserData>({ userInfo: null, loading: true });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userData, setUserData] = useState<UserData>({
-    user: null,
+    userInfo: null,
     loading: true,
   });
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/auth/decrypt`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}),
-        });
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //     //  I have to use a third party library to access cookies inside getsession to be able to use the cookies inside a client component
+  //       const session = await getSession();
+  //       if (session) {
+  //         setUserData({ userInfo: session.username, loading: false });
+  //       } else {
+  //         console.error("Failed to fetch user data");
+  //         setError("Failed to fetch user data");
+  //         setUserData({ userInfo: null, loading: false }); // Set loading to false even on error
+  //       }
+  //     } catch (error) {
+  //       console.error("An error occurred while fetching user data", error);
+  //       setError("An error occurred while fetching user data");
+  //       setUserData({ userInfo: null, loading: false }); // Set loading to false even on error
+  //     }
+  //   };
 
-        if (response.ok) {
-          const { decodedrefreshToken } = await response.json();
-          setUserData({ user: decodedrefreshToken.user, loading: false });
-        } else {
-          console.error("Failed to fetch user data");
-          setError("Failed to fetch user data");
-          setUserData({ user: null, loading: false }); // Set loading to false even on error
-        }
-      } catch (error) {
-        console.error("An error occurred while fetching user data", error);
-        setError("An error occurred while fetching user data");
-        setUserData({ user: null, loading: false }); // Set loading to false even on error
-      }
-    };
-
-    fetchUser();
-  }, []);
+  //   fetchUser();
+  // }, []);
 
   return (
     <UserContext.Provider value={{ ...userData }}>
@@ -64,6 +57,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useUser = () => {
-  const { user, loading } = useContext(UserContext);
-  return { user, loading };
+  const { userInfo, loading } = useContext(UserContext);
+  return { userInfo, loading };
 };

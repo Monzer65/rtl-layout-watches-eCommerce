@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 import { validatePassword } from "./helpers/validatePassword";
-import { encrypt, encryptRefresh } from "./auth";
+import { generateAccessToken, generateRefreshToken } from "./auth";
 import { validateEmail } from "./helpers/validateEmail";
 
 export async function signup(_currentState: unknown, formData: FormData) {
@@ -58,30 +58,30 @@ export async function signup(_currentState: unknown, formData: FormData) {
 
     await collection.insertOne(newUser);
 
-    const accessExpires = new Date(Date.now() + 10 * 1000);
-    const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const accessExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const refreshExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    const session = await encrypt({
+    const accessToken = await generateAccessToken({
       username: newUser.username,
       roles: newUser.roles,
-      expires: accessExpires,
+      expires: accessExpiry,
     });
 
-    const refreshSession = await encryptRefresh({
+    const refreshToken = await generateRefreshToken({
       username: newUser.username,
-      expires: refreshExpires,
+      expires: refreshExpiry,
     });
 
-    newUser.refreshToken.push(refreshSession);
+    newUser.refreshToken.push(refreshToken);
     await collection.updateOne({ _id: newUser._id }, { $set: newUser });
 
-    cookies().set("session", session, {
-      expires: accessExpires,
+    cookies().set("accessToken", accessToken, {
+      expires: accessExpiry,
       httpOnly: true,
     });
 
-    cookies().set("refreshToken", refreshSession, {
-      expires: refreshExpires,
+    cookies().set("refreshToken", refreshToken, {
+      expires: refreshExpiry,
       httpOnly: true,
     });
   } catch (error) {
@@ -123,30 +123,31 @@ export async function login(_currentState: unknown, formData: FormData) {
       return "رمز عبور یا ایمیل اشتباه است";
     }
 
-    const accessExpires = new Date(Date.now() + 10 * 60 * 1000);
-    const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const accessExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const refreshExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    const session = await encrypt({
+    const accessToken = await generateAccessToken({
       username: user.username,
       roles: user.roles,
-      expires: accessExpires,
+      expires: accessExpiry,
     });
 
-    const refreshSession = await encryptRefresh({
+    const refreshToken = await generateRefreshToken({
       username: user.username,
-      expires: refreshExpires,
+      expires: refreshExpiry,
     });
 
-    user.refreshToken.push(refreshSession);
+    user.refreshToken = [];
+    user.refreshToken.push(refreshToken);
     await collection.updateOne({ _id: user._id }, { $set: user });
 
-    cookies().set("session", session, {
-      expires: accessExpires,
+    cookies().set("accessToken", accessToken, {
+      expires: accessExpiry,
       httpOnly: true,
     });
 
-    cookies().set("refreshToken", refreshSession, {
-      expires: refreshExpires,
+    cookies().set("refreshToken", refreshToken, {
+      expires: refreshExpiry,
       httpOnly: true,
     });
 
@@ -159,11 +160,36 @@ export async function login(_currentState: unknown, formData: FormData) {
   redirect("/blog/dashboard");
 }
 
-export async function logout() {
-  // cookies().delete("accessToken");
-  // cookies().delete("refreshToken");
+export async function logout(_currentState: unknown) {
+  const refreshToken = cookies().get("refreshToken")?.value;
+
+  if (!refreshToken) {
+    console.error("Refresh token not found in cookies.");
+    cookies().set("accessToken", "", { expires: new Date(0) });
+    redirect("/");
+  }
+
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("users");
+    const user = await collection.findOne({
+      refreshToken: { $in: [refreshToken] },
+    });
+
+    if (!user) {
+      console.error("User not found with the provided refresh token.");
+      return "User not found.";
+    }
+  } catch (error) {
+    console.error("Database error:", error);
+    return "خطای دیتابیس. لطفا بعدا تلاش کنید";
+  }
+
+  // Clear cookies
   cookies().set("accessToken", "", { expires: new Date(0) });
   cookies().set("refreshToken", "", { expires: new Date(0) });
+
+  // Redirect user to the homepage
   redirect("/");
 }
 

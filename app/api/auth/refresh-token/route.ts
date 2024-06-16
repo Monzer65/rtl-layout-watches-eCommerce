@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import clientPromise from "@/app/lib/dbConnection";
-import { decryptRefresh, encrypt, encryptRefresh } from "@/app/lib/auth";
+import {
+  decodeRefreshToken,
+  generateAccessToken,
+  generateRefreshToken,
+} from "@/app/lib/auth";
 
 export async function POST(req: NextRequest) {
   const refreshToken = req.cookies.get("refreshToken")?.value;
@@ -17,13 +21,15 @@ export async function POST(req: NextRequest) {
     const collection = client.db("fakeData").collection("users");
 
     // Attempt to find user with the provided refresh token
-    const user = await collection.findOne({ refreshToken: refreshToken });
+    const user = await collection.findOne({
+      refreshToken: { $in: [refreshToken] },
+    });
 
     if (!user) {
       // If no user is found, check if the refresh token is compromised
-      const decoded = await decryptRefresh(refreshToken);
+      const decodedRefreshToken = await decodeRefreshToken(refreshToken);
 
-      if (!decoded) {
+      if (!decodedRefreshToken) {
         return new Response(
           JSON.stringify({ error: "Invalid Refresh Token" }),
           { status: 403 }
@@ -32,7 +38,7 @@ export async function POST(req: NextRequest) {
 
       // Invalidate all refresh tokens for the compromised user
       await collection.updateOne(
-        { username: decoded.username },
+        { username: decodedRefreshToken.username },
         { $set: { refreshToken: [] } }
       );
 
@@ -41,19 +47,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const accessExpires = new Date(Date.now() + 10 * 60 * 1000);
-    const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const accessExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const refreshExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     // Generate new access and refresh tokens
-    const newAccessToken = await encrypt({
+    const newAccessToken = await generateAccessToken({
       username: user.username,
       roles: user.roles,
-      expires: accessExpires,
+      expires: accessExpiry,
     });
 
-    const newRefreshToken = await encryptRefresh({
+    const newRefreshToken = await generateRefreshToken({
       username: user.username,
-      expires: refreshExpires,
+      expires: refreshExpiry,
     });
 
     // Update the user's refresh tokens in the database
