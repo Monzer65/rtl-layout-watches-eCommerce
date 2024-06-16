@@ -3,7 +3,7 @@ import CustomersTable from "@/app/components/admin/customers/CustomersTable";
 import Pagination from "@/app/components/admin/Pagination";
 import Search from "@/app/components/admin/Search";
 import { fetchCustomers } from "@/app/lib/data";
-import Link from "next/link";
+import { Customer } from "@/app/lib/definitions";
 import { Suspense } from "react";
 
 const customers = async ({
@@ -16,31 +16,24 @@ const customers = async ({
 }) => {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const pageSize = 2;
+  const pageSize = 10;
   const data = await fetchCustomers(query, currentPage, pageSize);
+  const customers = data.customers as Customer[];
 
   return (
     <div>
       <div className='max-w-[800px]'>
-        <Search placeholder='جستجو...' />
+        <Search placeholder='جستجوی نام کاربری یا ایمیل ...' />
       </div>
-      <h1 className='text-2xl font-bold mt-10'>مشتریان</h1>
-      <div>
+      <div className='flex gap-4 items-center mt-10 mb-4'>
+        <h1 className='text-base sm:text-lg md:text-2xl font-bold'>مشتریان</h1>
         <CreateCustomer />
-        <Suspense
-          key={query + currentPage}
-          fallback={<p>loading skeleton...</p>}
-        >
-          {data.customers &&
-            data.customers.map((customer, index) => (
-              <Link
-                key={index}
-                href={`/admin-area/store/customers/${customer._id}/edit`}
-              >
-                {customer.email}
-              </Link>
-            ))}
-          {/* <CustomersTable query={query} currentPage={currentPage} /> */}
+      </div>
+      <div>
+        <Suspense key={query + currentPage} fallback={<p>درحال بارگزاری...</p>}>
+          <div className='overflow-auto'>
+            <CustomersTable customers={customers} />
+          </div>
         </Suspense>
         <div className='mt-5 flex w-full justify-center'>
           <Pagination totalPages={data.totalPages || 1} />

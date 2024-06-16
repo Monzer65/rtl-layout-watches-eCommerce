@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SubmitButton } from "../SubmitButton";
 import { useFormState } from "react-dom";
 import { Customer } from "@/app/lib/definitions";
+import { RocketLaunchIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function EditCustomerForm({
   customer = {} as Customer,
@@ -17,19 +18,16 @@ export default function EditCustomerForm({
   );
 
   return (
-    <form
-      className='max-w-md mx-auto p-4 border rounded shadow'
-      action={dispatch}
-    >
+    <form className='mx-auto my-8 p-4 border rounded shadow' action={dispatch}>
       <div className='mb-4'>
-        <label htmlFor='name' className='block font-semibold mb-1'>
-          نام
+        <label htmlFor='username' className='block font-semibold mb-1'>
+          نام کاربری
         </label>
         <input
           type='text'
-          id='name'
-          name='name'
-          defaultValue={customer.name}
+          id='username'
+          name='username'
+          defaultValue={customer.username}
           className='w-full p-2 border rounded'
         />
       </div>
@@ -49,7 +47,7 @@ export default function EditCustomerForm({
 
       <div className='mb-4'>
         <label htmlFor='password' className='block font-semibold mb-1'>
-          پسورد جدید
+          رمز عبور جدید
         </label>
         <input
           type='password'
@@ -60,7 +58,7 @@ export default function EditCustomerForm({
       </div>
 
       <div className='mb-4'>
-        <label className='block font-semibold mb-1'>رُل</label>
+        <label className='block font-semibold mb-1'>نقش</label>
         <div className='flex gap-4'>
           <label>
             <input
@@ -69,7 +67,7 @@ export default function EditCustomerForm({
               value='user'
               defaultChecked={customer.roles.includes("user")}
             />{" "}
-            یوزر عادی
+            کاربر عادی
           </label>
           <label>
             <input
@@ -95,14 +93,18 @@ export default function EditCustomerForm({
           className='w-full p-2 border rounded'
         />
       </div>
-      <div className='flex gap-4'>
-        <SubmitButton type='submit'>ذخیره</SubmitButton>
+      <div className='flex items-center gap-4'>
         <Link
           href='/admin-area/store/customers'
-          className='flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200'
+          className='flex gap-1 h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200'
         >
-          کنسل
+          <XMarkIcon className='w-4 md:w-6' />
+          انصراف
         </Link>
+        <SubmitButton type='submit' className='gap-1'>
+          <RocketLaunchIcon className='w-4 md:w-6' />
+          ارسال
+        </SubmitButton>
       </div>
       {state?.error && (
         <div id='amount-error' aria-live='polite'>

@@ -8,12 +8,12 @@ export type Invoice = {
   status: "pending" | "paid";
 };
 
-export interface Customer {
+export type Customer = {
   _id: string;
-  name: string;
+  username: string;
   email: string;
   address: string;
   roles: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+  createdAt: Date;
+  updatedAt: Date;
+};

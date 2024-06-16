@@ -40,7 +40,7 @@ const StoreNavLinks = () => {
             key={link.name}
             href={link.href}
             className={`flex flex-col md:flex-row md:h-[48px] grow items-center justify-center gap-2 rounded-md md:rounded-none text-[10px] sm:text-xs md:text-sm lg:text-base font-medium hover:bg-[#5e81ac] hover:text-white md:flex-none md:justify-start p-1 md:p-2 md:px-3 ${
-              pathname === link.href
+              pathname.includes(link.href)
                 ? "bg-[#5e81ac] text-white"
                 : "bg-[#d8dee9] text-[#4c566a]"
             }`}

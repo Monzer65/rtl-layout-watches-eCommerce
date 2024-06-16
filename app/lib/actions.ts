@@ -9,6 +9,12 @@ import { validatePassword } from "./helpers/validatePassword";
 import { generateAccessToken, generateRefreshToken } from "./auth";
 import { validateEmail } from "./helpers/validateEmail";
 
+const generateUniqueUsername = (email: string) => {
+  const timestamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 15);
+  return email.split("@")[0] + "_" + randomString + "_" + timestamp;
+};
+
 export async function signup(_currentState: unknown, formData: FormData) {
   const email = formData.get("email");
   const password = formData.get("password");
@@ -40,12 +46,6 @@ export async function signup(_currentState: unknown, formData: FormData) {
 
     const hash = await bcrypt.hash(password.toString(), 8);
 
-    const generateUniqueUsername = (email: string) => {
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      return email.split("@")[0] + "_" + randomString + "_" + timestamp;
-    };
-
     const newUser = {
       _id: new ObjectId(),
       username: generateUniqueUsername(email.toString()),
@@ -53,6 +53,7 @@ export async function signup(_currentState: unknown, formData: FormData) {
       password: hash,
       roles: ["user"],
       refreshToken: [] as string[],
+      address: "",
       createdAt: new Date(),
     };
 
@@ -197,9 +198,10 @@ export async function createCustomer(
   _currentState: unknown,
   formData: FormData
 ) {
-  const name = formData.get("name");
+  const username = formData.get("username");
   const email = formData.get("email");
   const password = formData.get("password");
+  const roles = formData.getAll("roles");
   const address = formData.get("address");
 
   const hash = bcrypt.hashSync(`${password}`, 8);
@@ -214,12 +216,24 @@ export async function createCustomer(
       return { error: "کاربر قبلا ثبت شده است!" };
     }
 
+    if (!email || !password) {
+      return { error: "فیلدهای ایمیل و پسورد اجباری هستند" };
+    }
+
+    let rolesArray = Array.from(roles);
+    if (rolesArray.includes("admin") && !rolesArray.includes("user")) {
+      rolesArray.push("user");
+    }
+
     await collection.insertOne({
-      name,
+      username: username
+        ? username
+        : generateUniqueUsername(email ? email.toString() : "User"),
       email,
       password: hash,
       address,
-      roles: ["user"],
+      roles: rolesArray.length ? rolesArray : ["user"],
+      refreshToken: [],
       createdAt: new Date(),
     });
   } catch (error) {
@@ -236,7 +250,7 @@ export async function updateCustomer(
   _currentState: unknown,
   formData: FormData
 ) {
-  const name = formData.get("name");
+  const username = formData.get("username");
   const email = formData.get("email");
   const newPassword = formData.get("password")?.toString();
   const rolesArray = Array.from(formData.getAll("roles"));
@@ -263,7 +277,7 @@ export async function updateCustomer(
         { _id: user._id },
         {
           $set: {
-            name,
+            username,
             email,
             password: hash,
             roles: rolesArray,
@@ -277,7 +291,7 @@ export async function updateCustomer(
         { _id: user._id },
         {
           $set: {
-            name,
+            username,
             email,
             roles: rolesArray,
             address,
@@ -286,12 +300,35 @@ export async function updateCustomer(
         }
       );
     }
-    revalidatePath("/admin-area/store/customers");
-    redirect("/admin-area/store/customers");
   } catch (error) {
     console.error("Database Error:", error);
     return {
       error: "Database Error: Failed to Update Customer.",
     };
   }
+  revalidatePath("/admin-area/store/customers");
+  redirect("/admin-area/store/customers");
+}
+
+export async function deleteCustomer(id: string) {
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("users");
+    const objectId = new ObjectId(id);
+
+    const result = await collection.deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 1) {
+      console.log("Successfully deleted one document.");
+    } else {
+      console.log("No documents matched the query. Deleted 0 documents.");
+    }
+  } catch (error) {
+    console.error("Error deleting customer:", error);
+    return {
+      error: "Database Error: Failed to delete customer.",
+    };
+  }
+
+  revalidatePath("/admin-area/store/customers");
 }
