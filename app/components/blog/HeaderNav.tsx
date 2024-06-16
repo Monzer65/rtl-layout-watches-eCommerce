@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import {
+  ArrowLeftEndOnRectangleIcon,
+  ArrowsPointingInIcon,
   Bars3CenterLeftIcon,
   BookOpenIcon,
   BuildingStorefrontIcon,
@@ -121,7 +123,13 @@ const HeaderNav = ({
         })}
 
         {!session ? (
-          <Link href={"/login"}>ورود</Link>
+          <Link
+            href={"/login"}
+            className='flex gap-1 items-center px-3 py-1 text-gray-500 font-bold hover:underline hover:text-gray-800'
+          >
+            <ArrowLeftEndOnRectangleIcon className='w-6 sm:w-4' />
+            <div>ورود</div>
+          </Link>
         ) : (
           <>
             <form action={logout}>

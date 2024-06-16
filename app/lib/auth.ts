@@ -53,6 +53,21 @@ export async function verifyAndRenewSession(request: NextRequest) {
       return await handleRefreshToken(request);
     }
 
+    if (request.nextUrl.pathname.includes("/admin-area")) {
+      if (decodedAccessToken.roles.includes("admin")) {
+        return NextResponse.next();
+      } else {
+        return NextResponse.redirect(new URL("/unauthorized", request.url));
+      }
+    }
+
+    if (request.nextUrl.pathname.includes("/dashboard")) {
+      if (decodedAccessToken.roles.includes("user")) {
+        return NextResponse.next();
+      } else {
+        return NextResponse.redirect(new URL("/unauthorized", request.url));
+      }
+    }
     // If accessToken is valid, proceed with the response
     return NextResponse.next();
   } catch (error) {
