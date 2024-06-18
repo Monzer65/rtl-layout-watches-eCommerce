@@ -10,7 +10,7 @@ const nextConfig = {
         hostname: "lh3.googleusercontent.com",
       },
       {
-        hostname: "casio.com",
+        hostname: "www.casio.com",
       },
     ],
   },

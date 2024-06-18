@@ -6,13 +6,11 @@ export default async function AdminBlogLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className='flex h-screen flex-col md:flex-row md:overflow-hidden'>
-      <div className='w-full flex-none md:w-64'>
+    <div className='relative flex flex-col md:flex-row'>
+      <div className='sticky top-0 md:h-screen w-full flex-none md:w-64'>
         <BLogSideNav />
       </div>
-      <div className='flex-grow py-4 px-3 md:overflow-y-auto md:px-2'>
-        {children}
-      </div>
+      <div className='flex-grow py-4 px-3 md:px-2'>{children}</div>
     </div>
   );
 }

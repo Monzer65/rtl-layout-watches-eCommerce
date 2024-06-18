@@ -245,6 +245,150 @@ export async function createCustomer(
   redirect("/admin-area/store/customers");
 }
 
+export async function createProduct(
+  _currentState: unknown,
+  formData: FormData
+) {
+  const name = formData.get("productName");
+  const manufacturer = formData.get("manufacturer");
+  const manufacture_location = formData.get("manufacture_location");
+  const brand = formData.get("brand");
+  const model = formData.get("model");
+  const gender = formData.get("gender");
+  const style = formData.get("style");
+  const functions = formData.getAll("functions");
+  const movement = formData.get("movement");
+  const bezelMaterial = formData.get("bezelMaterial");
+  const bezelColor = formData.get("bezelColor");
+  const caseMaterial = formData.get("caseMaterial");
+  const caseColor = formData.get("caseColor");
+  const bandMaterial = formData.get("bandMaterial");
+  const bandColor = formData.get("bandColor");
+  const dialColor = formData.get("dialColor");
+  const waterResistance = formData.get("waterResistance");
+  const warranty = formData.get("warranty");
+  const caseShape = formData.get("caseShape");
+  const caseDiameter = formData.get("caseDiameter");
+  const caseThickness = formData.get("caseThickness");
+  const lugWidth = formData.get("lugWidth");
+  const weight = formData.get("weight");
+  const compilation = formData.get("compilation");
+  const price = formData.get("price");
+  const sale_price = formData.get("sale_price");
+  const description = formData.get("description");
+  const stock = formData.get("stock");
+  const reference = formData.get("reference");
+  const sku = formData.get("sku");
+  const ean_upc = formData.get("ean_upc");
+  const availability = formData.get("availability");
+  const images = formData.getAll("images");
+  const releaseDate = formData.get("releaseDate");
+  const tags = formData.get("tags");
+
+  const tagsToArray = tags
+    ? tags
+        .toString()
+        .split(/[-،]/)
+        .map((s) => s.trim())
+    : [];
+
+  const features = {
+    movement,
+    bezelMaterial,
+    bezelColor,
+    caseMaterial,
+    caseColor,
+    bandMaterial,
+    bandColor,
+    dialColor,
+    waterResistance,
+    warranty,
+  };
+
+  const specifications = {
+    caseShape,
+    caseDiameter: caseDiameter ? parseFloat(caseDiameter as string) : null,
+    caseThickness: caseThickness ? parseFloat(caseThickness as string) : null,
+    lugWidth: lugWidth ? parseFloat(lugWidth as string) : null,
+    weight: weight ? Number(weight) : null,
+  };
+
+  if (
+    !name ||
+    !manufacturer ||
+    !brand ||
+    !model ||
+    !gender ||
+    !price ||
+    !sale_price ||
+    !description ||
+    !sku ||
+    !images.length
+  ) {
+    return { error: "تمام فیلدهای ستاره دار را پر کنید" };
+  }
+
+  if (Number(price) < Number(sale_price)) {
+    return { error: "قیمت فروش (قیمت تخفیف دار) باید کمتر از قیمت محصول باشد" };
+  }
+
+  if (description) {
+    if (
+      description.toString().length < 20 ||
+      description.toString().length > 1000
+    ) {
+      return { error: "توضیحات باید بین 20 تا 1000 کاراکتر باشد" };
+    }
+  }
+
+  console.log(functions);
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("products");
+
+    const product = await collection.findOne({ SKU: sku });
+
+    if (product) {
+      return { error: "محصول با اس کی یو مشابه قبلا ثبت شده است!" };
+    }
+
+    const data = await collection.insertOne({
+      name: name ?? "",
+      manufacturer: manufacturer ?? "",
+      manufacture_location: manufacture_location ?? "",
+      brand: brand ?? "",
+      model: model ?? "",
+      gender: gender ?? "",
+      style: style ?? "",
+      functions: functions ?? [],
+      compilation: compilation ?? "",
+      price: price ? parseFloat(price as string) : null,
+      sale_price: sale_price ? parseFloat(sale_price as string) : null,
+      description: description ?? "",
+      stock: stock ? Number(stock) : null,
+      reference: reference ?? "",
+      SKU: sku ?? "",
+      EAN_EPU: ean_upc ?? "",
+      features: features ?? "",
+      specifications: specifications ?? "",
+      availability: availability === "on" ? true : false,
+      images: images ?? [],
+      releaseDate: new Date(releaseDate as string),
+      tags: tagsToArray ?? [],
+      reviews: [],
+      createdAt: new Date(),
+    });
+
+    console.log(data);
+  } catch (error) {
+    return {
+      message: "Database Error: Failed to Create Product.",
+    };
+  }
+  revalidatePath("/admin-area/store/products");
+  redirect("/admin-area/store/products");
+}
+
 export async function updateCustomer(
   id: string,
   _currentState: unknown,

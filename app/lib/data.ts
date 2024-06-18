@@ -1,7 +1,7 @@
 import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 import clientPromise from "./dbConnection";
 import { unstable_noStore as noStore } from "next/cache";
-import { Customer } from "./definitions";
+import { Customer, Review } from "./definitions";
 
 let client: MongoClient;
 let db: Db;
@@ -19,13 +19,57 @@ export async function init(collection: string) {
   }
 }
 
-export async function getProducts() {
+export async function getProducts(
+  query: string,
+  currentPage: number,
+  pageSize: number
+) {
+  noStore();
+
   try {
     if (!col) await init("products");
-    const result = await col.find({}).limit(10).toArray();
-    return { products: result };
+
+    const skip = (currentPage - 1) * pageSize;
+    const searchQuery = query
+      ? {
+          $or: [
+            { name: { $regex: new RegExp(query, "i") } },
+            { brand: { $regex: new RegExp(query, "i") } },
+            // Add more fields here if needed
+          ],
+        }
+      : {};
+
+    const totalCount = await col.countDocuments(searchQuery);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const result = await col
+      .find(searchQuery)
+      .skip(skip)
+      .limit(pageSize)
+      .toArray();
+
+    // Convert ObjectIds to string for _id in each product and each review
+    const products = result.map((product) => ({
+      ...product,
+      _id: product._id.toString(),
+      reviews: product.reviews.map(
+        (review: {
+          userId: any;
+          rating: number;
+          comment: string;
+          date: Date;
+        }): Review => ({
+          ...review,
+          userId: review.userId.toString(),
+        })
+      ),
+    }));
+
+    return { products, totalPages };
   } catch (error) {
-    return { error: "failed to catch products" };
+    console.error("Error fetching products:", error);
+    return { error: "Failed to fetch products" };
   }
 }
 

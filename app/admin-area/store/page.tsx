@@ -1,12 +1,18 @@
 import { getProducts } from "@/app/lib/data";
+import { Product } from "@/app/lib/definitions";
 
 const AdminStorePage = async () => {
-  const data = await getProducts();
+  const query = "";
+  const currentPage = 1;
+  const pageSize = 10;
+  const data = await getProducts(query, currentPage, pageSize);
+  const products = data.products as Product[];
 
   return (
     <div>
       StorePage
-      {data.products && <p>{data.products[0].name}</p>}
+      {products && <p>{products[0].name}</p>}
+      {products && <p>{products[0].brand}</p>}
       {/* <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       <Suspense fallback={<CardsSkeleton />}>
           <CardWrapper />
