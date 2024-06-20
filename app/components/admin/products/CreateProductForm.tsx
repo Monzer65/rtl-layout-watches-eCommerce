@@ -9,10 +9,13 @@ import {
   RocketLaunchIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const CreateProductForm = () => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [state, dispatch] = useFormState(createProduct, undefined);
 
   const addImageUrl = (url: string) => {
     if (url.length < 3) return;
@@ -23,27 +26,74 @@ const CreateProductForm = () => {
     setImageUrls(imageUrls.filter((_, i) => i !== index));
   };
 
-  const [state, dispatch] = useFormState(createProduct, undefined);
+  const addImageFile = (e: any) => {
+    const images = e.target.files;
+    const newImages = [...images].filter((img) => {
+      // Check for image size and image format here
+      // if(img.size < 1024 * 1024 && img.type.startsWith("image/")) return img
+      return img;
+    });
+
+    setImageFiles((prev) => [...newImages, ...prev]);
+  };
+
+  const removeImageFile = (index: number) => {
+    const result = window.confirm(
+      "Are you sure you want to delete this image?"
+    );
+    if (result) {
+      // Logic to delete the image
+      const updatedImages = [...imageFiles];
+      updatedImages.splice(index, 1);
+      setImageFiles(updatedImages);
+    }
+  };
+
+  const handleSubmit = async (formData: FormData) => {
+    if (!imageFiles.length) return alert("عکس باید انتخاب شود");
+    if (imageFiles.length > 3) return alert("حداکثر 3 عکس انتخاب شود");
+
+    imageFiles.forEach((img, index) => {
+      formData.append(`images`, img);
+    });
+
+    dispatch(formData);
+  };
 
   return (
     <form
-      action={dispatch}
+      action={handleSubmit}
       className={`mx-auto my-8 p-4 border rounded shadow ${
         state?.error ? "border-red-500" : ""
       }`}
     >
       <div className='mb-4'>
-        <label htmlFor='productName' className='block font-semibold mb-1'>
+        <label htmlFor='name' className='block font-semibold mb-1'>
           نام محصول<span className='text-red-500'>*</span>
         </label>
         <input
           type='text'
-          name='productName'
-          id='productName'
+          name='name'
+          id='name'
           placeholder='ساعت مچی مردانه'
+          className='w-full p-2 border rounded'
+          required
+        />
+      </div>
+
+      <div className='mb-4'>
+        <label htmlFor='sku' className='block font-semibold mb-1'>
+          شناسه اس کی یو<span className='text-red-500'>*</span>
+        </label>
+        <input
+          type='text'
+          name='sku'
+          id='sku'
+          placeholder='SKU12345'
           className='w-full p-2 border rounded'
         />
       </div>
+
       <div className='mb-4'>
         <label htmlFor='manufacturer' className='block font-semibold mb-1'>
           تولید کننده<span className='text-red-500'>*</span>
@@ -54,8 +104,10 @@ const CreateProductForm = () => {
           id='manufacturer'
           placeholder='شرکت کاسیو'
           className='w-full p-2 border rounded'
+          required
         />
       </div>
+
       <div className='mb-4'>
         <label
           htmlFor='manufacture_location'
@@ -71,6 +123,7 @@ const CreateProductForm = () => {
           className='w-full p-2 border rounded'
         />
       </div>
+
       <div className='mb-4'>
         <label htmlFor='brand' className='block font-semibold mb-1'>
           برند<span className='text-red-500'>*</span>
@@ -81,8 +134,10 @@ const CreateProductForm = () => {
           id='brand'
           placeholder='کاسیو'
           className='w-full p-2 border rounded'
+          required
         />
       </div>
+
       <div className='mb-4'>
         <label htmlFor='model' className='block font-semibold mb-1'>
           مدل<span className='text-red-500'>*</span>
@@ -93,6 +148,7 @@ const CreateProductForm = () => {
           id='model'
           placeholder='A158WA'
           className='w-full p-2 border rounded'
+          required
         />
       </div>
 
@@ -100,7 +156,12 @@ const CreateProductForm = () => {
         <label htmlFor='gender' className='block font-semibold mb-1'>
           جنسیت<span className='text-red-500'>*</span>
         </label>
-        <select name='gender' id='gender' className='w-full p-2 border rounded'>
+        <select
+          name='gender'
+          id='gender'
+          className='w-full p-2 border rounded'
+          required
+        >
           <option value='male'>مردانه</option>
           <option value='female'>زنانه</option>
           <option value='unspecified'>نامشخص</option>
@@ -373,16 +434,33 @@ const CreateProductForm = () => {
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='price' className='block font-semibold mb-1'>
-          قیمت (ریال)<span className='text-red-500'>*</span>
+        <label htmlFor='price' className='block font-medium'>
+          قیمت (تومان)<span className='text-red-500'>*</span>
+          <input
+            type='number'
+            name='price'
+            id='price'
+            min='0'
+            placeholder='۳۰۰۰۰۰'
+            className='w-full p-2 border rounded'
+            required
+          />
         </label>
-        <input
-          type='number'
-          name='price'
-          id='price'
-          placeholder='12000000'
-          className='w-full p-2 border rounded'
-        />
+      </div>
+
+      <div className='mb-4'>
+        <label htmlFor='buy_price' className='block font-medium'>
+          قیمت خرید(تومان)<span className='text-red-500'>*</span>
+          <input
+            type='number'
+            name='buy_price'
+            id='buy_price'
+            min='0'
+            placeholder='۳۰۰۰۰۰'
+            className='w-full p-2 border rounded'
+            required
+          />
+        </label>
       </div>
 
       <div className='mb-4'>
@@ -393,23 +471,37 @@ const CreateProductForm = () => {
           type='number'
           name='sale_price'
           id='sale_price'
-          placeholder='9990000'
+          placeholder='۳۰۰۰۰۰'
           className='w-full p-2 border rounded'
         />
       </div>
 
       <div className='mb-4'>
+        <label htmlFor='short_description' className='block font-semibold mb-1'>
+          توضیحات کوتاه
+        </label>
+        <textarea
+          name='short_description'
+          id='short_description'
+          rows={2}
+          placeholder='یک ساعت دیجیتال کلاسیک با صفحه‌ی نقره‌ای و بند استیل ضدزنگ، دارای آلارم و کرنومتر.'
+          className='w-full p-2 border rounded'
+          required
+        ></textarea>
+      </div>
+
+      <div className='mb-4'>
         <label htmlFor='description' className='block font-semibold mb-1'>
-          توضیحات<span className='text-red-500'>*</span>
+          توضیحات
         </label>
         <textarea
           name='description'
           id='description'
+          rows={6}
+          placeholder='یک ساعت دیجیتال کلاسیک از برند کاسیو، مدل A158WA، با طراحی شیک و مقاوم در برابر آب تا 3 اتمسفر. این ساعت دارای آلارم، تقویم، لامپ ال ای دی و کرنومتر می‌باشد.'
           className='w-full p-2 border rounded'
-          rows={3}
-          draggable={false}
-          placeholder=''
-        />
+          required
+        ></textarea>
       </div>
 
       <div className='mb-4'>
@@ -425,45 +517,6 @@ const CreateProductForm = () => {
         />
       </div>
 
-      <div className='mb-4'>
-        <label htmlFor='reference' className='block font-semibold mb-1'>
-          شناسه مرجع
-        </label>
-        <input
-          type='text'
-          name='reference'
-          id='reference'
-          placeholder='REF12345'
-          className='w-full p-2 border rounded'
-        />
-      </div>
-
-      <div className='mb-4'>
-        <label htmlFor='sku' className='block font-semibold mb-1'>
-          شناسه اس کی یو<span className='text-red-500'>*</span>
-        </label>
-        <input
-          type='text'
-          name='sku'
-          id='sku'
-          placeholder='SKU12345'
-          className='w-full p-2 border rounded'
-        />
-      </div>
-
-      <div className='mb-4'>
-        <label htmlFor='ean_upc' className='block font-semibold mb-1'>
-          شناسه ای ای ان یو پی سی
-        </label>
-        <input
-          type='text'
-          name='ean_upc'
-          id='ean_upc'
-          placeholder='EAN1234512345'
-          className='w-full p-2 border rounded'
-        />
-      </div>
-
       <div className='mb-4 [&>*]:cursor-pointer font-bold'>
         <label htmlFor='availability' className='flex gap-1'>
           <input
@@ -474,6 +527,31 @@ const CreateProductForm = () => {
           />
           <span>در دسترس</span>
         </label>
+      </div>
+
+      <div className='mb-4'>
+        <label htmlFor='releaseDate' className='block font-semibold mb-1'>
+          تاریخ تولید (میلادی)
+        </label>
+        <input
+          type='date'
+          name='releaseDate'
+          id='releaseDate'
+          className='w-full p-2 border rounded'
+        />
+      </div>
+
+      <div className='mb-4'>
+        <label htmlFor='tags' className='block font-semibold mb-1'>
+          تگ ها
+        </label>
+        <input
+          type='text'
+          name='tags'
+          id='tags'
+          placeholder='مردانه، کلاسیک ...'
+          className='w-full p-2 border rounded'
+        />
       </div>
 
       <div className='mb-4'>
@@ -538,28 +616,47 @@ const CreateProductForm = () => {
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='releaseDate' className='block font-semibold mb-1'>
-          تاریخ تولید (میلادی)
+        <label htmlFor='file' className='block font-semibold mb-1'>
+          فایل تصاویر
         </label>
         <input
-          type='date'
-          name='releaseDate'
-          id='releaseDate'
+          type='file'
+          accept='image/'
+          multiple
+          name='file'
+          id='file'
+          onChange={addImageFile}
           className='w-full p-2 border rounded'
+          required
         />
-      </div>
 
-      <div className='mb-4'>
-        <label htmlFor='tags' className='block font-semibold mb-1'>
-          تگ ها
-        </label>
-        <input
-          type='text'
-          name='tags'
-          id='tags'
-          placeholder='مردانه، کلاسیک ...'
-          className='w-full p-2 border rounded'
-        />
+        <div className='flex gap-2 flex-wrap [&>*]:border '>
+          {imageFiles.map((img, index) => {
+            const url = URL.createObjectURL(img);
+            return (
+              <div key={index} className='relative'>
+                <Image
+                  src={url}
+                  alt={""}
+                  width={100}
+                  height={100}
+                  className='object-cover'
+                />
+                <button
+                  onClick={(e) => {
+                    e.preventDefault;
+                    removeImageFile(index);
+                  }}
+                  type='button'
+                  className='absolute top-0 right-0 text-red-600 bg-slate-300 bg-opacity-45'
+                >
+                  <XMarkIcon className='w-6' />{" "}
+                  <span className='sr-only'>حذف تصویر</span>
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className='flex items-center gap-4'>
@@ -570,11 +667,12 @@ const CreateProductForm = () => {
           <XMarkIcon className='w-4 md:w-6' />
           انصراف
         </Link>
-        <SubmitButton type='submit' className='gap-1'>
+        <SubmitButton type='submit' className='flex-1 gap-1 active:scale-95'>
           <RocketLaunchIcon className='w-4 md:w-6' />
           ارسال
         </SubmitButton>
       </div>
+
       {state?.error && (
         <div
           id='amount-error'

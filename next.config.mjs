@@ -12,6 +12,9 @@ const nextConfig = {
       {
         hostname: "www.casio.com",
       },
+      {
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 };
