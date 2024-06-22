@@ -3,20 +3,27 @@
 import Link from "next/link";
 import { SubmitButton } from "../SubmitButton";
 import { useFormState } from "react-dom";
-import { createProduct } from "@/app/lib/actions";
+import { updateProduct } from "@/app/lib/actions";
 import {
   ArrowUturnLeftIcon,
   PlusCircleIcon,
   RocketLaunchIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
+import { Product } from "@/app/lib/definitions";
 
-const CreateProductForm = () => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+const EditProductForm = ({
+  product = {} as Product,
+}: {
+  product?: Product;
+}) => {
+  const [imageUrls, setImageUrls] = useState<string[]>([
+    product.images.toString(),
+  ]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [state, dispatch] = useFormState(createProduct, undefined);
+  const [state, dispatch] = useFormState(updateProduct, undefined);
 
   const addImageUrl = (url: string) => {
     if (url.length < 3) return;
@@ -76,6 +83,7 @@ const CreateProductForm = () => {
           type='text'
           name='name'
           id='name'
+          defaultValue={product?.name}
           placeholder='ساعت مچی مردانه'
           className='w-full p-2 border rounded'
           required
@@ -90,6 +98,7 @@ const CreateProductForm = () => {
           type='text'
           name='sku'
           id='sku'
+          defaultValue={product?.SKU}
           placeholder='SKU12345'
           className='w-full p-2 border rounded'
           required
@@ -104,6 +113,7 @@ const CreateProductForm = () => {
           type='text'
           name='manufacturer'
           id='manufacturer'
+          defaultValue={product?.manufacturer}
           placeholder='شرکت کاسیو'
           className='w-full p-2 border rounded'
           required
@@ -121,6 +131,7 @@ const CreateProductForm = () => {
           type='text'
           name='manufacture_location'
           id='manufacture_location'
+          defaultValue={product?.manufacture_location}
           placeholder='ژاپن'
           className='w-full p-2 border rounded'
         />
@@ -134,6 +145,7 @@ const CreateProductForm = () => {
           type='text'
           name='brand'
           id='brand'
+          defaultValue={product?.brand}
           placeholder='کاسیو'
           className='w-full p-2 border rounded'
           required
@@ -148,6 +160,7 @@ const CreateProductForm = () => {
           type='text'
           name='model'
           id='model'
+          defaultValue={product?.model}
           placeholder='A158WA'
           className='w-full p-2 border rounded'
           required
@@ -161,12 +174,13 @@ const CreateProductForm = () => {
         <select
           name='gender'
           id='gender'
+          defaultValue={product?.gender || "نامشخص"}
           className='w-full p-2 border rounded'
           required
         >
-          <option value='male'>مردانه</option>
-          <option value='female'>زنانه</option>
-          <option value='unspecified'>نامشخص</option>
+          <option value='مردانه'>مردانه</option>
+          <option value='زنانه'>زنانه</option>
+          <option value='نامشخص'>نامشخص</option>
         </select>
       </div>
 
@@ -178,6 +192,7 @@ const CreateProductForm = () => {
           type='text'
           name='style'
           id='style'
+          defaultValue={product?.style}
           placeholder='کلاسیک دیجیتال'
           className='w-full p-2 border rounded'
         />
@@ -193,6 +208,7 @@ const CreateProductForm = () => {
               type='checkbox'
               name='functions'
               id='alarm'
+              defaultChecked={product?.functions.includes("آلارم")}
               value='آلارم'
               className='mr-2'
             />
@@ -203,6 +219,7 @@ const CreateProductForm = () => {
               type='checkbox'
               name='functions'
               id='calendar'
+              defaultChecked={product.functions.includes("تقویم")}
               value='تقویم'
               className='mr-2'
             />
@@ -213,6 +230,7 @@ const CreateProductForm = () => {
               type='checkbox'
               name='functions'
               id='led'
+              defaultChecked={product.functions.includes("لامپ ال ای دی")}
               value='لامپ ال ای دی'
               className='mr-2'
             />
@@ -223,6 +241,7 @@ const CreateProductForm = () => {
               type='checkbox'
               name='functions'
               id='chronometer'
+              defaultChecked={product.functions.includes("کرنومتر")}
               value='کرنومتر'
               className='mr-2'
             />
@@ -233,6 +252,7 @@ const CreateProductForm = () => {
               type='checkbox'
               name='functions'
               id='heartrate'
+              defaultChecked={product.functions.includes("سنسور ضربان قلب")}
               value='سنسور ضربان قلب'
               className='mr-2'
             />
@@ -243,6 +263,7 @@ const CreateProductForm = () => {
               type='checkbox'
               name='functions'
               id='gps'
+              defaultChecked={product.functions.includes("جی پی اس")}
               value='جی پی اس'
               className='mr-2'
             />
@@ -260,6 +281,7 @@ const CreateProductForm = () => {
               type='text'
               name='movement'
               id='movement'
+              defaultValue={product?.features?.movement}
               placeholder='کوارتز تک باتری'
               className='w-full p-2 border rounded'
             />
@@ -270,6 +292,7 @@ const CreateProductForm = () => {
               type='text'
               name='bezelMaterial'
               id='bezelMaterial'
+              defaultValue={product?.features?.bezelMaterial}
               placeholder='رزین با پوشش کروم'
               className='w-full p-2 border rounded'
             />
@@ -283,6 +306,7 @@ const CreateProductForm = () => {
               type='color'
               name='bezelColor'
               id='bezelColor'
+              defaultValue={product?.features?.bezelColor}
               className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
           </label>
@@ -293,6 +317,7 @@ const CreateProductForm = () => {
               type='text'
               name='caseMaterial'
               id='caseMaterial'
+              defaultValue={product?.features?.caseMaterial}
               placeholder='رزین با پوشش کروم'
               className='w-full p-2 border rounded'
             />
@@ -306,6 +331,7 @@ const CreateProductForm = () => {
               type='color'
               name='caseColor'
               id='caseColor'
+              defaultValue={product?.features?.caseColor}
               className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
           </label>
@@ -315,6 +341,7 @@ const CreateProductForm = () => {
               type='text'
               name='bandMaterial'
               id='bandMaterial'
+              defaultValue={product?.features?.bandMaterial}
               placeholder='استیل ضدزنگ'
               className='w-full p-2 border rounded'
             />
@@ -328,6 +355,7 @@ const CreateProductForm = () => {
               type='color'
               name='bandColor'
               id='bandColor'
+              defaultValue={product?.features?.bandColor}
               className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
           </label>
@@ -340,6 +368,7 @@ const CreateProductForm = () => {
               type='color'
               name='dialColor'
               id='dialColor'
+              defaultValue={product?.features?.dialColor}
               className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
           </label>
@@ -349,6 +378,7 @@ const CreateProductForm = () => {
               type='text'
               name='waterResistance'
               id='waterResistance'
+              defaultValue={product?.features?.waterResistance}
               placeholder='3 اتمسفر'
               className='w-full p-2 border rounded'
             />
@@ -359,6 +389,7 @@ const CreateProductForm = () => {
               type='text'
               name='warranty'
               id='warranty'
+              defaultValue={product?.features?.warranty}
               placeholder='2 سال'
               className='w-full p-2 border rounded'
             />
@@ -375,6 +406,7 @@ const CreateProductForm = () => {
               type='text'
               name='caseShape'
               id='caseShape'
+              defaultValue={product?.specifications?.caseShape}
               placeholder='چهارگوش، دایره ...'
               className='w-full p-2 border rounded'
             />
@@ -385,6 +417,7 @@ const CreateProductForm = () => {
               type='number'
               name='caseDiameter'
               id='caseDiameter'
+              defaultValue={product?.specifications?.caseDiameter}
               placeholder='33'
               className='w-full p-2 border rounded'
             />
@@ -395,6 +428,7 @@ const CreateProductForm = () => {
               type='number'
               name='caseThickness'
               id='caseThickness'
+              defaultValue={product?.specifications?.caseThickness}
               placeholder='8'
               className='w-full p-2 border rounded'
             />
@@ -405,6 +439,7 @@ const CreateProductForm = () => {
               type='number'
               name='lugWidth'
               id='lugWidth'
+              defaultValue={product?.specifications?.lugWidth}
               placeholder='18'
               className='w-full p-2 border rounded'
             />
@@ -415,6 +450,7 @@ const CreateProductForm = () => {
               type='number'
               name='weight'
               id='weight'
+              defaultValue={product?.specifications?.weight}
               placeholder='48'
               className='w-full p-2 border rounded'
             />
@@ -430,6 +466,7 @@ const CreateProductForm = () => {
           type='text'
           name='compilation'
           id='compilation'
+          defaultValue={product?.compilation}
           placeholder='دست ساز'
           className='w-full p-2 border rounded'
         />
@@ -442,6 +479,7 @@ const CreateProductForm = () => {
             type='number'
             name='price'
             id='price'
+            defaultValue={product?.price}
             min='0'
             placeholder='۳۰۰۰۰۰'
             className='w-full p-2 border rounded'
@@ -457,6 +495,7 @@ const CreateProductForm = () => {
             type='number'
             name='buy_price'
             id='buy_price'
+            defaultValue={product?.buy_price}
             min='0'
             placeholder='۳۰۰۰۰۰'
             className='w-full p-2 border rounded'
@@ -473,6 +512,7 @@ const CreateProductForm = () => {
           type='number'
           name='sale_price'
           id='sale_price'
+          defaultValue={product?.sale_price}
           placeholder='۳۰۰۰۰۰'
           className='w-full p-2 border rounded'
         />
@@ -485,6 +525,7 @@ const CreateProductForm = () => {
         <textarea
           name='short_description'
           id='short_description'
+          defaultValue={product?.short_description}
           rows={2}
           placeholder='یک ساعت دیجیتال کلاسیک با صفحه‌ی نقره‌ای و بند استیل ضدزنگ، دارای آلارم و کرنومتر.'
           className='w-full p-2 border rounded'
@@ -499,6 +540,7 @@ const CreateProductForm = () => {
         <textarea
           name='description'
           id='description'
+          defaultValue={product?.description}
           rows={6}
           placeholder='یک ساعت دیجیتال کلاسیک از برند کاسیو، مدل A158WA، با طراحی شیک و مقاوم در برابر آب تا 3 اتمسفر. این ساعت دارای آلارم، تقویم، لامپ ال ای دی و کرنومتر می‌باشد.'
           className='w-full p-2 border rounded'
@@ -514,6 +556,7 @@ const CreateProductForm = () => {
           type='number'
           name='stock'
           id='stock'
+          defaultValue={product?.stock}
           placeholder='8'
           className='w-full p-2 border rounded'
         />
@@ -525,7 +568,7 @@ const CreateProductForm = () => {
             type='checkbox'
             id='availability'
             name='availability'
-            defaultChecked
+            defaultChecked={product.availability === true}
           />
           <span>در دسترس</span>
         </label>
@@ -539,6 +582,7 @@ const CreateProductForm = () => {
           type='date'
           name='releaseDate'
           id='releaseDate'
+          defaultValue={product.releaseDate.toISOString().split("T")[0]}
           className='w-full p-2 border rounded'
         />
       </div>
@@ -551,6 +595,7 @@ const CreateProductForm = () => {
           type='text'
           name='tags'
           id='tags'
+          defaultValue={product?.tags}
           placeholder='مردانه، کلاسیک ...'
           className='w-full p-2 border rounded'
         />
@@ -568,16 +613,10 @@ const CreateProductForm = () => {
               className='text-red-500'
               onClick={() => removeImageUrl(index)}
             >
-              <span className='sr-only'>افزودن لینک تصویر</span>
+              <span className='sr-only'>حذف لینک تصویر</span>
               <XMarkIcon className='w-6' />
             </button>
-            <input
-              type='text'
-              name='images'
-              value={url}
-              readOnly
-              className='p-1 rounded border'
-            />
+            <Image src={url} alt='image' width={50} height={50} />
           </div>
         ))}
 
@@ -661,6 +700,47 @@ const CreateProductForm = () => {
         </div>
       </div>
 
+      <div className='mb-4'>
+        <label htmlFor='reviews' className='block font-semibold mb-1'>
+          نظرات درباره این محصول
+        </label>
+        <div className='border rounded p-2'>
+          {product.reviews.map((review, index) => (
+            <div key={index} className='mb-2'>
+              <label className='block font-semibold mb-1'>آیدی کاربر:</label>
+              <input
+                type='text'
+                name={`reviews[${index}].userId`}
+                defaultValue={review.userId}
+                className='w-full p-2 border rounded mb-2'
+              />
+              <label className='block font-semibold mb-1'>امتیاز:</label>
+              <input
+                type='number'
+                name={`reviews[${index}].rating`}
+                defaultValue={review.rating}
+                className='w-full p-2 border rounded mb-2'
+              />
+              <label className='block font-semibold mb-1'>نظر:</label>
+              <textarea
+                name={`reviews[${index}].comment`}
+                defaultValue={review.comment}
+                className='w-full p-2 border rounded mb-2'
+              />
+              <label className='block font-semibold mb-1'>
+                تاریخ ایجاد دیگاه:
+              </label>
+              <input
+                name={`reviews[${index}].date`}
+                type='date'
+                defaultValue={new Date(review.date).toISOString().split("T")[0]}
+                className='w-full p-2 border rounded mb-2'
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className='flex items-center gap-4'>
         <Link
           href='/admin-area/store/products'
@@ -674,7 +754,7 @@ const CreateProductForm = () => {
           className='flex-1 gap-1 text-center active:scale-95'
         >
           <RocketLaunchIcon className='w-4 md:w-6' />
-          ایجاد محصول
+          ویرایش محصول
         </SubmitButton>
       </div>
 
@@ -691,4 +771,4 @@ const CreateProductForm = () => {
   );
 };
 
-export default CreateProductForm;
+export default EditProductForm;

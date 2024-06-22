@@ -362,7 +362,6 @@ export async function createProduct(
   const allFields = [
     "manufacture_location",
     "style",
-    "functions",
     "movement",
     "bezelMaterial",
     "bezelColor",
@@ -406,7 +405,6 @@ export async function createProduct(
     short_description,
     description,
     style,
-    functions,
     movement,
     bezelMaterial,
     bezelColor,
@@ -429,6 +427,7 @@ export async function createProduct(
     tags,
   } = formDataEntries;
 
+  const functions = formData.getAll("functions") as string[];
   const images = formData.getAll("images") as File[];
   let imageUrls: string[] = [];
 
@@ -448,6 +447,7 @@ export async function createProduct(
     caseThickness,
     lugWidth,
   };
+
   for (const [field, value] of Object.entries(numericFields)) {
     if (value && isNaN(Number(value))) {
       return { error: `${field} باید یک عدد معتبر باشد` };
@@ -469,7 +469,7 @@ export async function createProduct(
     (short_description && (short_description as string).length < 20) ||
     (short_description as string).length > 1000
   ) {
-    return { error: "توضیحات باید بین 20 تا 1000 کاراکتر باشد" };
+    return { error: "توضیحات کوتاه باید بین 20 تا 1000 کاراکتر باشد" };
   }
 
   if (
@@ -515,43 +515,6 @@ export async function createProduct(
     weight: weight ? Number(weight) : null,
   };
 
-  for (const image of images) {
-    if (typeof image === "string") {
-      imageUrls.push(image);
-      console.log("Form Data Image URL:", image);
-    } else {
-      // Handle file (object)
-      const bufferArray = await image.arrayBuffer();
-      const buffer = new Uint8Array(bufferArray);
-
-      try {
-        await new Promise((resolve, reject) => {
-          cloudinary.uploader
-            .upload_stream(
-              {
-                folder: "watches",
-              },
-              function (error, result) {
-                if (error) {
-                  reject(error); // Reject the promise on error
-                  return;
-                }
-                resolve(result);
-                if (result) {
-                  imageUrls.push(result?.url);
-                }
-                console.log("Uploaded Image Url:", result?.url);
-              }
-            )
-            .end(buffer);
-        });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        return { message: "خطا در بارگزاری تصاویر" };
-      }
-    }
-  }
-
   try {
     const client = await clientPromise;
     const collection = client.db("fakeData").collection("products");
@@ -559,6 +522,43 @@ export async function createProduct(
 
     if (existingProduct) {
       return { error: "محصول با اس کی یو مشابه قبلا ثبت شده است!" };
+    }
+
+    for (const image of images) {
+      if (typeof image === "string") {
+        imageUrls.push(image);
+        console.log("Form Data Image URL:", image);
+      } else {
+        // Handle file (object)
+        const bufferArray = await image.arrayBuffer();
+        const buffer = new Uint8Array(bufferArray);
+
+        try {
+          await new Promise((resolve, reject) => {
+            cloudinary.uploader
+              .upload_stream(
+                {
+                  folder: "watches",
+                },
+                function (error, result) {
+                  if (error) {
+                    reject(error); // Reject the promise on error
+                    return;
+                  }
+                  resolve(result);
+                  if (result) {
+                    imageUrls.push(result?.url);
+                  }
+                  console.log("Uploaded Image Url:", result?.url);
+                }
+              )
+              .end(buffer);
+          });
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          return { message: "خطا در بارگزاری تصاویر" };
+        }
+      }
     }
 
     const data = await collection.insertOne({
@@ -573,6 +573,7 @@ export async function createProduct(
       functions: functions ?? [],
       compilation: compilation ?? "",
       price: price ? parseFloat(price as string) : null,
+      buy_price: buy_price ? parseFloat(buy_price as string) : null,
       sale_price: sale_price ? parseFloat(sale_price as string) : null,
       description: description ?? "",
       stock: stock ? Number(stock) : null,
@@ -593,146 +594,288 @@ export async function createProduct(
   redirect("/admin-area/store/products");
 }
 
-// export async function createProduct(
-//   _currentState: unknown,
-//   formData: FormData
-// ) {
-//   const name = formData.get("productName");
-//   const manufacturer = formData.get("manufacturer");
-//   const manufacture_location = formData.get("manufacture_location");
-//   const brand = formData.get("brand");
-//   const model = formData.get("model");
-//   const gender = formData.get("gender");
-//   const style = formData.get("style");
-//   const functions = formData.getAll("functions");
-//   const movement = formData.get("movement");
-//   const bezelMaterial = formData.get("bezelMaterial");
-//   const bezelColor = formData.get("bezelColor");
-//   const caseMaterial = formData.get("caseMaterial");
-//   const caseColor = formData.get("caseColor");
-//   const bandMaterial = formData.get("bandMaterial");
-//   const bandColor = formData.get("bandColor");
-//   const dialColor = formData.get("dialColor");
-//   const waterResistance = formData.get("waterResistance");
-//   const warranty = formData.get("warranty");
-//   const caseShape = formData.get("caseShape");
-//   const caseDiameter = formData.get("caseDiameter");
-//   const caseThickness = formData.get("caseThickness");
-//   const lugWidth = formData.get("lugWidth");
-//   const weight = formData.get("weight");
-//   const compilation = formData.get("compilation");
-//   const price = formData.get("price");
-//   const sale_price = formData.get("sale_price");
-//   const description = formData.get("description");
-//   const stock = formData.get("stock");
-//   const reference = formData.get("reference");
-//   const sku = formData.get("sku");
-//   const ean_upc = formData.get("ean_upc");
-//   const availability = formData.get("availability");
-//   const images = formData.getAll("images");
-//   const releaseDate = formData.get("releaseDate");
-//   const tags = formData.get("tags");
+export async function updateProduct(
+  _currentState: unknown,
+  formData: FormData
+) {
+  const requiredFields = [
+    "name",
+    "sku",
+    "manufacturer",
+    "brand",
+    "model",
+    "gender",
+    "price",
+    "buy_price",
+    "sale_price",
+    "short_description",
+    "description",
+    "images",
+  ];
 
-//   const tagsToArray = tags
-//     ? tags
-//         .toString()
-//         .split(/[-،]/)
-//         .map((s) => s.trim())
-//     : [];
+  const allFields = [
+    "manufacture_location",
+    "style",
+    "movement",
+    "bezelMaterial",
+    "bezelColor",
+    "caseMaterial",
+    "caseColor",
+    "bandMaterial",
+    "bandColor",
+    "dialColor",
+    "waterResistance",
+    "warranty",
+    "caseShape",
+    "caseDiameter",
+    "caseThickness",
+    "lugWidth",
+    "weight",
+    "compilation",
+    "stock",
+    "availability",
+    "releaseDate",
+    "tags",
+  ];
 
-//   const features = {
-//     movement,
-//     bezelMaterial,
-//     bezelColor,
-//     caseMaterial,
-//     caseColor,
-//     bandMaterial,
-//     bandColor,
-//     dialColor,
-//     waterResistance,
-//     warranty,
-//   };
+  const formDataEntries = Object.fromEntries(
+    [...requiredFields, ...allFields].map((field) => [
+      field,
+      formData.get(field),
+    ])
+  );
 
-//   const specifications = {
-//     caseShape,
-//     caseDiameter: caseDiameter ? parseFloat(caseDiameter as string) : null,
-//     caseThickness: caseThickness ? parseFloat(caseThickness as string) : null,
-//     lugWidth: lugWidth ? parseFloat(lugWidth as string) : null,
-//     weight: weight ? Number(weight) : null,
-//   };
+  const {
+    name,
+    sku,
+    manufacturer,
+    manufacture_location,
+    brand,
+    model,
+    gender,
+    price,
+    buy_price,
+    sale_price,
+    short_description,
+    description,
+    style,
+    movement,
+    bezelMaterial,
+    bezelColor,
+    caseMaterial,
+    caseColor,
+    bandMaterial,
+    bandColor,
+    dialColor,
+    waterResistance,
+    warranty,
+    caseShape,
+    caseDiameter,
+    caseThickness,
+    lugWidth,
+    weight,
+    compilation,
+    stock,
+    availability,
+    releaseDate,
+    tags,
+  } = formDataEntries;
 
-//   if (
-//     !name ||
-//     !manufacturer ||
-//     !brand ||
-//     !model ||
-//     !gender ||
-//     !price ||
-//     !sale_price ||
-//     !description ||
-//     !sku ||
-//     !images.length
-//   ) {
-//     return { error: "تمام فیلدهای ستاره دار را پر کنید" };
-//   }
+  const functions = formData.getAll("functions") as string[];
+  const images = formData.getAll("images") as File[];
+  let imageUrls: string[] = [];
 
-//   if (Number(price) < Number(sale_price)) {
-//     return { error: "قیمت فروش (قیمت تخفیف دار) باید کمتر از قیمت محصول باشد" };
-//   }
+  function getReviews(formData: FormData) {
+    const reviews: any[] = [];
+    const keys = Array.from(formData.keys());
+    const reviewMap = new Map();
 
-//   if (description) {
-//     if (
-//       description.toString().length < 20 ||
-//       description.toString().length > 1000
-//     ) {
-//       return { error: "توضیحات باید بین 20 تا 1000 کاراکتر باشد" };
-//     }
-//   }
+    keys.forEach((key) => {
+      const match = key.match(/reviews\[(\d+)\]\.(\w+)/);
+      if (match) {
+        const [, index, field] = match;
+        if (!reviewMap.has(index)) {
+          reviewMap.set(index, {});
+        }
+        reviewMap.get(index)[field] = formData.get(key);
+      }
+    });
 
-//   console.log(functions);
-//   try {
-//     const client = await clientPromise;
-//     const collection = client.db("fakeData").collection("products");
+    reviewMap.forEach((value, key) => {
+      reviews.push({
+        userId: value.userId,
+        username: value.username,
+        rating: parseInt(value.rating, 10),
+        comment: value.comment,
+        date: new Date(value.date),
+      });
+    });
 
-//     const product = await collection.findOne({ SKU: sku });
+    return reviews;
+  }
 
-//     if (product) {
-//       return { error: "محصول با اس کی یو مشابه قبلا ثبت شده است!" };
-//     }
+  const reviews = getReviews(formData);
+  console.log(images);
 
-//     const data = await collection.insertOne({
-//       name: name ?? "",
-//       manufacturer: manufacturer ?? "",
-//       manufacture_location: manufacture_location ?? "",
-//       brand: brand ?? "",
-//       model: model ?? "",
-//       gender: gender ?? "",
-//       style: style ?? "",
-//       functions: functions ?? [],
-//       compilation: compilation ?? "",
-//       price: price ? parseFloat(price as string) : null,
-//       sale_price: sale_price ? parseFloat(sale_price as string) : null,
-//       description: description ?? "",
-//       stock: stock ? Number(stock) : null,
-//       reference: reference ?? "",
-//       SKU: sku ?? "",
-//       EAN_EPU: ean_upc ?? "",
-//       features: features ?? "",
-//       specifications: specifications ?? "",
-//       availability: availability === "on" ? true : false,
-//       images: images ?? [],
-//       releaseDate: new Date(releaseDate as string),
-//       tags: tagsToArray ?? [],
-//       reviews: [],
-//       createdAt: new Date(),
-//     });
+  // Check for required fields
+  if (!requiredFields.every((field) => formDataEntries[field])) {
+    return { error: "تمام فیلدهای ستاره دار را پر کنید" };
+  }
 
-//     console.log(data);
-//   } catch (error) {
-//     return {
-//       message: "Database Error: Failed to Create Product.",
-//     };
-//   }
-//   revalidatePath("/admin-area/store/products");
-//   redirect("/admin-area/store/products");
-// }
+  // // Check numeric values and positive numbers
+  // const numericFields = {
+  //   price,
+  //   buy_price,
+  //   sale_price,
+  //   stock,
+  //   weight,
+  //   caseDiameter,
+  //   caseThickness,
+  //   lugWidth,
+  // };
+
+  // for (const [field, value] of Object.entries(numericFields)) {
+  //   if (value && isNaN(Number(value))) {
+  //     return { error: `${field} باید یک عدد معتبر باشد` };
+  //   }
+  //   if (value && Number(value) < 0) {
+  //     return { error: `${field} باید یک عدد مثبت باشد` };
+  //   }
+  // }
+
+  // if (Number(price) < Number(sale_price)) {
+  //   return { error: "قیمت فروش (قیمت تخفیف دار) باید کمتر از قیمت محصول باشد" };
+  // }
+
+  // if (Number(buy_price) > Number(sale_price)) {
+  //   return { error: "قیمت فروش باید بیشتر از قیمت خرید باشد" };
+  // }
+
+  // if (
+  //   (short_description && (short_description as string).length < 20) ||
+  //   (short_description as string).length > 1000
+  // ) {
+  //   return { error: "توضیحات کوتاه باید بین 20 تا 1000 کاراکتر باشد" };
+  // }
+
+  // if (
+  //   (description && (description as string).length < 20) ||
+  //   (description as string).length > 1000
+  // ) {
+  //   return { error: "توضیحات باید بین 20 تا 1000 کاراکتر باشد" };
+  // }
+
+  // if (releaseDate && isNaN(Date.parse(releaseDate as string))) {
+  //   return { error: "تاریخ انتشار نامعتبر است" };
+  // }
+
+  // if (!Array.isArray(images) || images.length === 0) {
+  //   return { error: "تصاویر باید بارگذاری شوند" };
+  // }
+
+  // const tagsToArray = tags
+  //   ? tags
+  //       .toString()
+  //       .split(/[-،]/)
+  //       .map((s) => s.trim())
+  //   : [];
+
+  // const features = {
+  //   movement,
+  //   bezelMaterial,
+  //   bezelColor,
+  //   caseMaterial,
+  //   caseColor,
+  //   bandMaterial,
+  //   bandColor,
+  //   dialColor,
+  //   waterResistance,
+  //   warranty,
+  // };
+
+  // const specifications = {
+  //   caseShape,
+  //   caseDiameter: caseDiameter ? parseFloat(caseDiameter as string) : null,
+  //   caseThickness: caseThickness ? parseFloat(caseThickness as string) : null,
+  //   lugWidth: lugWidth ? parseFloat(lugWidth as string) : null,
+  //   weight: weight ? Number(weight) : null,
+  // };
+
+  // try {
+  //   const client = await clientPromise;
+  //   const collection = client.db("fakeData").collection("products");
+  //   const existingProduct = await collection.findOne({ SKU: sku });
+
+  //   if (existingProduct) {
+  //     return { error: "محصول با اس کی یو مشابه قبلا ثبت شده است!" };
+  //   }
+
+  //   for (const image of images) {
+  //     if (typeof image === "string") {
+  //       imageUrls.push(image);
+  //       console.log("Form Data Image URL:", image);
+  //     } else {
+  //       // Handle file (object)
+  //       const bufferArray = await image.arrayBuffer();
+  //       const buffer = new Uint8Array(bufferArray);
+
+  //       try {
+  //         await new Promise((resolve, reject) => {
+  //           cloudinary.uploader
+  //             .upload_stream(
+  //               {
+  //                 folder: "watches",
+  //               },
+  //               function (error, result) {
+  //                 if (error) {
+  //                   reject(error); // Reject the promise on error
+  //                   return;
+  //                 }
+  //                 resolve(result);
+  //                 if (result) {
+  //                   imageUrls.push(result?.url);
+  //                 }
+  //                 console.log("Uploaded Image Url:", result?.url);
+  //               }
+  //             )
+  //             .end(buffer);
+  //         });
+  //       } catch (error) {
+  //         console.error("Error uploading image:", error);
+  //         return { message: "خطا در بارگزاری تصاویر" };
+  //       }
+  //     }
+  //   }
+
+  //   const data = await collection.insertOne({
+  //     name: name ?? "",
+  //     SKU: sku ?? "",
+  //     manufacturer: manufacturer ?? "",
+  //     manufacture_location: manufacture_location ?? "",
+  //     brand: brand ?? "",
+  //     model: model ?? "",
+  //     gender: gender ?? "",
+  //     style: style ?? "",
+  //     functions: functions ?? [],
+  //     compilation: compilation ?? "",
+  //     price: price ? parseFloat(price as string) : null,
+  //     buy_price: buy_price ? parseFloat(buy_price as string) : null,
+  //     sale_price: sale_price ? parseFloat(sale_price as string) : null,
+  //     description: description ?? "",
+  //     stock: stock ? Number(stock) : null,
+  //     features,
+  //     specifications,
+  //     availability: availability === "on",
+  //     images: imageUrls,
+  //     releaseDate: releaseDate ? new Date(releaseDate as string) : null,
+  //     tags: tagsToArray,
+  //     reviews: [],
+  //     createdAt: new Date(),
+  //   });
+  // } catch (error) {
+  //   return { message: "خطای دیتابیس: ایجاد محصول جدید ناموفق بود" };
+  // }
+
+  // revalidatePath("/admin-area/store/products");
+  // redirect("/admin-area/store/products");
+}

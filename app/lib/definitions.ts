@@ -20,6 +20,7 @@ export type Customer = {
 
 export type Review = {
   userId: string;
+  username: string;
   rating: number;
   comment: string;
   date: Date;
@@ -28,6 +29,7 @@ export type Review = {
 export type Product = {
   _id: string;
   name: string;
+  SKU: string;
   manufacturer: string;
   manufacture_location: string;
   brand: string;
@@ -37,12 +39,11 @@ export type Product = {
   functions: string[];
   compilation: string;
   price: number;
+  buy_price: number;
   sale_price: number;
+  short_description: string;
   description: string;
   stock: number;
-  reference: number;
-  SKU: string;
-  EAN_UPC: string;
   features: {
     movement: string;
     bezelMaterial: string;
