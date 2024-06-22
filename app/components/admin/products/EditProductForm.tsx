@@ -19,15 +19,48 @@ const EditProductForm = ({
 }: {
   product?: Product;
 }) => {
-  const [imageUrls, setImageUrls] = useState<string[]>([
-    product.images.toString(),
-  ]);
+  const [imageUrls, setImageUrls] = useState<string[]>(product.images);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [state, dispatch] = useFormState(updateProduct, undefined);
+  const [clientErrors, setClientErrors] = useState<string[]>([]);
+  const [state, dispatch] = useFormState(
+    updateProduct.bind(null, product._id),
+    undefined
+  );
+
+  const allowedDomains = [
+    "imgbb.com",
+    "cloudinary.com",
+    "casio.com",
+    "picsum.photos",
+    "lh3.googleusercontent.com",
+  ];
+
+  const isValidImageUrl = (url: string) => {
+    const imageExtensionRegex = /\.(jpg|jpeg|png|gif|webp)$/i;
+    if (!imageExtensionRegex.test(url)) return false;
+    const hostname = new URL(url).hostname;
+    return allowedDomains.some((domain) => hostname.endsWith(domain));
+  };
 
   const addImageUrl = (url: string) => {
-    if (url.length < 3) return;
-    setImageUrls([...imageUrls, url]);
+    setClientErrors([]);
+    if (state) {
+      state.error = undefined;
+    }
+
+    if (url.length < 3) {
+      setClientErrors(["یو آر ال خیلی کوتاه است"]);
+      return;
+    }
+    if (isValidImageUrl(url)) {
+      setImageUrls([...imageUrls, url]);
+    } else {
+      setClientErrors([
+        "یو آر ال نامعتبر. فقط از سایتها و فرمتهای تعیین شده استفاده کنید",
+      ]);
+
+      console.error("Invalid image URL:", url);
+    }
   };
 
   const removeImageUrl = (index: number) => {
@@ -57,9 +90,8 @@ const EditProductForm = ({
     }
   };
 
-  const handleSubmit = async (formData: FormData) => {
-    if (!imageFiles.length) return alert("عکس باید انتخاب شود");
-    if (imageFiles.length > 3) return alert("حداکثر 3 عکس انتخاب شود");
+  const handleSubmit = (formData: FormData) => {
+    setClientErrors([]);
 
     imageFiles.forEach((img, index) => {
       formData.append(`images`, img);
@@ -490,7 +522,7 @@ const EditProductForm = ({
 
       <div className='mb-4'>
         <label htmlFor='buy_price' className='block font-medium'>
-          قیمت خرید(تومان)<span className='text-red-500'>*</span>
+          قیمت خرید(تومان)
           <input
             type='number'
             name='buy_price'
@@ -499,14 +531,13 @@ const EditProductForm = ({
             min='0'
             placeholder='۳۰۰۰۰۰'
             className='w-full p-2 border rounded'
-            required
           />
         </label>
       </div>
 
       <div className='mb-4'>
         <label htmlFor='sale_price' className='block font-semibold mb-1'>
-          قیمت فروش (ریال)<span className='text-red-500'>*</span>
+          قیمت فروش (ریال)
         </label>
         <input
           type='number'
@@ -529,8 +560,7 @@ const EditProductForm = ({
           rows={2}
           placeholder='یک ساعت دیجیتال کلاسیک با صفحه‌ی نقره‌ای و بند استیل ضدزنگ، دارای آلارم و کرنومتر.'
           className='w-full p-2 border rounded'
-          required
-        ></textarea>
+        />
       </div>
 
       <div className='mb-4'>
@@ -544,8 +574,7 @@ const EditProductForm = ({
           rows={6}
           placeholder='یک ساعت دیجیتال کلاسیک از برند کاسیو، مدل A158WA، با طراحی شیک و مقاوم در برابر آب تا 3 اتمسفر. این ساعت دارای آلارم، تقویم، لامپ ال ای دی و کرنومتر می‌باشد.'
           className='w-full p-2 border rounded'
-          required
-        ></textarea>
+        />
       </div>
 
       <div className='mb-4'>
@@ -603,22 +632,38 @@ const EditProductForm = ({
 
       <div className='mb-4'>
         <label htmlFor='images' className='block font-semibold mb-1'>
-          لینک تصاویر<span className='text-red-500'>*</span>
+          لینک تصاویر
         </label>
 
-        {imageUrls.map((url, index) => (
-          <div key={index} className='flex items-center gap-4 mb-1'>
-            <button
-              type='button'
-              className='text-red-500'
-              onClick={() => removeImageUrl(index)}
-            >
-              <span className='sr-only'>حذف لینک تصویر</span>
-              <XMarkIcon className='w-6' />
-            </button>
-            <Image src={url} alt='image' width={50} height={50} />
-          </div>
-        ))}
+        {imageUrls.map((url, index) => {
+          return (
+            <div key={index} className='flex items-center gap-4 mb-1'>
+              <button
+                type='button'
+                className='text-red-500'
+                onClick={() => removeImageUrl(index)}
+              >
+                <span className='sr-only'>حذف لینک تصویر</span>
+                <XMarkIcon className='w-6' />
+              </button>
+              {isValidImageUrl(url) ? (
+                <Image src={url} alt='' width={40} height={40} />
+              ) : (
+                <p className='text-xs text-red-500'>
+                  تصویر نامعتبر (فقط از وبسایتهای تعیین شده و با پسوندهای معین
+                  مجاز است)
+                </p>
+              )}
+              <input
+                type='text'
+                name='images'
+                value={url}
+                readOnly
+                className='p-1 rounded border'
+              />
+            </div>
+          );
+        })}
 
         <label
           htmlFor='ImageInput'
@@ -668,7 +713,6 @@ const EditProductForm = ({
           id='file'
           onChange={addImageFile}
           className='w-full p-2 border rounded'
-          required
         />
 
         <div className='flex gap-2 flex-wrap [&>*]:border '>
@@ -701,44 +745,55 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='reviews' className='block font-semibold mb-1'>
-          نظرات درباره این محصول
-        </label>
-        <div className='border rounded p-2'>
-          {product.reviews.map((review, index) => (
-            <div key={index} className='mb-2'>
-              <label className='block font-semibold mb-1'>آیدی کاربر:</label>
-              <input
-                type='text'
-                name={`reviews[${index}].userId`}
-                defaultValue={review.userId}
-                className='w-full p-2 border rounded mb-2'
-              />
-              <label className='block font-semibold mb-1'>امتیاز:</label>
-              <input
-                type='number'
-                name={`reviews[${index}].rating`}
-                defaultValue={review.rating}
-                className='w-full p-2 border rounded mb-2'
-              />
-              <label className='block font-semibold mb-1'>نظر:</label>
-              <textarea
-                name={`reviews[${index}].comment`}
-                defaultValue={review.comment}
-                className='w-full p-2 border rounded mb-2'
-              />
-              <label className='block font-semibold mb-1'>
-                تاریخ ایجاد دیگاه:
-              </label>
-              <input
-                name={`reviews[${index}].date`}
-                type='date'
-                defaultValue={new Date(review.date).toISOString().split("T")[0]}
-                className='w-full p-2 border rounded mb-2'
-              />
+        {product.reviews.length < 1 ? (
+          <p>نظری برای این محصول ثبت نشده است</p>
+        ) : (
+          <>
+            <label htmlFor='reviews' className='block font-semibold mb-1'>
+              نظرات درباره این محصول
+            </label>
+            <div className='border rounded p-2'>
+              {product.reviews.map((review, index) => (
+                <div key={index} className='mb-2'>
+                  <label className='block font-semibold mb-1'>
+                    آیدی کاربر:
+                  </label>
+                  <input
+                    type='text'
+                    name={`reviews[${index}].userId`}
+                    defaultValue={review.userId}
+                    readOnly
+                    className='w-full p-2 border rounded mb-2'
+                  />
+                  <label className='block font-semibold mb-1'>امتیاز:</label>
+                  <input
+                    type='number'
+                    name={`reviews[${index}].rating`}
+                    defaultValue={review.rating}
+                    className='w-full p-2 border rounded mb-2'
+                  />
+                  <label className='block font-semibold mb-1'>نظر:</label>
+                  <textarea
+                    name={`reviews[${index}].comment`}
+                    defaultValue={review.comment}
+                    className='w-full p-2 border rounded mb-2'
+                  />
+                  <label className='block font-semibold mb-1'>
+                    تاریخ ایجاد دیگاه:
+                  </label>
+                  <input
+                    name={`reviews[${index}].date`}
+                    type='date'
+                    defaultValue={
+                      new Date(review.date).toISOString().split("T")[0]
+                    }
+                    className='w-full p-2 border rounded mb-2'
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
 
       <div className='flex items-center gap-4'>
@@ -767,6 +822,17 @@ const EditProductForm = ({
           {state.error}
         </div>
       )}
+      {clientErrors.length >= 1 ? (
+        <div
+          id='amount-error'
+          aria-live='polite'
+          className='fixed bottom-6 md:bottom-4 left-0 md:left-auto md:right-0 max-w-[200px] m-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded'
+        >
+          {clientErrors.map((err, index) => (
+            <p key={index}>{err}</p>
+          ))}
+        </div>
+      ) : null}
     </form>
   );
 };

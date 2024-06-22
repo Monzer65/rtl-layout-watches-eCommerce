@@ -38,7 +38,3 @@ export function formatIranianDateTime(date: Date): string {
 
   return `${dayOfWeek} ${persianDate} ساعت ${formattedHours}:${formattedMinutes} ${suffix}`;
 }
-
-// Example usage:
-const date = new Date();
-console.log(formatIranianDateTime(date));

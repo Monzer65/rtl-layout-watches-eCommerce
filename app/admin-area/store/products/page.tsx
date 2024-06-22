@@ -22,7 +22,6 @@ const productsPage = async ({
   const data = await getProducts(query, currentPage, pageSize);
   const products = data.products as Product[];
 
-  console.log(products);
   return (
     <div>
       <div className='max-w-[800px]'>

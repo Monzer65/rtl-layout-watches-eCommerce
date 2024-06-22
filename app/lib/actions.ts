@@ -527,7 +527,7 @@ export async function createProduct(
     for (const image of images) {
       if (typeof image === "string") {
         imageUrls.push(image);
-        console.log("Form Data Image URL:", image);
+        // console.log("Form Data Image URL:", image);
       } else {
         // Handle file (object)
         const bufferArray = await image.arrayBuffer();
@@ -549,7 +549,7 @@ export async function createProduct(
                   if (result) {
                     imageUrls.push(result?.url);
                   }
-                  console.log("Uploaded Image Url:", result?.url);
+                  // console.log("Uploaded Image Url:", result?.url);
                 }
               )
               .end(buffer);
@@ -595,6 +595,7 @@ export async function createProduct(
 }
 
 export async function updateProduct(
+  id: string,
   _currentState: unknown,
   formData: FormData
 ) {
@@ -606,15 +607,15 @@ export async function updateProduct(
     "model",
     "gender",
     "price",
-    "buy_price",
-    "sale_price",
-    "short_description",
-    "description",
     "images",
   ];
 
   const allFields = [
     "manufacture_location",
+    "buy_price",
+    "sale_price",
+    "short_description",
+    "description",
     "style",
     "movement",
     "bezelMaterial",
@@ -682,8 +683,7 @@ export async function updateProduct(
   } = formDataEntries;
 
   const functions = formData.getAll("functions") as string[];
-  const images = formData.getAll("images") as File[];
-  let imageUrls: string[] = [];
+  const images = formData.getAll("images") as File[] | string[];
 
   function getReviews(formData: FormData) {
     const reviews: any[] = [];
@@ -715,41 +715,40 @@ export async function updateProduct(
   }
 
   const reviews = getReviews(formData);
-  console.log(images);
 
   // Check for required fields
   if (!requiredFields.every((field) => formDataEntries[field])) {
     return { error: "تمام فیلدهای ستاره دار را پر کنید" };
   }
 
-  // // Check numeric values and positive numbers
-  // const numericFields = {
-  //   price,
-  //   buy_price,
-  //   sale_price,
-  //   stock,
-  //   weight,
-  //   caseDiameter,
-  //   caseThickness,
-  //   lugWidth,
-  // };
+  // Check numeric values and positive numbers
+  const numericFields = {
+    price,
+    buy_price,
+    sale_price,
+    stock,
+    weight,
+    caseDiameter,
+    caseThickness,
+    lugWidth,
+  };
 
-  // for (const [field, value] of Object.entries(numericFields)) {
-  //   if (value && isNaN(Number(value))) {
-  //     return { error: `${field} باید یک عدد معتبر باشد` };
-  //   }
-  //   if (value && Number(value) < 0) {
-  //     return { error: `${field} باید یک عدد مثبت باشد` };
-  //   }
-  // }
+  for (const [field, value] of Object.entries(numericFields)) {
+    if (value && isNaN(Number(value))) {
+      return { error: `${field} باید یک عدد معتبر باشد` };
+    }
+    if (value && Number(value) < 0) {
+      return { error: `${field} باید یک عدد مثبت باشد` };
+    }
+  }
 
-  // if (Number(price) < Number(sale_price)) {
-  //   return { error: "قیمت فروش (قیمت تخفیف دار) باید کمتر از قیمت محصول باشد" };
-  // }
+  if (Number(price) < Number(sale_price)) {
+    return { error: "قیمت فروش (قیمت تخفیف دار) باید کمتر از قیمت محصول باشد" };
+  }
 
-  // if (Number(buy_price) > Number(sale_price)) {
-  //   return { error: "قیمت فروش باید بیشتر از قیمت خرید باشد" };
-  // }
+  if (Number(buy_price) > Number(sale_price)) {
+    return { error: "قیمت فروش باید بیشتر از قیمت خرید باشد" };
+  }
 
   // if (
   //   (short_description && (short_description as string).length < 20) ||
@@ -765,117 +764,125 @@ export async function updateProduct(
   //   return { error: "توضیحات باید بین 20 تا 1000 کاراکتر باشد" };
   // }
 
-  // if (releaseDate && isNaN(Date.parse(releaseDate as string))) {
-  //   return { error: "تاریخ انتشار نامعتبر است" };
-  // }
+  if (releaseDate && isNaN(Date.parse(releaseDate as string))) {
+    return { error: "تاریخ انتشار نامعتبر است" };
+  }
 
-  // if (!Array.isArray(images) || images.length === 0) {
-  //   return { error: "تصاویر باید بارگذاری شوند" };
-  // }
+  if (!Array.isArray(images) || images.length === 0) {
+    return { error: "تصاویر باید بارگذاری شوند" };
+  }
 
-  // const tagsToArray = tags
-  //   ? tags
-  //       .toString()
-  //       .split(/[-،]/)
-  //       .map((s) => s.trim())
-  //   : [];
+  const tagsToArray = tags
+    ? tags
+        .toString()
+        .split(/[-،,]/)
+        .map((s) => s.trim())
+    : [];
 
-  // const features = {
-  //   movement,
-  //   bezelMaterial,
-  //   bezelColor,
-  //   caseMaterial,
-  //   caseColor,
-  //   bandMaterial,
-  //   bandColor,
-  //   dialColor,
-  //   waterResistance,
-  //   warranty,
-  // };
+  const features = {
+    movement,
+    bezelMaterial,
+    bezelColor,
+    caseMaterial,
+    caseColor,
+    bandMaterial,
+    bandColor,
+    dialColor,
+    waterResistance,
+    warranty,
+  };
 
-  // const specifications = {
-  //   caseShape,
-  //   caseDiameter: caseDiameter ? parseFloat(caseDiameter as string) : null,
-  //   caseThickness: caseThickness ? parseFloat(caseThickness as string) : null,
-  //   lugWidth: lugWidth ? parseFloat(lugWidth as string) : null,
-  //   weight: weight ? Number(weight) : null,
-  // };
+  const specifications = {
+    caseShape,
+    caseDiameter: caseDiameter ? parseFloat(caseDiameter as string) : null,
+    caseThickness: caseThickness ? parseFloat(caseThickness as string) : null,
+    lugWidth: lugWidth ? parseFloat(lugWidth as string) : null,
+    weight: weight ? Number(weight) : null,
+  };
 
-  // try {
-  //   const client = await clientPromise;
-  //   const collection = client.db("fakeData").collection("products");
-  //   const existingProduct = await collection.findOne({ SKU: sku });
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("products");
+    const product = await collection.findOne({ _id: new ObjectId(id) });
 
-  //   if (existingProduct) {
-  //     return { error: "محصول با اس کی یو مشابه قبلا ثبت شده است!" };
-  //   }
+    if (!product) {
+      return { message: "Product not found" };
+    }
 
-  //   for (const image of images) {
-  //     if (typeof image === "string") {
-  //       imageUrls.push(image);
-  //       console.log("Form Data Image URL:", image);
-  //     } else {
-  //       // Handle file (object)
-  //       const bufferArray = await image.arrayBuffer();
-  //       const buffer = new Uint8Array(bufferArray);
+    const imageUrls: string[] = [];
 
-  //       try {
-  //         await new Promise((resolve, reject) => {
-  //           cloudinary.uploader
-  //             .upload_stream(
-  //               {
-  //                 folder: "watches",
-  //               },
-  //               function (error, result) {
-  //                 if (error) {
-  //                   reject(error); // Reject the promise on error
-  //                   return;
-  //                 }
-  //                 resolve(result);
-  //                 if (result) {
-  //                   imageUrls.push(result?.url);
-  //                 }
-  //                 console.log("Uploaded Image Url:", result?.url);
-  //               }
-  //             )
-  //             .end(buffer);
-  //         });
-  //       } catch (error) {
-  //         console.error("Error uploading image:", error);
-  //         return { message: "خطا در بارگزاری تصاویر" };
-  //       }
-  //     }
-  //   }
+    for (const image of images) {
+      if (typeof image === "string") {
+        // Existing image URL
+        imageUrls.push(image);
+      } else {
+        // Handle file (object)
+        const bufferArray = await image.arrayBuffer();
+        const buffer = new Uint8Array(bufferArray);
 
-  //   const data = await collection.insertOne({
-  //     name: name ?? "",
-  //     SKU: sku ?? "",
-  //     manufacturer: manufacturer ?? "",
-  //     manufacture_location: manufacture_location ?? "",
-  //     brand: brand ?? "",
-  //     model: model ?? "",
-  //     gender: gender ?? "",
-  //     style: style ?? "",
-  //     functions: functions ?? [],
-  //     compilation: compilation ?? "",
-  //     price: price ? parseFloat(price as string) : null,
-  //     buy_price: buy_price ? parseFloat(buy_price as string) : null,
-  //     sale_price: sale_price ? parseFloat(sale_price as string) : null,
-  //     description: description ?? "",
-  //     stock: stock ? Number(stock) : null,
-  //     features,
-  //     specifications,
-  //     availability: availability === "on",
-  //     images: imageUrls,
-  //     releaseDate: releaseDate ? new Date(releaseDate as string) : null,
-  //     tags: tagsToArray,
-  //     reviews: [],
-  //     createdAt: new Date(),
-  //   });
-  // } catch (error) {
-  //   return { message: "خطای دیتابیس: ایجاد محصول جدید ناموفق بود" };
-  // }
+        try {
+          await new Promise((resolve, reject) => {
+            cloudinary.uploader
+              .upload_stream(
+                {
+                  folder: "watches",
+                },
+                function (error, result) {
+                  if (error) {
+                    reject(error);
+                    return;
+                  }
+                  resolve(result);
+                  if (result) {
+                    imageUrls.push(result.url);
+                  }
+                  console.log("Uploaded Image Url:", result?.url);
+                }
+              )
+              .end(buffer);
+          });
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          return { message: "خطا در بارگزاری تصاویر" };
+        }
+      }
+    }
 
-  // revalidatePath("/admin-area/store/products");
-  // redirect("/admin-area/store/products");
+    const data = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          name: name ?? "",
+          SKU: sku ?? "",
+          manufacturer: manufacturer ?? "",
+          manufacture_location: manufacture_location ?? "",
+          brand: brand ?? "",
+          model: model ?? "",
+          gender: gender ?? "",
+          style: style ?? "",
+          functions: functions ?? [],
+          compilation: compilation ?? "",
+          price: price ? parseFloat(price as string) : null,
+          buy_price: buy_price ? parseFloat(buy_price as string) : null,
+          sale_price: sale_price ? parseFloat(sale_price as string) : null,
+          short_description: short_description ?? "",
+          description: description ?? "",
+          stock: stock ? Number(stock) : null,
+          features,
+          specifications,
+          availability: availability === "on",
+          images: imageUrls,
+          releaseDate: releaseDate ? new Date(releaseDate as string) : null,
+          tags: tagsToArray,
+          reviews: reviews,
+          updatedAt: new Date(),
+        },
+      }
+    );
+  } catch (error) {
+    return { message: "خطای دیتابیس: ایجاد محصول جدید ناموفق بود" };
+  }
+
+  revalidatePath("/admin-area/store/products");
+  redirect("/admin-area/store/products");
 }
