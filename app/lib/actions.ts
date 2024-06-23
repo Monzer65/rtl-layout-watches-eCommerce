@@ -886,3 +886,26 @@ export async function updateProduct(
   revalidatePath("/admin-area/store/products");
   redirect("/admin-area/store/products");
 }
+
+export async function deleteProduct(id: string) {
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("products");
+    const objectId = new ObjectId(id);
+
+    const result = await collection.deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 1) {
+      console.log("Successfully deleted one document.");
+    } else {
+      console.log("No documents matched the query. Deleted 0 documents.");
+    }
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return {
+      error: "Database Error: Failed to delete product.",
+    };
+  }
+
+  revalidatePath("/admin-area/store/products");
+}

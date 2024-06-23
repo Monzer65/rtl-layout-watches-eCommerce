@@ -1,8 +1,10 @@
 "use client";
+
 import { Product } from "@/app/lib/definitions";
 import Image from "next/image";
 import { useState } from "react";
 import { UpdateProductButton } from "./Buttons";
+import { DeleteProduct } from "./DeleteProductForm";
 
 export default function ProductsTable({ products }: { products: Product[] }) {
   const [copied, setCopied] = useState("");
@@ -75,8 +77,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
             </td>{" "}
             <td className='flex gap-2 justify-between border p-2'>
               <UpdateProductButton id={product._id} />
-              {/* <UpdateProduct id={product._id} />
-              <DeleteProduct id={product._id} /> */}
+              <DeleteProduct id={product._id} />
             </td>
           </tr>
         ))}

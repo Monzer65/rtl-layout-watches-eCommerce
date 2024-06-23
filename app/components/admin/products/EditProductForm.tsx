@@ -64,24 +64,30 @@ const EditProductForm = ({
   };
 
   const removeImageUrl = (index: number) => {
-    setImageUrls(imageUrls.filter((_, i) => i !== index));
+    const result = window.confirm("از حذف این تصویر مطمئنید؟");
+    if (result) {
+      setImageUrls(imageUrls.filter((_, i) => i !== index));
+    }
   };
 
   const addImageFile = (e: any) => {
+    setClientErrors([]);
     const images = e.target.files;
     const newImages = [...images].filter((img) => {
       // Check for image size and image format here
       // if(img.size < 1024 * 1024 && img.type.startsWith("image/")) return img
-      return img;
+      if (!img.type.startsWith("image/")) {
+        setClientErrors(["فایل انتخاب شده یک تصویر نیست"]);
+        return false;
+      }
+      return true;
     });
 
     setImageFiles((prev) => [...newImages, ...prev]);
   };
 
   const removeImageFile = (index: number) => {
-    const result = window.confirm(
-      "Are you sure you want to delete this image?"
-    );
+    const result = window.confirm("از حذف این تصویر مطمئنید؟");
     if (result) {
       // Logic to delete the image
       const updatedImages = [...imageFiles];
@@ -104,11 +110,14 @@ const EditProductForm = ({
     <form
       action={handleSubmit}
       className={`mx-auto my-8 p-4 border rounded shadow ${
-        state?.error ? "border-red-500" : ""
+        state?.error || clientErrors.length > 0 ? "border-red-500" : ""
       }`}
     >
       <div className='mb-4'>
-        <label htmlFor='name' className='block font-semibold mb-1'>
+        <label
+          htmlFor='name'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           نام محصول<span className='text-red-500'>*</span>
         </label>
         <input
@@ -123,7 +132,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='sku' className='block font-semibold mb-1'>
+        <label
+          htmlFor='sku'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           شناسه اس کی یو<span className='text-red-500'>*</span>
         </label>
         <input
@@ -138,7 +150,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='manufacturer' className='block font-semibold mb-1'>
+        <label
+          htmlFor='manufacturer'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           تولید کننده<span className='text-red-500'>*</span>
         </label>
         <input
@@ -155,7 +170,7 @@ const EditProductForm = ({
       <div className='mb-4'>
         <label
           htmlFor='manufacture_location'
-          className='block font-semibold mb-1'
+          className='block font-bold mb-1 text-xl text-blue-900'
         >
           محل تولید
         </label>
@@ -170,7 +185,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='brand' className='block font-semibold mb-1'>
+        <label
+          htmlFor='brand'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           برند<span className='text-red-500'>*</span>
         </label>
         <input
@@ -185,7 +203,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='model' className='block font-semibold mb-1'>
+        <label
+          htmlFor='model'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           مدل<span className='text-red-500'>*</span>
         </label>
         <input
@@ -200,7 +221,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='gender' className='block font-semibold mb-1'>
+        <label
+          htmlFor='gender'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           جنسیت<span className='text-red-500'>*</span>
         </label>
         <select
@@ -217,7 +241,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='style' className='block font-semibold mb-1'>
+        <label
+          htmlFor='style'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           استایل
         </label>
         <input
@@ -231,7 +258,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='functions' className='block font-semibold mb-1'>
+        <label
+          htmlFor='functions'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           عملکردها
         </label>
         <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
@@ -305,193 +335,240 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <span className='block font-semibold mb-1'>ویژگی‌ها</span>
-        <div className='grid grid-cols-1 gap-4'>
-          <label htmlFor='movement' className='block font-medium'>
-            حرکت
+        <span className='block font-bold mb-1 text-xl text-blue-900'>
+          ویژگی‌ها
+        </span>
+        <div className='flex flex-wrap gap-4 '>
+          <div className=''>
+            <label htmlFor='movement' className='block font-semibold mb-1'>
+              حرکت
+            </label>
             <input
               type='text'
               name='movement'
               id='movement'
               defaultValue={product?.features?.movement}
               placeholder='کوارتز تک باتری'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label htmlFor='bezelMaterial' className='block font-medium'>
-            جنس بزل (قاب رویی)
+          </div>
+          <div className=''>
+            <label htmlFor='bezelMaterial' className='block font-medium'>
+              جنس بزل (قاب رویی)
+            </label>
             <input
               type='text'
               name='bezelMaterial'
               id='bezelMaterial'
               defaultValue={product?.features?.bezelMaterial}
               placeholder='رزین با پوشش کروم'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label
-            htmlFor='bezelColor'
-            className='block font-medium text-gray-700'
-          >
-            رنگ بزل (قاب رویی)
+          </div>
+
+          <div className=''>
+            <label
+              htmlFor='bezelColor'
+              className='block font-medium text-gray-700'
+            >
+              رنگ بزل (قاب رویی)
+            </label>
             <input
               type='color'
               name='bezelColor'
               id='bezelColor'
               defaultValue={product?.features?.bezelColor}
-              className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+              className='mt-1 block border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
-          </label>
+          </div>
 
-          <label htmlFor='caseMaterial' className='block font-medium'>
-            جنس بدنه
+          <div className=''>
+            <label htmlFor='caseMaterial' className='block font-medium'>
+              جنس بدنه
+            </label>
             <input
               type='text'
               name='caseMaterial'
               id='caseMaterial'
               defaultValue={product?.features?.caseMaterial}
               placeholder='رزین با پوشش کروم'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label
-            htmlFor='caseColor'
-            className='block font-medium text-gray-700'
-          >
-            رنگ بدنه
+          </div>
+
+          <div className=''>
+            <label
+              htmlFor='caseColor'
+              className='block font-medium text-gray-700'
+            >
+              رنگ بدنه
+            </label>
             <input
               type='color'
               name='caseColor'
               id='caseColor'
               defaultValue={product?.features?.caseColor}
-              className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+              className='mt-1 block border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
-          </label>
-          <label htmlFor='bandMaterial' className='block font-medium'>
-            جنس بند
+          </div>
+
+          <div className=''>
+            <label htmlFor='bandMaterial' className='block font-medium'>
+              جنس بند
+            </label>
             <input
               type='text'
               name='bandMaterial'
               id='bandMaterial'
               defaultValue={product?.features?.bandMaterial}
               placeholder='استیل ضدزنگ'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label
-            htmlFor='bandColor'
-            className='block font-medium text-gray-700'
-          >
-            رنگ بند
+          </div>
+
+          <div className=''>
+            <label
+              htmlFor='bandColor'
+              className='block font-medium text-gray-700'
+            >
+              رنگ بند
+            </label>
             <input
               type='color'
               name='bandColor'
               id='bandColor'
               defaultValue={product?.features?.bandColor}
-              className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+              className='mt-1 block border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
-          </label>
-          <label
-            htmlFor='dialColor'
-            className='block font-medium text-gray-700'
-          >
-            رنگ دایال
+          </div>
+
+          <div className=''>
+            <label
+              htmlFor='dialColor'
+              className='block font-medium text-gray-700'
+            >
+              رنگ دایال
+            </label>
             <input
               type='color'
               name='dialColor'
               id='dialColor'
               defaultValue={product?.features?.dialColor}
-              className='mt-1 block w-[150px] border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+              className='mt-1 block border-gray-300 shadow-sm focus:border-indigo-300 rounded-full focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
-          </label>
-          <label htmlFor='waterResistance' className='block font-medium'>
-            مقاومت در برابر آب
+          </div>
+
+          <div className=''>
+            <label htmlFor='waterResistance' className='block font-medium'>
+              مقاومت در برابر آب
+            </label>
             <input
               type='text'
               name='waterResistance'
               id='waterResistance'
               defaultValue={product?.features?.waterResistance}
               placeholder='3 اتمسفر'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label htmlFor='warranty' className='block font-medium'>
-            گارانتی
+          </div>
+
+          <div className=''>
+            <label htmlFor='warranty' className='block font-medium'>
+              گارانتی
+            </label>
             <input
               type='text'
               name='warranty'
               id='warranty'
               defaultValue={product?.features?.warranty}
               placeholder='2 سال'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
+          </div>
         </div>
       </div>
 
       <div className='mb-4'>
-        <span className='block font-semibold mb-1'>خصوصیات</span>
-        <div className='grid grid-cols-1 gap-4'>
-          <label htmlFor='caseShape' className='block font-medium'>
-            شکل قاب
+        <span className='block font-bold mb-1 text-xl text-blue-900'>
+          خصوصیات
+        </span>
+        <div className='flex flex-wrap gap-4'>
+          <div className=''>
+            <label htmlFor='caseShape' className='block font-medium'>
+              شکل قاب
+            </label>
             <input
               type='text'
               name='caseShape'
               id='caseShape'
               defaultValue={product?.specifications?.caseShape}
               placeholder='چهارگوش، دایره ...'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label htmlFor='caseDiameter' className='block font-medium'>
-            قطر قاب (میلیمتر)
+          </div>
+
+          <div className=''>
+            <label htmlFor='caseDiameter' className='block font-medium'>
+              قطر قاب (میلیمتر)
+            </label>
             <input
               type='number'
               name='caseDiameter'
               id='caseDiameter'
               defaultValue={product?.specifications?.caseDiameter}
               placeholder='33'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label htmlFor='caseThickness' className='block font-medium'>
-            ضخامت قاب (میلیمتر)
+          </div>
+          <div className=''>
+            <label htmlFor='caseThickness' className='block font-medium'>
+              ضخامت قاب (میلیمتر)
+            </label>
             <input
               type='number'
               name='caseThickness'
               id='caseThickness'
               defaultValue={product?.specifications?.caseThickness}
               placeholder='8'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label htmlFor='lugWidth' className='block font-medium'>
-            عرض لاگ (میلیمتر)
+          </div>
+
+          <div className=''>
+            <label htmlFor='lugWidth' className='block font-medium'>
+              عرض لاگ (میلیمتر)
+            </label>
             <input
               type='number'
               name='lugWidth'
               id='lugWidth'
               defaultValue={product?.specifications?.lugWidth}
               placeholder='18'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
-          <label htmlFor='weight' className='block font-medium'>
-            وزن (گرم)
+          </div>
+
+          <div className=''>
+            <label htmlFor='weight' className='block font-medium'>
+              وزن (گرم)
+            </label>
             <input
               type='number'
               name='weight'
               id='weight'
               defaultValue={product?.specifications?.weight}
               placeholder='48'
-              className='w-full p-2 border rounded'
+              className='max-w-[150px] p-2 border rounded'
             />
-          </label>
+          </div>
         </div>
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='compilation' className='block font-semibold mb-1'>
+        <label
+          htmlFor='compilation'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           مجموعه
         </label>
         <input
@@ -505,39 +582,48 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='price' className='block font-medium'>
+        <label
+          htmlFor='price'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           قیمت (تومان)<span className='text-red-500'>*</span>
-          <input
-            type='number'
-            name='price'
-            id='price'
-            defaultValue={product?.price}
-            min='0'
-            placeholder='۳۰۰۰۰۰'
-            className='w-full p-2 border rounded'
-            required
-          />
         </label>
+        <input
+          type='number'
+          name='price'
+          id='price'
+          defaultValue={product?.price}
+          min='0'
+          placeholder='۳۰۰۰۰۰'
+          className='w-full p-2 border rounded'
+          required
+        />
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='buy_price' className='block font-medium'>
-          قیمت خرید(تومان)
-          <input
-            type='number'
-            name='buy_price'
-            id='buy_price'
-            defaultValue={product?.buy_price}
-            min='0'
-            placeholder='۳۰۰۰۰۰'
-            className='w-full p-2 border rounded'
-          />
+        <label
+          htmlFor='buy_price'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
+          قیمت خرید (تومان)
         </label>
+        <input
+          type='number'
+          name='buy_price'
+          id='buy_price'
+          defaultValue={product?.buy_price}
+          min='0'
+          placeholder='۳۰۰۰۰۰'
+          className='w-full p-2 border rounded'
+        />
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='sale_price' className='block font-semibold mb-1'>
-          قیمت فروش (ریال)
+        <label
+          htmlFor='sale_price'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
+          قیمت فروش (تومان)
         </label>
         <input
           type='number'
@@ -550,7 +636,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='short_description' className='block font-semibold mb-1'>
+        <label
+          htmlFor='short_description'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           توضیحات کوتاه
         </label>
         <textarea
@@ -564,7 +653,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='description' className='block font-semibold mb-1'>
+        <label
+          htmlFor='description'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           توضیحات
         </label>
         <textarea
@@ -578,7 +670,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='stock' className='block font-semibold mb-1'>
+        <label
+          htmlFor='stock'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           موجودی
         </label>
         <input
@@ -604,7 +699,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='releaseDate' className='block font-semibold mb-1'>
+        <label
+          htmlFor='releaseDate'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           تاریخ تولید (میلادی)
         </label>
         <input
@@ -617,7 +715,10 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='tags' className='block font-semibold mb-1'>
+        <label
+          htmlFor='tags'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           تگ ها
         </label>
         <input
@@ -631,45 +732,17 @@ const EditProductForm = ({
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='images' className='block font-semibold mb-1'>
+        <label
+          htmlFor='images'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           لینک تصاویر
         </label>
 
-        {imageUrls.map((url, index) => {
-          return (
-            <div key={index} className='flex items-center gap-4 mb-1'>
-              <button
-                type='button'
-                className='text-red-500'
-                onClick={() => removeImageUrl(index)}
-              >
-                <span className='sr-only'>حذف لینک تصویر</span>
-                <XMarkIcon className='w-6' />
-              </button>
-              {isValidImageUrl(url) ? (
-                <Image src={url} alt='' width={40} height={40} />
-              ) : (
-                <p className='text-xs text-red-500'>
-                  تصویر نامعتبر (فقط از وبسایتهای تعیین شده و با پسوندهای معین
-                  مجاز است)
-                </p>
-              )}
-              <input
-                type='text'
-                name='images'
-                value={url}
-                readOnly
-                className='p-1 rounded border'
-              />
-            </div>
-          );
-        })}
-
         <label
           htmlFor='ImageInput'
-          className='flex justify-between items-center gap-4 font-semibold mb-1'
+          className='flex justify-between items-center gap-4'
         >
-          <span className='sr-only'>افزودن تصویر</span>
           <input
             type='text'
             name='imageInput'
@@ -680,8 +753,8 @@ const EditProductForm = ({
                 e.currentTarget.value = "";
               }
             }}
-            placeholder='لینک تصویر را وارد کنید و دکمه انتر را بزنید'
-            className='w-full p-2 border rounded'
+            placeholder='لینک تصویر را از casio.com, re.cloudinary.com و ... وارد کنید و دکمه انتر را بزنید'
+            className='w-full p-2 border rounded mb-1'
           />
           <button
             type='button'
@@ -699,10 +772,48 @@ const EditProductForm = ({
             <PlusCircleIcon className='w-10 text-blue-600' />
           </button>
         </label>
+
+        {imageUrls.map((url, index) => {
+          return (
+            <div key={index} className='flex items-center gap-4 mb-1'>
+              <button
+                type='button'
+                className='text-red-500'
+                onClick={() => removeImageUrl(index)}
+              >
+                <span className='sr-only'>حذف لینک تصویر</span>
+                <XMarkIcon className='w-6' />
+              </button>
+              {isValidImageUrl(url) ? (
+                <Image
+                  src={url}
+                  alt={`product image ${index + 1}`}
+                  width={40}
+                  height={40}
+                />
+              ) : (
+                <p className='text-xs text-red-500'>
+                  تصویر نامعتبر (فقط از وبسایتهای تعیین شده و با پسوندهای معین
+                  مجاز است)
+                </p>
+              )}
+              <input
+                type='text'
+                name='images'
+                value={url}
+                readOnly
+                className='p-1 rounded border'
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className='mb-4'>
-        <label htmlFor='file' className='block font-semibold mb-1'>
+        <label
+          htmlFor='file'
+          className='block font-bold mb-1 text-xl text-blue-900'
+        >
           فایل تصاویر
         </label>
         <input
@@ -712,7 +823,7 @@ const EditProductForm = ({
           name='file'
           id='file'
           onChange={addImageFile}
-          className='w-full p-2 border rounded'
+          className='w-full p-2 border rounded mb-1'
         />
 
         <div className='flex gap-2 flex-wrap [&>*]:border '>
@@ -725,7 +836,7 @@ const EditProductForm = ({
                   alt={""}
                   width={100}
                   height={100}
-                  className='object-cover'
+                  className='object-cover rounded-md'
                 />
                 <button
                   onClick={(e) => {
@@ -749,44 +860,63 @@ const EditProductForm = ({
           <p>نظری برای این محصول ثبت نشده است</p>
         ) : (
           <>
-            <label htmlFor='reviews' className='block font-semibold mb-1'>
+            <label
+              htmlFor='reviews'
+              className='block font-bold mb-1 text-xl text-blue-900'
+            >
               نظرات درباره این محصول
             </label>
             <div className='border rounded p-2'>
               {product.reviews.map((review, index) => (
                 <div key={index} className='mb-2'>
-                  <label className='block font-semibold mb-1'>
-                    آیدی کاربر:
-                  </label>
-                  <input
-                    type='text'
-                    name={`reviews[${index}].userId`}
-                    defaultValue={review.userId}
-                    readOnly
-                    className='w-full p-2 border rounded mb-2'
-                  />
-                  <label className='block font-semibold mb-1'>امتیاز:</label>
-                  <input
-                    type='number'
-                    name={`reviews[${index}].rating`}
-                    defaultValue={review.rating}
-                    className='w-full p-2 border rounded mb-2'
-                  />
-                  <label className='block font-semibold mb-1'>نظر:</label>
+                  <span className='font-semibold text-blue-800'>
+                    نظر شماره {index + 1}
+                  </span>
+                  <div className='flex flex-wrap md:flex-nowrap gap-4'>
+                    <div className='flex-1'>
+                      <label className='block font-bold mb-1'>
+                        آیدی کاربر:
+                      </label>
+                      <input
+                        type='text'
+                        name={`reviews[${index}].userId`}
+                        defaultValue={review.userId}
+                        readOnly
+                        className='w-full p-2 border rounded mb-2'
+                      />
+                    </div>
+                    <div className='flex-1'>
+                      <label className='block font-semibold mb-1'>
+                        امتیاز:
+                      </label>
+                      <input
+                        type='number'
+                        name={`reviews[${index}].rating`}
+                        min={1}
+                        max={5}
+                        defaultValue={review.rating}
+                        className='w-full p-2 border rounded mb-2'
+                      />
+                    </div>
+                    <div className='flex-1'>
+                      <label className='block font-semibold mb-1'>
+                        تاریخ ایجاد دیگاه:
+                      </label>
+                      <input
+                        name={`reviews[${index}].date`}
+                        type='date'
+                        defaultValue={
+                          new Date(review.date).toISOString().split("T")[0]
+                        }
+                        className='w-full p-2 border rounded mb-2'
+                      />
+                    </div>
+                  </div>
+                  <label className='block font-semibold mb-1'>دیدگاه:</label>
                   <textarea
                     name={`reviews[${index}].comment`}
                     defaultValue={review.comment}
-                    className='w-full p-2 border rounded mb-2'
-                  />
-                  <label className='block font-semibold mb-1'>
-                    تاریخ ایجاد دیگاه:
-                  </label>
-                  <input
-                    name={`reviews[${index}].date`}
-                    type='date'
-                    defaultValue={
-                      new Date(review.date).toISOString().split("T")[0]
-                    }
+                    maxLength={1000}
                     className='w-full p-2 border rounded mb-2'
                   />
                 </div>
