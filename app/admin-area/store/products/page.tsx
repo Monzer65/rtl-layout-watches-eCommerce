@@ -4,7 +4,7 @@ import Pagination from "@/app/components/admin/Pagination";
 import { CreateProductButton } from "@/app/components/admin/products/Buttons";
 import ProductsTable from "@/app/components/admin/products/ProductsTable";
 import Search from "@/app/components/admin/Search";
-import { getProducts } from "@/app/lib/data";
+import { getProducts } from "@/app/lib/data_products";
 import { Product } from "@/app/lib/definitions";
 import { Suspense } from "react";
 

@@ -1,12 +1,4 @@
-export type Invoice = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  date: string;
-  // In TypeScript, this is called a string union type.
-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
-  status: "pending" | "paid";
-};
+import { ObjectId } from "mongodb";
 
 export type Customer = {
   _id: string;
@@ -70,4 +62,42 @@ export type Product = {
   reviews: Review[];
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type ItemInInvoice = {
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+};
+export type CustomerInInvoice = {
+  customerId: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: AddressInCustomerInInvoice;
+};
+export type AddressInCustomerInInvoice = {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+};
+export type Invoice = {
+  _id: ObjectId;
+  invoiceNumber: string;
+  customer: CustomerInInvoice;
+  items: ItemInInvoice[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  paymentStatus: "pending" | "paid" | "failed";
+  paymentMethod: string;
+  transactionId: string;
+  invoiceDate: Date;
+  dueDate: Date;
+  updatedAt: Date;
+  notes: string;
 };

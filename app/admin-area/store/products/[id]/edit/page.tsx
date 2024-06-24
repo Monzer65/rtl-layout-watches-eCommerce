@@ -1,5 +1,5 @@
 import EditProductForm from "@/app/components/admin/products/EditProductForm";
-import { getProductById } from "@/app/lib/data";
+import { getProductById } from "@/app/lib/data_products";
 import { formatIranianDateTime } from "@/app/lib/helpers/formatDateAndTime";
 
 const page = async ({ params }: { params: { id: string } }) => {

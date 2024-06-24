@@ -1,4 +1,4 @@
-import { getProducts } from "@/app/lib/data";
+import { getProducts } from "@/app/lib/data_products";
 import { Product } from "@/app/lib/definitions";
 
 const AdminStorePage = async () => {

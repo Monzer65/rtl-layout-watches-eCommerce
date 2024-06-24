@@ -74,7 +74,6 @@ const EditProductForm = ({
     setClientErrors([]);
     const images = e.target.files;
     const newImages = [...images].filter((img) => {
-      // Check for image size and image format here
       // if(img.size < 1024 * 1024 && img.type.startsWith("image/")) return img
       if (!img.type.startsWith("image/")) {
         setClientErrors(["فایل انتخاب شده یک تصویر نیست"]);
@@ -89,20 +88,16 @@ const EditProductForm = ({
   const removeImageFile = (index: number) => {
     const result = window.confirm("از حذف این تصویر مطمئنید؟");
     if (result) {
-      // Logic to delete the image
       const updatedImages = [...imageFiles];
       updatedImages.splice(index, 1);
       setImageFiles(updatedImages);
     }
   };
-
   const handleSubmit = (formData: FormData) => {
     setClientErrors([]);
-
     imageFiles.forEach((img, index) => {
       formData.append(`images`, img);
     });
-
     dispatch(formData);
   };
 
@@ -515,6 +510,7 @@ const EditProductForm = ({
               type='number'
               name='caseDiameter'
               id='caseDiameter'
+              min={1}
               defaultValue={product?.specifications?.caseDiameter}
               placeholder='33'
               className='max-w-[150px] p-2 border rounded'
@@ -528,6 +524,7 @@ const EditProductForm = ({
               type='number'
               name='caseThickness'
               id='caseThickness'
+              min={1}
               defaultValue={product?.specifications?.caseThickness}
               placeholder='8'
               className='max-w-[150px] p-2 border rounded'
@@ -542,6 +539,7 @@ const EditProductForm = ({
               type='number'
               name='lugWidth'
               id='lugWidth'
+              min={1}
               defaultValue={product?.specifications?.lugWidth}
               placeholder='18'
               className='max-w-[150px] p-2 border rounded'
@@ -556,6 +554,7 @@ const EditProductForm = ({
               type='number'
               name='weight'
               id='weight'
+              min={1}
               defaultValue={product?.specifications?.weight}
               placeholder='48'
               className='max-w-[150px] p-2 border rounded'
@@ -593,7 +592,7 @@ const EditProductForm = ({
           name='price'
           id='price'
           defaultValue={product?.price}
-          min='0'
+          min={0}
           placeholder='۳۰۰۰۰۰'
           className='w-full p-2 border rounded'
           required
@@ -629,6 +628,7 @@ const EditProductForm = ({
           type='number'
           name='sale_price'
           id='sale_price'
+          min={0}
           defaultValue={product?.sale_price}
           placeholder='۳۰۰۰۰۰'
           className='w-full p-2 border rounded'
@@ -753,7 +753,7 @@ const EditProductForm = ({
                 e.currentTarget.value = "";
               }
             }}
-            placeholder='لینک تصویر را از casio.com, re.cloudinary.com و ... وارد کنید و دکمه انتر را بزنید'
+            placeholder='لینک تصویر را از casio.com, res.cloudinary.com و ... وارد کنید و دکمه انتر را بزنید'
             className='w-full p-2 border rounded mb-1'
           />
           <button

@@ -1,14 +1,16 @@
 "use server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import clientPromise from "./dbConnection";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
+import clientPromise from "./dbConnection";
+import bcrypt from "bcryptjs";
 import { validatePassword } from "./helpers/validatePassword";
 import { generateAccessToken, generateRefreshToken } from "./auth";
 import { validateEmail } from "./helpers/validateEmail";
-import { v2 as cloudinary, v2 } from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import { Invoice, ItemInInvoice } from "./definitions";
+import { generateInvoiceNumber } from "./helpers/generateInvoiceNumber";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -908,4 +910,151 @@ export async function deleteProduct(id: string) {
   }
 
   revalidatePath("/admin-area/store/products");
+}
+
+export async function createInvoice(
+  _currentState: unknown,
+  formData: FormData
+) {
+  const customer = formData.get("customer");
+  const products = formData.getAll("products");
+  const paymentMethod = formData.get("paymentMethod");
+  const paymentStatus = formData.get("paymentStatus");
+  const transactionId = formData.get("transactionId");
+  const invoiceDate = formData.get("invoiceDate");
+  const dueDate = formData.get("dueDate");
+  const notes = formData.get("notes");
+
+  const parsedCustomer = JSON.parse(customer ? customer.toString() : "");
+
+  const customerData = {
+    customer: {
+      customerId: parsedCustomer._id,
+      name: parsedCustomer.username,
+      email: parsedCustomer.email,
+      phone: parsedCustomer?.phone || "",
+      address: {
+        street: parsedCustomer?.address?.street || "",
+        city: parsedCustomer?.address?.city || "",
+        state: parsedCustomer?.address?.state || "",
+        zip: parsedCustomer?.address?.zip || "",
+        country: parsedCustomer?.address?.country || "",
+      },
+    },
+  };
+
+  const parsedProducts = products.map((product) =>
+    JSON.parse(product.toString())
+  );
+
+  const quantities: number[] = [];
+
+  for (let i = 0; i < products.length; i++) {
+    const quantity = formData.get(`quantity-${i}`);
+    if (quantity) {
+      quantities.push(parseInt(quantity.toString(), 10));
+    } else {
+      quantities.push(1); // Default to 1 if no quantity is provided
+    }
+  }
+
+  const items = parsedProducts.map((product, index) => ({
+    productId: product._id,
+    productName: product.name,
+    quantity: quantities[index],
+    unitPrice: product.sale_price,
+    totalPrice: product.sale_price * quantities[index],
+  }));
+
+  const subtotal = items.reduce((acc, item) => acc + item.totalPrice, 0);
+  const tax = 0.1 * subtotal;
+  const total = subtotal + tax;
+
+  const invoiceNumber = generateInvoiceNumber("");
+
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("invoices");
+
+    // Check if the invoice number already exists
+    const invoice = await collection.findOne({
+      invoiceNumber: invoiceNumber?.toString(),
+    });
+
+    if (invoice) {
+      return {
+        error: "Invoice already exists!",
+      };
+    }
+
+    // Check if the payment method is valid
+    // const validPaymentMethods = ["credit_card", "paypal", "bank_transfer"];
+    // if (!validPaymentMethods.includes(paymentMethod?.toString() || "")) {
+    //   return {
+    //     error: "Invalid payment method!",
+    //   };
+    // }
+
+    if (
+      invoiceDate &&
+      dueDate &&
+      new Date(invoiceDate.toString()) > new Date(dueDate.toString())
+    ) {
+      return {
+        error: "Due date cannot be earlier than invoice date!",
+      };
+    }
+
+    const newInvoice: Invoice = {
+      _id: new ObjectId(),
+      invoiceNumber: invoiceNumber?.toString() || generateInvoiceNumber(""),
+      customer: customerData.customer,
+      items,
+      subtotal,
+      tax,
+      total,
+      paymentStatus: (paymentStatus?.toString() || "pending") as
+        | "pending"
+        | "paid"
+        | "failed",
+      paymentMethod: paymentMethod?.toString() || "",
+      transactionId: transactionId?.toString() || "",
+      invoiceDate: invoiceDate ? new Date(invoiceDate.toString()) : new Date(),
+      dueDate: dueDate ? new Date(dueDate.toString()) : new Date(),
+      updatedAt: new Date(),
+      notes: notes?.toString() || "",
+    };
+
+    await collection.insertOne(newInvoice);
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Database Error: Failed to Create Invoice.",
+    };
+  }
+  revalidatePath("/admin-area/store/invoices");
+  redirect("/admin-area/store/invoices");
+}
+
+export async function deleteInvoice(id: string) {
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("invoices");
+    const objectId = new ObjectId(id);
+
+    const result = await collection.deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 1) {
+      console.log("Successfully deleted one document.");
+    } else {
+      console.log("No documents matched the query. Deleted 0 documents.");
+    }
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
+    return {
+      error: "Database Error: Failed to delete invoice.",
+    };
+  }
+
+  revalidatePath("/admin-area/store/invoices");
 }

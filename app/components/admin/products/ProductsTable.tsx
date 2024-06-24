@@ -36,7 +36,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
                 alt={product.name}
                 width={40}
                 height={40}
-                className='m-auto'
+                className='m-auto h-auto'
               />
             </td>
             <td className='border p-2 relative' dir='ltr'>
@@ -75,9 +75,11 @@ export default function ProductsTable({ products }: { products: Product[] }) {
                 year: "numeric",
               })}
             </td>{" "}
-            <td className='flex gap-2 justify-between border p-2'>
-              <UpdateProductButton id={product._id} />
-              <DeleteProduct id={product._id} />
+            <td className='border p-2'>
+              <div className='flex gap-2 justify-between'>
+                <UpdateProductButton id={product._id} />
+                <DeleteProduct id={product._id} />
+              </div>
             </td>
           </tr>
         ))}

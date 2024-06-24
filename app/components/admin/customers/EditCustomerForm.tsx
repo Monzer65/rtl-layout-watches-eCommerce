@@ -65,7 +65,7 @@ export default function EditCustomerForm({
               type='checkbox'
               name='roles'
               value='user'
-              defaultChecked={customer.roles.includes("user")}
+              defaultChecked={customer?.roles.includes("user")}
             />{" "}
             کاربر عادی
           </label>
@@ -74,7 +74,7 @@ export default function EditCustomerForm({
               type='checkbox'
               name='roles'
               value='admin'
-              defaultChecked={customer.roles.includes("admin")}
+              defaultChecked={customer?.roles.includes("admin")}
             />{" "}
             ادمین
           </label>

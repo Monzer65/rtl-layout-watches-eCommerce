@@ -2,11 +2,11 @@ import { CreateCustomer } from "@/app/components/admin/customers/Buttons";
 import CustomersTable from "@/app/components/admin/customers/CustomersTable";
 import Pagination from "@/app/components/admin/Pagination";
 import Search from "@/app/components/admin/Search";
-import { fetchCustomers } from "@/app/lib/data";
+import { fetchCustomers } from "@/app/lib/data_customers";
 import { Customer } from "@/app/lib/definitions";
 import { Suspense } from "react";
 
-const customers = async ({
+const CustomersPage = async ({
   searchParams,
 }: {
   searchParams?: {
@@ -43,4 +43,4 @@ const customers = async ({
   );
 };
 
-export default customers;
+export default CustomersPage;

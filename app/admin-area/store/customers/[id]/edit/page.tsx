@@ -1,9 +1,10 @@
 import EditCustomerForm from "@/app/components/admin/customers/EditCustomerForm";
-import { fetchCustomerById } from "@/app/lib/data";
+import { fetchCustomerById } from "@/app/lib/data_customers";
 import { formatIranianDateTime } from "@/app/lib/helpers/formatDateAndTime";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const id = params.id;
+  console.log("id:", id);
   const customerData = await fetchCustomerById(id);
 
   return (

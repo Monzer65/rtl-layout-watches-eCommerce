@@ -67,9 +67,11 @@ export default function CustomersTable({
                 year: "numeric",
               })}
             </td>{" "}
-            <td className='flex gap-2 justify-between border p-2'>
-              <UpdateCustomer id={customer._id} />
-              <DeleteCustomer id={customer._id} />
+            <td className=' border p-2'>
+              <div className='flex gap-2 justify-between'>
+                <UpdateCustomer id={customer._id} />
+                <DeleteCustomer id={customer._id} />
+              </div>
             </td>
           </tr>
         ))}
