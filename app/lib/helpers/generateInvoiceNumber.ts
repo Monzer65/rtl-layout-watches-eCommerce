@@ -1,24 +1,19 @@
-export function generateInvoiceNumber(lastInvoiceNumber: string): string {
-  // Determine the pattern components
+export function generateInvoiceNumber(): string {
+  // Define the prefix and date format
   const prefix = "INV-";
-  const datePrefix = "YYYYMMDD-";
-  const sequentialNumberLength = 3;
+  const dateFormat = "YYYYMMDD";
 
-  // Extract the sequential number from the last invoice number
-  const lastSequentialNumber = parseInt(
-    lastInvoiceNumber.slice(lastInvoiceNumber.length - sequentialNumberLength),
-    10
-  );
+  // Get the current date
+  const currentDate = new Date();
 
-  // Generate the new sequential number
-  const newSequentialNumber = String(lastSequentialNumber + 1).padStart(
-    sequentialNumberLength,
-    "0"
-  );
+  // Format the date as a string
+  const dateString = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
 
-  // Construct the new invoice number
-  const currentDate = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const newInvoiceNumber = `${prefix}${currentDate}-${newSequentialNumber}`;
+  // Generate a random sequential number
+  const sequentialNumber = Math.floor(100000 + Math.random() * 900000);
 
-  return newInvoiceNumber;
+  // Construct the invoice number
+  const invoiceNumber = `${prefix}${dateString}-${sequentialNumber}`;
+
+  return invoiceNumber;
 }

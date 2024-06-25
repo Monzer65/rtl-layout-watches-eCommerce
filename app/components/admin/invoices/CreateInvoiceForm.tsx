@@ -56,6 +56,7 @@ export default function CreateInvoiceForm({
             className='peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pr-10 text-sm outline-2 placeholder:text-gray-500'
             defaultValue=''
             aria-describedby='customer-error'
+            required
           >
             <option value='' disabled>
               یک مشتری را برای صدور فاکتور جدید انتخاب کنید
@@ -80,6 +81,7 @@ export default function CreateInvoiceForm({
             name='productId'
             className='border border-gray-200 pr-10 py-2 text-sm outline-2 placeholder:text-gray-500'
             onChange={(e) => handleProductSelect(e.target.value)}
+            required
           />
           <datalist id='productId'>
             {products.map((product) => (
@@ -132,24 +134,13 @@ export default function CreateInvoiceForm({
               hidden
               readOnly
               className='p-1 rounded border'
+              required
             />
           </div>
         );
       })}
 
-      <div className='mb-4'>
-        <label htmlFor='tax' className='block font-semibold mb-1'>
-          مالیات
-        </label>
-        <input
-          type='number'
-          id='tax'
-          name='tax'
-          className='w-full p-2 border rounded'
-        />
-      </div>
-
-      <fieldset className='mb-4'>
+      <fieldset className='my-4'>
         <legend className='mb-2 block text-sm font-medium'>
           انتخاب وضعیت پرداخت
         </legend>

@@ -80,10 +80,17 @@ export async function fetchInvoiceById(id: string) {
 
     if (result) {
       const invoice: Invoice = {
-        _id: result._id,
+        ...result,
+        _id: result._id.toString(),
+        customer: {
+          ...result.customer,
+          customerId: result.customer.customerId.toString(),
+        },
+        items: result.items.map((item: ItemInInvoice) => ({
+          ...item,
+          productId: item.productId.toString(),
+        })),
         invoiceNumber: result.invoiceNumber,
-        customer: result.customer,
-        items: result.items,
         subtotal: result.subtotal,
         tax: result.tax,
         total: result.total,

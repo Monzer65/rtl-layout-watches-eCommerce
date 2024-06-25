@@ -86,7 +86,7 @@ export type AddressInCustomerInInvoice = {
   country: string;
 };
 export type Invoice = {
-  _id: ObjectId;
+  _id: string;
   invoiceNumber: string;
   customer: CustomerInInvoice;
   items: ItemInInvoice[];

@@ -925,6 +925,7 @@ export async function createInvoice(
   const dueDate = formData.get("dueDate");
   const notes = formData.get("notes");
 
+  if (!customer || !products) return { error: "فیلدهای اجباری باید پر شوند" };
   const parsedCustomer = JSON.parse(customer ? customer.toString() : "");
 
   const customerData = {
@@ -967,33 +968,15 @@ export async function createInvoice(
   }));
 
   const subtotal = items.reduce((acc, item) => acc + item.totalPrice, 0);
-  const tax = 0.1 * subtotal;
-  const total = subtotal + tax;
+  const taxPercentage = 0.1;
+  const calcedTax = subtotal * taxPercentage;
+  const total = subtotal + calcedTax;
 
-  const invoiceNumber = generateInvoiceNumber("");
+  const invoiceNumber = generateInvoiceNumber();
 
   try {
     const client = await clientPromise;
     const collection = client.db("fakeData").collection("invoices");
-
-    // Check if the invoice number already exists
-    const invoice = await collection.findOne({
-      invoiceNumber: invoiceNumber?.toString(),
-    });
-
-    if (invoice) {
-      return {
-        error: "Invoice already exists!",
-      };
-    }
-
-    // Check if the payment method is valid
-    // const validPaymentMethods = ["credit_card", "paypal", "bank_transfer"];
-    // if (!validPaymentMethods.includes(paymentMethod?.toString() || "")) {
-    //   return {
-    //     error: "Invalid payment method!",
-    //   };
-    // }
 
     if (
       invoiceDate &&
@@ -1001,17 +984,16 @@ export async function createInvoice(
       new Date(invoiceDate.toString()) > new Date(dueDate.toString())
     ) {
       return {
-        error: "Due date cannot be earlier than invoice date!",
+        error: "تاریخ سررسید نباید زودتر از تاریخ فاکتور باشد",
       };
     }
 
-    const newInvoice: Invoice = {
-      _id: new ObjectId(),
-      invoiceNumber: invoiceNumber?.toString() || generateInvoiceNumber(""),
+    const newInvoice = {
+      invoiceNumber: invoiceNumber?.toString() || generateInvoiceNumber(),
       customer: customerData.customer,
       items,
       subtotal,
-      tax,
+      tax: taxPercentage,
       total,
       paymentStatus: (paymentStatus?.toString() || "pending") as
         | "pending"
@@ -1030,6 +1012,123 @@ export async function createInvoice(
     console.error(error);
     return {
       error: "Database Error: Failed to Create Invoice.",
+    };
+  }
+  revalidatePath("/admin-area/store/invoices");
+  redirect("/admin-area/store/invoices");
+}
+
+export async function updateInvoice(
+  id: string,
+  _currentState: unknown,
+  formData: FormData
+) {
+  const customer = formData.get("customer");
+  const products = formData.getAll("products");
+  const invoiceNumber = formData.get("invoiceNumber");
+  const tax = formData.get("tax");
+  const paymentMethod = formData.get("paymentMethod");
+  const paymentStatus = formData.get("paymentStatus");
+  const transactionId = formData.get("transactionId");
+  const invoiceDate = formData.get("invoiceDate");
+  const dueDate = formData.get("dueDate");
+  const notes = formData.get("notes");
+
+  if (!customer || !products) return { error: "فیلدهای اجباری باید پر شوند" };
+
+  const parsedCustomer = JSON.parse(customer ? customer.toString() : "");
+
+  const customerData = {
+    customer: {
+      customerId: parsedCustomer._id,
+      name: parsedCustomer.username,
+      email: parsedCustomer.email,
+      phone: parsedCustomer?.phone || "",
+      address: {
+        street: parsedCustomer?.address?.street || "",
+        city: parsedCustomer?.address?.city || "",
+        state: parsedCustomer?.address?.state || "",
+        zip: parsedCustomer?.address?.zip || "",
+        country: parsedCustomer?.address?.country || "",
+      },
+    },
+  };
+
+  const parsedProducts = products.map((product) =>
+    JSON.parse(product.toString())
+  );
+
+  const quantities: number[] = [];
+
+  for (let i = 0; i < products.length; i++) {
+    const quantity = formData.get(`quantity-${i}`);
+    if (quantity) {
+      quantities.push(parseInt(quantity.toString(), 10));
+    } else {
+      quantities.push(1); // Default to 1 if no quantity is provided
+    }
+  }
+
+  const items = parsedProducts.map((product, index) => ({
+    productId: product._id,
+    productName: product.name,
+    quantity: quantities[index],
+    unitPrice: product.sale_price,
+    totalPrice: product.sale_price * quantities[index],
+  }));
+
+  const subtotal = items.reduce((acc, item) => acc + item.totalPrice, 0);
+  const taxPercentage = tax ? parseFloat(tax.toString()) / 100 : 0.1;
+  const calcedTax = subtotal * taxPercentage;
+  const total = subtotal + calcedTax;
+
+  try {
+    const client = await clientPromise;
+    const collection = client.db("fakeData").collection("invoices");
+
+    const invoice = await collection.findOne({ _id: new ObjectId(id) });
+
+    if (!invoice) return { error: "فاکتور مدنظر یافت نشد" };
+
+    if (
+      invoiceDate &&
+      dueDate &&
+      new Date(invoiceDate.toString()) > new Date(dueDate.toString())
+    ) {
+      return {
+        error: "تاریخ سررسید نباید زودتر از تاریخ فاکتور باشد",
+      };
+    }
+
+    await collection.updateOne(
+      { _id: invoice._id },
+      {
+        $set: {
+          invoiceNumber: invoiceNumber?.toString() || "",
+          customer: customerData.customer,
+          items,
+          subtotal,
+          tax: taxPercentage,
+          total,
+          paymentStatus: (paymentStatus?.toString() || "pending") as
+            | "pending"
+            | "paid"
+            | "failed",
+          paymentMethod: paymentMethod?.toString() || "",
+          transactionId: transactionId?.toString() || "",
+          invoiceDate: invoiceDate
+            ? new Date(invoiceDate.toString())
+            : new Date(),
+          dueDate: dueDate ? new Date(dueDate.toString()) : new Date(),
+          notes: notes?.toString() || "",
+        },
+        $currentDate: { updatedAt: true },
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Database Error: Failed to Edit Invoice.",
     };
   }
   revalidatePath("/admin-area/store/invoices");

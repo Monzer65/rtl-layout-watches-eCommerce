@@ -25,12 +25,18 @@ export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
             <td className='border p-2 relative' dir='ltr'>
               {invoice?.invoiceNumber}
             </td>
-            <td className='border p-2'>
+            <td className='border p-2 relative' dir='ltr'>
               <Link
                 href={`/admin-area/store/customers/${invoice.customer.customerId}/edit`}
                 className='hover:underline text-blue-700'
               >
-                {invoice?.customer.name}
+                <span title={invoice?.customer.name}>
+                  {invoice?.customer.name &&
+                    invoice?.customer.name.substring(0, 15)}
+                  {invoice?.customer.name &&
+                    invoice?.customer.name.length > 15 &&
+                    "..."}
+                </span>
               </Link>
             </td>
             <td className='border p-2'>
