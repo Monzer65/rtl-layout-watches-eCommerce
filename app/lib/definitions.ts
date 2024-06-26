@@ -101,3 +101,8 @@ export type Invoice = {
   updatedAt: Date;
   notes: string;
 };
+
+export type RevenueData = {
+  month: string;
+  totalRevenue: number;
+};

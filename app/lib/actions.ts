@@ -9,7 +9,6 @@ import { validatePassword } from "./helpers/validatePassword";
 import { generateAccessToken, generateRefreshToken } from "./auth";
 import { validateEmail } from "./helpers/validateEmail";
 import { v2 as cloudinary } from "cloudinary";
-import { Invoice, ItemInInvoice } from "./definitions";
 import { generateInvoiceNumber } from "./helpers/generateInvoiceNumber";
 
 cloudinary.config({

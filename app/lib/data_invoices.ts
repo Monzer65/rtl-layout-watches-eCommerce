@@ -111,3 +111,34 @@ export async function fetchInvoiceById(id: string) {
     return { error: "Failed to fetch invoice" };
   }
 }
+
+export async function fetchLatestInvoices() {
+  try {
+    if (!col) await init();
+
+    const latestInvoices = await col
+      .find()
+      .sort({ invoiceDate: -1 })
+      .limit(6)
+      .toArray();
+
+    // Convert ObjectId to string for _id in each invoice
+    const formattedInvoices = latestInvoices.map((invoice) => ({
+      ...invoice,
+      _id: invoice._id.toString(),
+      customer: {
+        ...invoice.customer,
+        customerId: invoice.customer.customerId.toString(),
+      },
+      items: invoice.items.map((item: ItemInInvoice) => ({
+        ...item,
+        productId: item.productId.toString(),
+      })),
+    }));
+
+    return formattedInvoices;
+  } catch (error) {
+    console.error("Error fetching latest invoices:", error);
+    return { error: "Failed to fetch latest invoices" };
+  }
+}
