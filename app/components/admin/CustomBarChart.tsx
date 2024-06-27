@@ -37,7 +37,7 @@ const CustomBarChart = ({ data }: { data: RevenueData[] }) => {
         جمع کل فاکتورها بصورت ماهیانه در سال جاری
       </h2>
       <div className='flex grow flex-col justify-between rounded-xl bg-gray-50 p-4'>
-        <div className='bg-white px-6'>
+        <div className='bg-white px-6 overflow-auto'>
           <BarChart
             data={data}
             index='month'

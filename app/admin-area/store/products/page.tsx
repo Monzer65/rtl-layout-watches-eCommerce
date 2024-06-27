@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/app/components/admin/BreadCrumbs";
 import { CreateCustomer } from "@/app/components/admin/customers/Buttons";
 import CustomersTable from "@/app/components/admin/customers/CustomersTable";
 import Pagination from "@/app/components/admin/Pagination";
@@ -6,6 +7,7 @@ import ProductsTable from "@/app/components/admin/products/ProductsTable";
 import Search from "@/app/components/admin/Search";
 import { getProducts } from "@/app/lib/data_products";
 import { Product } from "@/app/lib/definitions";
+import { HomeIcon } from "@heroicons/react/24/outline";
 import { Suspense } from "react";
 
 const productsPage = async ({
@@ -31,6 +33,20 @@ const productsPage = async ({
         <h1 className='text-base sm:text-lg md:text-2xl font-bold'>محصولات</h1>
         <CreateProductButton />
       </div>
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            label: "داشبورد فروشگاه",
+            href: "/admin-area/store",
+            icon: <HomeIcon />,
+          },
+          {
+            label: "مدیریت محصولات",
+            href: `/admin-area/store/products`,
+            active: true,
+          },
+        ]}
+      />
       <div>
         <Suspense key={query + currentPage} fallback={<p>درحال بارگزاری...</p>}>
           <div className='overflow-x-auto'>

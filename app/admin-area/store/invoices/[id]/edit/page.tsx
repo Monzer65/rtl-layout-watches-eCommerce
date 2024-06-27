@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/app/components/admin/BreadCrumbs";
 import EditInvoiceForm from "@/app/components/admin/invoices/EditInvoiceForm";
 import { fetchCustomers } from "@/app/lib/data_customers";
 import { fetchInvoiceById } from "@/app/lib/data_invoices";
@@ -9,6 +10,7 @@ import {
   Product,
 } from "@/app/lib/definitions";
 import { formatIranianDateTime } from "@/app/lib/helpers/formatDateAndTime";
+import { HomeIcon } from "@heroicons/react/24/outline";
 
 const InvoiceEditPage = async ({ params }: { params: { id: string } }) => {
   const id = params.id;
@@ -50,11 +52,29 @@ const InvoiceEditPage = async ({ params }: { params: { id: string } }) => {
           : "N/A"}
       </p>
 
-      <p>
+      <p className='mb-2'>
         آخرین ویرایش:{" "}
         {invoice?.updatedAt ? formatIranianDateTime(invoice.updatedAt) : "N/A"}
       </p>
 
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            label: "داشبورد فروشگاه",
+            href: "/admin-area/store",
+            icon: <HomeIcon />,
+          },
+          {
+            label: "مدیریت فاکتورها",
+            href: `/admin-area/store/invoices`,
+          },
+          {
+            label: "ویرایش فاکتور",
+            href: `/admin-area/store/invoices/${id}/edit`,
+            active: true,
+          },
+        ]}
+      />
       <EditInvoiceForm
         invoice={invoice}
         customers={customers}

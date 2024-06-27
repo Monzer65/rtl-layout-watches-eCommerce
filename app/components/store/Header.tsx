@@ -1,5 +1,3 @@
-"use client";
-
 import Image, { StaticImageData } from "next/image";
 import Search from "../Search";
 import Link from "next/link";
@@ -16,53 +14,56 @@ import {
   DocumentChartBarIcon,
 } from "@heroicons/react/24/outline";
 import Header_mobile_nav from "./Header_mobile_nav";
-import { useContext, useEffect, useRef, useState } from "react";
-import { CartContext } from "@/app/contexts/CartContext";
-import { usePathname } from "next/navigation";
-import { useUser } from "@/app/contexts/UserContext";
+import { getSession } from "@/app/lib/auth";
+// import { useContext, useEffect, useRef, useState } from "react";
+// import { CartContext } from "@/app/contexts/CartContext";
+// import { usePathname } from "next/navigation";
+// import { useUser } from "@/app/contexts/UserContext";
 
-const Header = ({ logo }: { logo: StaticImageData }) => {
-  const [open, setOpen] = useState(false);
-  const [dashNavOpen, setDashNavOpen] = useState(false);
-  const DashBtnRef = useRef<HTMLButtonElement>(null);
+const Header = async ({ logo }: { logo: StaticImageData }) => {
+  const session = await getSession();
+
+  // const [open, setOpen] = useState(false);
+  // const [dashNavOpen, setDashNavOpen] = useState(false);
+  // const DashBtnRef = useRef<HTMLButtonElement>(null);
   // const { user, isAuthenticated, isLoading, permissions } =
   //   useKindeBrowserClient();
-  const { userInfo, loading } = useUser();
-  const userPermissions = userInfo ? userInfo.roles : [];
+  // const { userInfo, loading } = useUser();
+  // const userPermissions = userInfo ? userInfo.roles : [];
 
-  const { cartItems, dispatch } = useContext(CartContext)!;
-  const pathname = usePathname();
+  // const { cartItems, dispatch } = useContext(CartContext)!;
+  // const pathname = usePathname();
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setOpen(false);
-      } else {
-        setOpen(true);
-      }
-      setDashNavOpen(false);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth <= 768) {
+  //       setOpen(false);
+  //     } else {
+  //       setOpen(true);
+  //     }
+  //     setDashNavOpen(false);
+  //   };
 
-    handleResize();
+  //   handleResize();
 
-    window.addEventListener("resize", handleResize);
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  //   window.addEventListener("resize", handleResize);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
-  const handleClickOutside = (e: any) => {
-    const dashbtn = DashBtnRef.current;
-    if (dashbtn && !dashbtn.contains(e.target)) {
-      setDashNavOpen(false);
-    }
-  };
+  // const handleClickOutside = (e: any) => {
+  //   const dashbtn = DashBtnRef.current;
+  //   if (dashbtn && !dashbtn.contains(e.target)) {
+  //     setDashNavOpen(false);
+  //   }
+  // };
 
-  const handleDashNav = () => {
-    setDashNavOpen(!dashNavOpen);
-  };
+  // const handleDashNav = () => {
+  //   setDashNavOpen(!dashNavOpen);
+  // };
 
   return (
     <header
@@ -70,11 +71,11 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
         open ? "top-0" : "top-auto"
       } bottom-0 md:bottom-auto inset-x-0 shadow-inner shadow-gray-300 md:shadow-[0_3px_5px_rgba(50,50,50,0.75)] bg-white z-10`}
     >
-      {open && (
+      {/* {open && (
         <nav className='md:hidden sticky inset-0 h-[calc(100%_-_4.25rem)] z-10 overflow-auto'>
           <Header_mobile_nav />
         </nav>
-      )}
+      )} */}
       <div
         className={`flex items-center justify-between gap-2 md:px-8 md:py-4 md:border-b`}
       >
@@ -229,7 +230,7 @@ const Header = ({ logo }: { logo: StaticImageData }) => {
           </Link>
         </div>
       </div>
-      <Header_desktop_nav />
+      {/* <Header_desktop_nav /> */}
     </header>
   );
 };

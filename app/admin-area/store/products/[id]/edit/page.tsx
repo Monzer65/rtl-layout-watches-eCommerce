@@ -1,6 +1,8 @@
+import Breadcrumbs from "@/app/components/admin/BreadCrumbs";
 import EditProductForm from "@/app/components/admin/products/EditProductForm";
 import { getProductById } from "@/app/lib/data_products";
 import { formatIranianDateTime } from "@/app/lib/helpers/formatDateAndTime";
+import { HomeIcon } from "@heroicons/react/24/outline";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const id = params.id;
@@ -18,13 +20,31 @@ const page = async ({ params }: { params: { id: string } }) => {
           : "N/A"}
       </p>
 
-      <p>
+      <p className='mb-2'>
         آخرین ویرایش:{" "}
         {productData?.product?.updatedAt
           ? formatIranianDateTime(productData.product.updatedAt)
           : "N/A"}
       </p>
 
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            label: "داشبورد فروشگاه",
+            href: "/admin-area/store",
+            icon: <HomeIcon />,
+          },
+          {
+            label: "مدیریت محصولات",
+            href: `/admin-area/store/products`,
+          },
+          {
+            label: "ویرایش محصول",
+            href: `/admin-area/store/products/${id}/edit`,
+            active: true,
+          },
+        ]}
+      />
       <EditProductForm product={productData.product} />
     </div>
   );

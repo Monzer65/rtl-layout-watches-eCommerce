@@ -1,9 +1,11 @@
+import Breadcrumbs from "@/app/components/admin/BreadCrumbs";
 import { CreateInvoiceButton } from "@/app/components/admin/invoices/Buttons";
 import InvoicesTable from "@/app/components/admin/invoices/InvoicesTable";
 import Pagination from "@/app/components/admin/Pagination";
 import Search from "@/app/components/admin/Search";
 import { fetchInvoices } from "@/app/lib/data_invoices";
 import { Invoice } from "@/app/lib/definitions";
+import { HomeIcon } from "@heroicons/react/24/outline";
 import { Suspense } from "react";
 
 const InvoicesPage = async ({
@@ -31,6 +33,20 @@ const InvoicesPage = async ({
         <h1 className='text-base sm:text-lg md:text-2xl font-bold'>فاکتورها</h1>
         <CreateInvoiceButton />
       </div>
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            label: "داشبورد فروشگاه",
+            href: "/admin-area/store",
+            icon: <HomeIcon />,
+          },
+          {
+            label: "مدیریت فاکتورها",
+            href: `/admin-area/store/invoices`,
+            active: true,
+          },
+        ]}
+      />
       <div>
         <Suspense key={query + currentPage} fallback={<p>درحال بارگزاری...</p>}>
           <div className='overflow-auto'>

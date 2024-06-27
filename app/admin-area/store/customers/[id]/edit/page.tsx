@@ -1,6 +1,8 @@
+import Breadcrumbs from "@/app/components/admin/BreadCrumbs";
 import EditCustomerForm from "@/app/components/admin/customers/EditCustomerForm";
 import { fetchCustomerById } from "@/app/lib/data_customers";
 import { formatIranianDateTime } from "@/app/lib/helpers/formatDateAndTime";
+import { HomeIcon } from "@heroicons/react/24/outline";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const id = params.id;
@@ -19,12 +21,31 @@ const page = async ({ params }: { params: { id: string } }) => {
           : "N/A"}
       </p>
 
-      <p>
+      <p className='mb-2'>
         آخرین ویرایش:{" "}
         {customerData?.customer?.updatedAt
           ? formatIranianDateTime(customerData.customer.updatedAt)
           : "N/A"}
       </p>
+
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            label: "داشبورد فروشگاه",
+            href: "/admin-area/store",
+            icon: <HomeIcon />,
+          },
+          {
+            label: "مدیریت مشتریان",
+            href: `/admin-area/store/customers`,
+          },
+          {
+            label: "ویرایش مشتری",
+            href: `/admin-area/store/customers/${id}/edit`,
+            active: true,
+          },
+        ]}
+      />
 
       <EditCustomerForm customer={customerData.customer} />
     </div>
