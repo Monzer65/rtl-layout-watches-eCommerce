@@ -2,16 +2,16 @@ import { ICart } from "./CartContext";
 
 export type CartAction =
   | { type: "ADD_TO_CART"; payload: ICart }
-  | { type: "REMOVE_CART_ITEM"; payload: number }
-  | { type: "INCREMENT_CART_ITEM"; payload: number }
-  | { type: "DECREMENT_CART_ITEM"; payload: number };
+  | { type: "REMOVE_CART_ITEM"; payload: string }
+  | { type: "INCREMENT_CART_ITEM"; payload: string }
+  | { type: "DECREMENT_CART_ITEM"; payload: string };
 
 export const cartReducer = (state: ICart[], action: CartAction): ICart[] => {
   switch (action.type) {
     case "ADD_TO_CART":
-      const { id, quantity } = action.payload;
+      const { _id, quantity } = action.payload;
       const existingItemIndex = state.findIndex(
-        (cartItem) => cartItem.id === id
+        (cartItem) => cartItem._id === _id
       );
 
       if (existingItemIndex !== -1) {
@@ -34,20 +34,20 @@ export const cartReducer = (state: ICart[], action: CartAction): ICart[] => {
 
     case "INCREMENT_CART_ITEM":
       return state.map((cart) =>
-        cart.id === action.payload
+        cart._id === action.payload
           ? { ...cart, quantity: cart.quantity < 10 ? cart.quantity + 1 : 10 }
           : cart
       );
 
     case "DECREMENT_CART_ITEM":
       return state.map((cart) =>
-        cart.id === action.payload
+        cart._id === action.payload
           ? { ...cart, quantity: cart.quantity > 1 ? cart.quantity - 1 : 1 }
           : cart
       );
 
     case "REMOVE_CART_ITEM":
-      return state.filter((cart) => cart.id !== action.payload);
+      return state.filter((cart) => cart._id !== action.payload);
 
     default:
       return state;

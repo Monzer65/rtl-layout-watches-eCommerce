@@ -1,7 +1,7 @@
 "use client";
 
 import { HeartIcon, ShareIcon } from "@heroicons/react/24/outline";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { MouseEvent, MouseEventHandler, useRef, useState } from "react";
 
 const ImageThumbnail = ({
@@ -10,7 +10,7 @@ const ImageThumbnail = ({
   isActive,
   onClick,
 }: {
-  image: StaticImageData;
+  image: string;
   index: number;
   isActive: boolean;
   onClick: MouseEventHandler;
@@ -18,6 +18,8 @@ const ImageThumbnail = ({
   <Image
     src={image}
     alt={`Thumbnail ${index + 1}`}
+    width={70}
+    height={70}
     className={`w-[70px] h-[70px] object-contain cursor-pointer p-1 rounded-lg ${
       isActive ? "border-2 border-red-600" : "border border-gray-500"
     }`}
@@ -25,7 +27,7 @@ const ImageThumbnail = ({
   />
 );
 
-const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
+const Carousel = ({ images }: { images: string[] | undefined }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const lensRef = useRef<HTMLDivElement>(null);
@@ -125,7 +127,7 @@ const Carousel = ({ images }: { images: StaticImageData[] | undefined }) => {
           ref={zoomedImageRef}
           className='w-full h-full hidden bg-left-top bg-contain bg-no-repeat shadow-lg shadow-gray-500 border rounded-md  bg-white'
           style={{
-            backgroundImage: `url(${images && images[currentImageIndex].src})`,
+            backgroundImage: `url(${images && images[currentImageIndex]})`,
             backgroundSize: "350% 350%",
           }}
         ></div>

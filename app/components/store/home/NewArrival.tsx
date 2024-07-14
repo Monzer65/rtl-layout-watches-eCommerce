@@ -1,21 +1,15 @@
 "use client";
 
+import { FieldProduct } from "@/app/lib/definitions";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 const NewArrival = ({
-  products,
+  latest,
+  mostSold,
 }: {
-  products: {
-    title: string;
-    detailUrl: string;
-    imageSrc: StaticImageData;
-    priceBeforeDiscount: number;
-    priceAfterDiscount: number;
-    itemsLeft: number;
-    deliveryMethod: string;
-    type: string;
-  }[];
+  latest: FieldProduct[];
+  mostSold: FieldProduct[];
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const mouseCoords = useRef({
@@ -132,18 +126,30 @@ const NewArrival = ({
     });
   };
 
-  const discountPercentage = (
-    priceBefore: number,
-    priceAfter: number
-  ): number => {
-    const result = 100 - Math.round((priceAfter * 100) / priceBefore);
-    return result;
-  };
+  // const discountPercentage = (
+  //   priceBefore: number,
+  //   priceAfter: number
+  // ): number => {
+  //   const result = 100 - Math.round((priceAfter * 100) / priceBefore);
+  //   return result;
+  // };
 
   const buttonTypes = ["جدید ترینها", "پرفروشترینها"];
 
   const [active, setActive] = useState(buttonTypes[0]);
 
+  const filterProducts = (type: string) => {
+    switch (type) {
+      case "جدید ترینها":
+        return latest;
+      case "پرفروشترینها":
+        return mostSold;
+      default:
+        return latest;
+    }
+  };
+
+  const filteredProducts = filterProducts(active);
   return (
     <div className='my-8 sm:my-16'>
       <div className='flex justify-between items-center border-b-2 sm:border-b-4 pb-2 px-4 border-black'>
@@ -153,7 +159,6 @@ const NewArrival = ({
               key={index}
               onClick={() => {
                 setActive(type);
-                console.log(type);
               }}
               className={`font-semibold border rounded-md px-2 py-1 hover:scale-105 active:scale-100 text-base sm:text-lg md:text-xl lg:text-2xl ${
                 active === type
@@ -197,42 +202,42 @@ const NewArrival = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleDragEnd}
         >
-          {products
-            .filter((item) => item.type === active)
-            .map((item, index) => {
-              return (
-                <Link
-                  key={index}
-                  href={item.detailUrl}
-                  ref={linkRef}
-                  className={`slide grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-gray-500 text-[10px] sm:text-xs md:text-sm lg:text-base bg-white p-2 rounded-md ${
-                    index === 0 ? "snap-end" : "snap-start"
-                  } `}
-                >
-                  <Image
-                    src={item.imageSrc}
-                    alt='sample'
-                    draggable={"false"}
-                    className='h-[70px] sm:h-[100px] md:h-[130px] lg:h-[150px] object-contain'
-                  />
-                  <p className='text-center leading-4'>{item.title}</p>
+          {filteredProducts.map((item, index) => {
+            return (
+              <Link
+                key={index}
+                href={item._id}
+                ref={linkRef}
+                className={`slide grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-gray-500 text-[10px] sm:text-xs md:text-sm lg:text-base bg-white p-2 rounded-md ${
+                  index === 0 ? "snap-end" : "snap-start"
+                } `}
+              >
+                <Image
+                  src={item.images[0]}
+                  alt='sample'
+                  width={200}
+                  height={150}
+                  draggable={"false"}
+                  className='h-[70px] sm:h-[100px] md:h-[130px] lg:h-[150px] object-contain'
+                />
+                <p className='text-center leading-4'>{item.name}</p>
 
-                  <div className='text-center'>
-                    <p className=''>
-                      <span className='font-bold ml-1'>
-                        {item.priceAfterDiscount.toLocaleString()}
-                      </span>
-                      <span className='text-[8px] sm:text-xs'>تومان</span>
-                    </p>
-                    <p className='line-through decoration-red-500'>
-                      <span className='text-[8px] sm:text-xs'>
-                        {item.priceBeforeDiscount.toLocaleString()}
-                      </span>
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
+                <div className='text-center'>
+                  <p className=''>
+                    <span className='font-bold ml-1'>
+                      {item.sale_price.toLocaleString()}
+                    </span>
+                    <span className='text-[8px] sm:text-xs'>تومان</span>
+                  </p>
+                  <p className='line-through decoration-red-500'>
+                    <span className='text-[8px] sm:text-xs'>
+                      {item.price.toLocaleString()}
+                    </span>
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         <button

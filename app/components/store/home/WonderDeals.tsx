@@ -1,6 +1,7 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
+import { FieldProduct } from "@/app/lib/definitions";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -9,15 +10,7 @@ const WonderDeals = ({
   wonderDealsImage,
   discountImage,
 }: {
-  products: {
-    title: string;
-    detailUrl: string;
-    imageSrc: StaticImageData;
-    priceBeforeDiscount: number;
-    priceAfterDiscount: number;
-    itemsLeft: number;
-    deliveryMethod: string;
-  }[];
+  products: FieldProduct[];
   wonderDealsImage: string;
   discountImage: string;
 }) => {
@@ -170,11 +163,15 @@ const WonderDeals = ({
           <Image
             src={wonderDealsImage}
             alt='wonder Deals'
+            width={200}
+            height={110}
             className='w-full aspect-square max-h-[50px] sm:max-h-[80px] md:max-h-[100px] lg:max-h-[110px] object-contain'
           />
           <Image
             src={discountImage}
             alt='discount'
+            width={200}
+            height={110}
             className='w-full aspect-square max-h-[50px] sm:max-h-[80px] md:max-h-[100px] lg:max-h-[110px] object-contain'
           />
           <p className='flex justify-center items-center text-white'>
@@ -198,24 +195,23 @@ const WonderDeals = ({
           </p>
         </Link>
         {products.map((item, index) => {
-          const discount = discountPercentage(
-            item.priceBeforeDiscount,
-            item.priceAfterDiscount
-          );
+          const discount = discountPercentage(item.price, item.sale_price);
           return (
             <Link
               key={index}
-              href={item.detailUrl}
+              href={`/store/products/${item._id}`}
               ref={linkRef}
               className={`grid grid-rows-[min-content] gap-2 flex-[0_0_auto] max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 p-2 rounded-md shadow-lg shadow-red-900 snap-start`}
             >
               <Image
-                src={item.imageSrc}
+                src={item.images[0]}
                 alt='sample'
+                width={200}
+                height={150}
                 draggable={"false"}
                 className='h-[70px] sm:h-[100px] md:h-[130px] lg:h-[150px] object-contain'
               />
-              <p className='text-center leading-4'>{item.title}</p>
+              <p className='text-center leading-4'>{item.name}</p>
               <p className='inline-flex items-center gap-1 text-[8px] sm:text-xs'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -236,7 +232,7 @@ const WonderDeals = ({
               <div className=''>
                 <p className=''>
                   <span className='font-bold ml-1'>
-                    {item.priceAfterDiscount.toLocaleString()}
+                    {item.sale_price.toLocaleString()}
                   </span>
                   <span className='text-[8px] sm:text-xs'>تومان</span>
                   <span className='text-white text-[8px] sm:text-xs mr-2 font-semibold bg-red-500 rounded-lg px-[0.25rem] '>
@@ -245,7 +241,7 @@ const WonderDeals = ({
                 </p>
                 <p className='line-through decoration-red-500'>
                   <span className='text-[8px] sm:text-xs'>
-                    {item.priceBeforeDiscount.toLocaleString()}
+                    {item.price.toLocaleString()}
                   </span>
                 </p>
               </div>
@@ -254,7 +250,10 @@ const WonderDeals = ({
         })}
 
         <div className='flex flex-col justify-center items-center flex-[0_0_auto] w-[100px] sm:w-[130px] md:w-[170px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 py-2 rounded-md shadow-lg shadow-red-900 ml-2 snap-start'>
-          <Link href={"/"} className='grid gap-2 font-semibold'>
+          <Link
+            href={"/store/products?q=wonder-deals"}
+            className='grid gap-2 font-semibold'
+          >
             <span>
               <svg
                 xmlns='http://www.w3.org/2000/svg'

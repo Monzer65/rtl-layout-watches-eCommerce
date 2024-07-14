@@ -14,19 +14,22 @@ import { useContext, useState } from "react";
 import AddToCart from "../AddToCart";
 
 const BasicInfo = ({
-  id,
+  _id,
+  image,
   title,
   shortDesc,
   price,
 }: {
-  id: number;
+  _id: string;
+  image: string;
   title: string;
   shortDesc: string;
   price: number;
 }) => {
   const { cartItems, dispatch } = useContext(CartContext)!;
   const currentProduct = {
-    id,
+    _id,
+    image,
     title,
     description: shortDesc,
     price,
@@ -67,7 +70,8 @@ const BasicInfo = ({
       <div className=' max-w-[500px]'>
         <div className='flex gap-4 item-center justify-between mb-2'>
           <AddToCart
-            id={id}
+            _id={_id}
+            image={image}
             title={title}
             shortDesc={shortDesc}
             price={price}

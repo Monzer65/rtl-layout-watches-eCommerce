@@ -5,18 +5,21 @@ import RatingInfo from "@/app/components/store/products/productDetail/RatingInfo
 import ReviewButton from "@/app/components/store/products/productDetail/ReviewButton";
 import ReviewForm from "@/app/components/store/products/productDetail/ReviewForm";
 import Reviews from "@/app/components/store/products/productDetail/Reviews";
-import { products, reviews } from "@/app/data";
+import { reviews } from "@/app/data";
+import { getProductById } from "@/app/lib/data_products";
+import { Product } from "@/app/lib/definitions";
 import { Suspense } from "react";
 
-const ProductDetail = ({ params }: { params: { id: string } }) => {
-  const product = products.find(({ id }) => id === Number(params.id));
-  const relatedReviews: {
-    id: number;
-    username: string;
-    productId: number;
-    comment: string;
-    rating: number;
-  }[] = reviews.filter((review) => review.productId === product?.id);
+const ProductDetail = async ({ params }: { params: { id: string } }) => {
+  const data = await getProductById(params.id);
+  const product = data.product as Product;
+  // const relatedReviews: {
+  //   id: string;
+  //   username: string;
+  //   productId: number;
+  //   comment: string;
+  //   rating: number;
+  // }[] = reviews.filter((review) => review.productId === product?.id);
 
   if (!product) {
     return <div>Product not found</div>;
@@ -25,31 +28,33 @@ const ProductDetail = ({ params }: { params: { id: string } }) => {
   return (
     <main className='px-8'>
       <div className='grid md:flex justify-center gap-4'>
-        <Carousel images={product?.images} />
+        <Carousel images={product.images} />
         <BasicInfo
-          id={product.id}
-          title={product?.title}
-          shortDesc={product?.shortDesc}
+          _id={product._id}
+          image={product.images[0]}
+          title={product?.name}
+          shortDesc={product?.short_description}
           price={product?.price}
         />
       </div>
       <div className='my-4'>
         <h3 className='font-bold text-2xl'>توضیحات</h3>
-        <p>{product?.longDesc}</p>
+        <p>{product?.description}</p>
       </div>
       <div className='my-4'>
         <DetailInfo
           brand={product?.brand}
           model={product?.model}
-          caseSize={product?.caseSize}
-          caseShape={product?.caseShape}
-          caseMaterial={product?.caseMaterial}
-          caseColor={product?.caseColor}
-          bandMaterial={product?.bandMaterial}
-          bandColor={product?.bandColor}
-          dialColor={product?.dialColor}
-          movement={product?.movement}
-          waterResistance={product?.waterResistance}
+          caseDiameter={product?.specifications.caseDiameter}
+          caseShape={product?.specifications.caseShape}
+          caseThickness={product?.specifications.caseThickness}
+          caseMaterial={product?.features.caseMaterial}
+          caseColor={product?.features.caseColor}
+          bandMaterial={product?.features.bandMaterial}
+          bandColor={product?.features.bandColor}
+          dialColor={product?.features.dialColor}
+          movement={product?.features.movement}
+          waterResistance={product?.features.waterResistance}
         />
       </div>
 
@@ -58,7 +63,7 @@ const ProductDetail = ({ params }: { params: { id: string } }) => {
       </div>
       <div className='my-4'>
         <Suspense fallback={<p>loading reviews...</p>}>
-          <Reviews relatedReviews={relatedReviews} />
+          <Reviews reviews={product.reviews} />
         </Suspense>
 
         <div id='comment-section' className='max-w-[600px]'>

@@ -1,28 +1,19 @@
+import { Review } from "@/app/lib/definitions";
 import {
   HandThumbDownIcon,
   HandThumbUpIcon,
   StarIcon,
 } from "@heroicons/react/24/outline";
 
-const Reviews = ({
-  relatedReviews,
-}: {
-  relatedReviews: {
-    id: number;
-    username: string;
-    productId: number;
-    comment: string;
-    rating: number;
-  }[];
-}) => {
+const Reviews = ({ reviews }: { reviews: Review[] }) => {
   return (
     <>
       <h3 className='font-bold text-2xl'>دیدگاه ها</h3>
-      {relatedReviews.map((review, index) => {
+      {reviews.map((review, index) => {
         return (
           <div key={index} className='border-b py-2 [&>*]:my-2 text-justify'>
             <p className='text-sm text-gray-600'>
-              <span className='mr-2'>2024/05/02</span>
+              <span className='mr-2'>{review.date.toLocaleDateString()}</span>
               {review.username}
             </p>
             <div className='flex'>

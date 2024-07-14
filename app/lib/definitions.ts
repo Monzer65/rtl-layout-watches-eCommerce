@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-
 export type Customer = {
   _id: string;
   username: string;
@@ -36,6 +34,8 @@ export type Product = {
   short_description: string;
   description: string;
   stock: number;
+  sales: number;
+  wonderDeal: boolean;
   features: {
     movement: string;
     bezelMaterial: string;
@@ -64,6 +64,26 @@ export type Product = {
   updatedAt: Date;
 };
 
+export type FieldProduct = {
+  _id: string;
+  name: string;
+  price: number;
+  buy_price: number;
+  sale_price: number;
+  availability: boolean;
+  initialStock: number;
+  stock: number;
+  images: string[];
+  releaseDate: Date;
+  tags: string[];
+  reviews: Review[];
+  wonderDeal: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deliveryMethod: string;
+  sales: number;
+};
+
 export type ItemInInvoice = {
   productId: string;
   productName: string;
@@ -71,6 +91,7 @@ export type ItemInInvoice = {
   unitPrice: number;
   totalPrice: number;
 };
+
 export type CustomerInInvoice = {
   customerId: string;
   name: string;
@@ -78,6 +99,7 @@ export type CustomerInInvoice = {
   phone: string;
   address: AddressInCustomerInInvoice;
 };
+
 export type AddressInCustomerInInvoice = {
   street: string;
   city: string;
@@ -85,6 +107,7 @@ export type AddressInCustomerInInvoice = {
   zip: string;
   country: string;
 };
+
 export type Invoice = {
   _id: string;
   invoiceNumber: string;

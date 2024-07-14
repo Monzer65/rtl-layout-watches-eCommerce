@@ -16,8 +16,6 @@ import brand11 from "@/public/images/brands/vivw_s.jpg";
 import womens from "@/public/images/categories/women.webp";
 import mens from "@/public/images/categories/men.webp";
 import kids from "@/public/images/categories/kids.webp";
-import sample from "@/public/images/sample.png";
-import sample_1 from "@/public/images/sample_1.jpg";
 import Carousel from "../components/store/home/Carousel";
 import MainCategories from "../components/store/home/MainCategories";
 import WonderDeals from "../components/store/home/WonderDeals";
@@ -26,6 +24,8 @@ import NewArrival from "../components/store/home/NewArrival";
 import Brands from "../components/store/home/Brands";
 import wonderDealsImage from "@/public/images/wonderDeals.svg";
 import discountImage from "@/public/images/discount.svg";
+import { getFieldProducts, getProducts } from "../lib/data_products";
+import { Suspense } from "react";
 
 const slides = [
   { id: 1, image: c1Image, url: "/" },
@@ -38,159 +38,6 @@ const mainCategories = [
   { title: "زنانه", src: womens, url: "/" },
   { title: "مردانه", src: mens, url: "/" },
   { title: "بچگانه", src: kids, url: "/" },
-];
-
-const products = [
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 18,
-    priceAfterDiscount: 13,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko Astron GPS Solar SSH145J1",
-    detailUrl: "",
-    imageSrc: sample_1,
-    priceBeforeDiscount: 15,
-    priceAfterDiscount: 12,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 23000,
-    priceAfterDiscount: 17000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 1324000,
-    priceAfterDiscount: 1300000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15,
-    priceAfterDiscount: 12,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15,
-    priceAfterDiscount: 12,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15,
-    priceAfterDiscount: 12,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 12200000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 12200000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 12200000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 12200000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "جدید ترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 11000000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "پرفروشترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 9500000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "پرفروشترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 13224000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "پرفروشترینها",
-  },
-  {
-    title: "Seiko SSB321",
-    detailUrl: "",
-    imageSrc: sample,
-    priceBeforeDiscount: 15000000,
-    priceAfterDiscount: 14200000,
-    itemsLeft: 5,
-    deliveryMethod: "ارسال سریع",
-    type: "پرفروشترینها",
-  },
 ];
 
 const brandImages = [
@@ -207,48 +54,26 @@ const brandImages = [
   { src: brand11, url: "/" },
 ];
 
-const Store = () => {
+const Store = async () => {
+  const data = await getFieldProducts();
   return (
     <main className='px-8 md:pt-[8.5rem] pb-4'>
       <Carousel slides={slides} />
       <MainCategories mainCategories={mainCategories} />
-      <WonderDeals
-        products={products}
-        wonderDealsImage={wonderDealsImage}
-        discountImage={discountImage}
-      />
+      <Suspense fallback={<p>در حال بارگزاری ...</p>}>
+        <WonderDeals
+          products={data.wonderDeals}
+          wonderDealsImage={wonderDealsImage}
+          discountImage={discountImage}
+        />
+      </Suspense>
       <MiddleGrid />
-      <NewArrival products={products} />
+      <Suspense fallback={<p>درحال بارگزاری...</p>}>
+        <NewArrival latest={data.latest} mostSold={data.mostSold} />
+      </Suspense>
       <Brands brandImages={brandImages} />
     </main>
   );
 };
 
 export default Store;
-
-// import { getMovies } from "../data";
-
-// async function fetchMovies() {
-//   const { movies } = await getMovies();
-//   if (!movies) throw new Error("failed to fetch movies");
-//   return movies;
-// }
-
-// const Blog = async () => {
-// const movies = await fetchMovies();
-
-// return (
-//   <main>
-//     <ul>
-{
-  /* {movies.map((movie: any, index: number) => {
-          return <li key={index}>{movie.title}</li>;
-        })} */
-}
-//         <li>Blog</li>
-//       </ul>
-//     </main>
-//   );
-// };
-
-// export default Blog;

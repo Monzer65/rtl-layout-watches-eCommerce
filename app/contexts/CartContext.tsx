@@ -3,7 +3,8 @@ import { createContext, ReactNode, useEffect, useReducer } from "react";
 import { CartAction, cartReducer } from "./CartReducer";
 
 export interface ICart {
-  id: number;
+  _id: string;
+  image: string;
   title: string;
   description: string;
   price: number;

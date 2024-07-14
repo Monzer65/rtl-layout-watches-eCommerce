@@ -1,7 +1,7 @@
 import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 import clientPromise from "./dbConnection";
 import { unstable_noStore as noStore } from "next/cache";
-import { Product, Review } from "./definitions";
+import { FieldProduct, Product, Review } from "./definitions";
 
 let client: MongoClient;
 let db: Db;
@@ -66,9 +66,69 @@ export async function getProducts(
   }
 }
 
-export async function getProductById(id: string) {
+export async function getFieldProducts() {
   noStore();
+  try {
+    if (!col) await init();
 
+    const projection = {
+      _id: 1,
+      name: 1,
+      price: 1,
+      buy_price: 1,
+      sale_price: 1,
+      availability: 1,
+      stock: 1,
+      images: 1,
+      releaseDate: 1,
+      tags: 1,
+      reviews: 1,
+      wonderDeal: 1,
+      createdAt: 1,
+      updatedAt: 1,
+      deliveryMethod: 1,
+      sales: 1,
+    };
+
+    const [wonderDealsProducts, latestProducts, mostSoldProducts] =
+      await Promise.all([
+        col.find({ wonderDeal: true }).project(projection).toArray(),
+        col
+          .find()
+          .sort({ releaseDate: -1 })
+          .limit(10)
+          .project(projection)
+          .toArray(),
+        col.find().sort({ sales: -1 }).limit(20).project(projection).toArray(),
+      ]);
+
+    const formatProducts = (products: any) =>
+      products.map((product: FieldProduct) => ({
+        ...product,
+        _id: product._id.toString(),
+        reviews: product.reviews.map((review: Review) => ({
+          ...review,
+          userId: review.userId.toString(),
+        })),
+        wonderDeal: product.wonderDeal || false,
+      }));
+
+    const wonderDealsFormatted = formatProducts(wonderDealsProducts);
+    const latestProductsFormatted = formatProducts(latestProducts);
+    const mostSoldProductsFormatted = formatProducts(mostSoldProducts);
+
+    return {
+      wonderDeals: wonderDealsFormatted,
+      latest: latestProductsFormatted,
+      mostSold: mostSoldProductsFormatted,
+    };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return { error: "Failed to fetch products" };
+  }
+}
+
+export async function getProductById(id: string) {
   try {
     if (!col) await init();
     const result = await col.findOne({ _id: new ObjectId(id) });
@@ -92,6 +152,8 @@ export async function getProductById(id: string) {
         short_description: result.short_description,
         description: result.description,
         stock: result.stock,
+        sales: result.sales,
+        wonderDeal: result.wonderDeal,
         features: {
           movement: result.features.movement,
           bezelMaterial: result.features.bezelMaterial,

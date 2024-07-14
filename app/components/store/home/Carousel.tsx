@@ -102,12 +102,12 @@ const Carousel: React.FC<SliderProps> = ({ slides }) => {
       -(carousel.scrollWidth - carousel.offsetWidth);
 
     if (isAtRightEnd) {
-      console.log("You've reached right end");
+      // console.log("You've reached right end");
       carousel.classList.add("no-transition");
       carousel.scrollLeft = -(carousel.scrollWidth - 2 * carousel.offsetWidth);
       carousel.classList.remove("no-transition");
     } else if (isAtLeftEnd) {
-      console.log("You've reached left end");
+      // console.log("You've reached left end");
       carousel.classList.add("no-transition");
       carousel.scrollLeft = -carousel.offsetWidth;
       carousel.classList.remove("no-transition");

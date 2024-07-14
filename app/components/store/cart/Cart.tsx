@@ -8,6 +8,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Image from "next/image";
 
 const Cart = () => {
   const { cartItems, dispatch } = useContext(CartContext)!;
@@ -19,9 +20,16 @@ const Cart = () => {
           <p className='text-sm text-gray-400'>{cartItems.length} آیتم</p>
           <div className='grid grid-cols-1 gap-4 mt-4'>
             {cartItems.map((item) => (
-              <React.Fragment key={item.id}>
+              <React.Fragment key={item._id}>
                 <div className='bg-white rounded-lg p-4 shadow-md'>
                   <div className='flex items-center justify-between gap-4'>
+                    <Image
+                      src={item.image}
+                      alt='product image'
+                      width={30}
+                      height={30}
+                      className='rounded-md'
+                    />
                     <div>
                       <h2 className='text-base sm:text-lg font-semibold'>
                         {item.title}
@@ -39,19 +47,19 @@ const Cart = () => {
                         onClick={() =>
                           dispatch({
                             type: "INCREMENT_CART_ITEM",
-                            payload: item.id,
+                            payload: item._id,
                           })
                         }
                       >
                         <PlusIcon className='w-4 sm:w-5 md:w-6' />
                       </button>
-                      <span>{item.quantity} عدد</span>
+                      <p>{item.quantity} عدد</p>
                       <button
                         className='bg-red-500 text-white rounded-md'
                         onClick={() =>
                           dispatch({
                             type: "DECREMENT_CART_ITEM",
-                            payload: item.id,
+                            payload: item._id,
                           })
                         }
                       >
@@ -62,7 +70,7 @@ const Cart = () => {
                   <button
                     className='bg-red-500 text-white px-3 py-1 rounded-md float-left'
                     onClick={() =>
-                      dispatch({ type: "REMOVE_CART_ITEM", payload: item.id })
+                      dispatch({ type: "REMOVE_CART_ITEM", payload: item._id })
                     }
                   >
                     حذف

@@ -359,13 +359,16 @@ const Products = () => {
                 <Image
                   src={item.imgSrc}
                   alt={`product ${item.title}`}
+                  width={200}
+                  height={200}
                   className='w-full h-[200px] object-contain'
                 />
                 <h3 className='text-lg font-bold my-2 mx-4'>{item.title}</h3>
               </Link>
               <p className='text-base text-gray-800 my-2 mx-4'>{item.price}</p>
               <AddToCart
-                id={item.id}
+                _id={item._id.toString()}
+                image={item.image}
                 title={item.title}
                 shortDesc={item.shortDesc}
                 price={item.price}

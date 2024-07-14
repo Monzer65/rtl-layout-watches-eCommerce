@@ -2,9 +2,10 @@
 const DetailInfo = ({
   brand,
   model,
-  caseSize,
+  caseDiameter,
   caseShape,
   caseMaterial,
+  caseThickness,
   caseColor,
   bandMaterial,
   bandColor,
@@ -14,9 +15,10 @@ const DetailInfo = ({
 }: {
   brand: string | undefined;
   model: string | undefined;
-  caseSize: string | undefined;
+  caseDiameter: number | undefined;
   caseShape: string | undefined;
   caseMaterial: string | undefined;
+  caseThickness: number | undefined;
   caseColor: string | undefined;
   bandMaterial: string | undefined;
   bandColor: string | undefined;
@@ -38,8 +40,8 @@ const DetailInfo = ({
             <td>{model}</td>
           </tr>
           <tr>
-            <th>سایز قاب</th>
-            <td>{caseSize}</td>
+            <th>عرض قاب</th>
+            <td>{caseDiameter}</td>
           </tr>
           <tr>
             <th>شکل قاب</th>
@@ -48,6 +50,10 @@ const DetailInfo = ({
           <tr>
             <th>جنس قاب</th>
             <td>{caseMaterial}</td>
+          </tr>
+          <tr>
+            <th>ضخامت قاب</th>
+            <td>{caseThickness}</td>
           </tr>
           <tr>
             <th>رنگ قاب</th>

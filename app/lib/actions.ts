@@ -380,6 +380,7 @@ export async function createProduct(
     "weight",
     "compilation",
     "stock",
+    "wonderDeal",
     "availability",
     "releaseDate",
     "tags",
@@ -423,6 +424,7 @@ export async function createProduct(
     weight,
     compilation,
     stock,
+    wonderDeal,
     availability,
     releaseDate,
     tags,
@@ -557,7 +559,7 @@ export async function createProduct(
           });
         } catch (error) {
           console.error("Error uploading image:", error);
-          return { message: "خطا در بارگزاری تصاویر" };
+          return { error: "خطا در بارگزاری تصاویر" };
         }
       }
     }
@@ -578,6 +580,8 @@ export async function createProduct(
       sale_price: sale_price ? parseFloat(sale_price as string) : null,
       description: description ?? "",
       stock: stock ? Number(stock) : null,
+      sales: 0,
+      wonderDeal: wonderDeal === "on",
       features,
       specifications,
       availability: availability === "on",
@@ -638,6 +642,8 @@ export async function updateProduct(
     "availability",
     "releaseDate",
     "tags",
+    "sales",
+    "wonderDeal",
   ];
 
   const formDataEntries = Object.fromEntries(
@@ -681,6 +687,8 @@ export async function updateProduct(
     availability,
     releaseDate,
     tags,
+    sales,
+    wonderDeal,
   } = formDataEntries;
 
   const functions = formData.getAll("functions") as string[];
@@ -732,6 +740,7 @@ export async function updateProduct(
     caseDiameter,
     caseThickness,
     lugWidth,
+    sales,
   };
 
   for (const [field, value] of Object.entries(numericFields)) {
@@ -844,7 +853,7 @@ export async function updateProduct(
           });
         } catch (error) {
           console.error("Error uploading image:", error);
-          return { message: "خطا در بارگزاری تصاویر" };
+          return { error: "خطا در بارگزاری تصاویر" };
         }
       }
     }
@@ -869,6 +878,8 @@ export async function updateProduct(
           short_description: short_description ?? "",
           description: description ?? "",
           stock: stock ? Number(stock) : null,
+          sales: sales ? Number(sales) : 0,
+          wonderDeal: wonderDeal === "on",
           features,
           specifications,
           availability: availability === "on",

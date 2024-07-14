@@ -101,6 +101,7 @@ const CreateProductForm = () => {
     dispatch(formData);
   };
 
+  console.log(clientErrors);
   return (
     <form
       action={handleSubmit}
@@ -608,6 +609,13 @@ const CreateProductForm = () => {
       </div>
 
       <div className='mb-4 [&>*]:cursor-pointer font-bold'>
+        <label htmlFor='wonderDeal' className='flex gap-1'>
+          <input type='checkbox' id='wonderDeal' name='wonderDeal' />
+          <span>قرار دادن در فروش ویژه</span>
+        </label>
+      </div>
+
+      <div className='mb-4 [&>*]:cursor-pointer font-bold'>
         <label htmlFor='availability' className='flex gap-1'>
           <input
             type='checkbox'
@@ -897,22 +905,23 @@ const CreateProductForm = () => {
         <div
           id='amount-error'
           aria-live='polite'
-          className='fixed bottom-6 md:bottom-4 left-0 md:left-auto md:right-0 max-w-[200px] m-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded'
+          className='fixed bottom-6 md:bottom-4 left-0 md:left-auto md:right-0 max-w-[200px] m-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded z-10'
         >
           {state.error}
         </div>
       )}
-      {clientErrors.length >= 1 ? (
+
+      {clientErrors && (
         <div
           id='amount-error'
           aria-live='polite'
-          className='fixed bottom-6 md:bottom-4 left-0 md:left-auto md:right-0 max-w-[200px] m-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded'
+          className='fixed bottom-6 md:bottom-4 left-0 md:left-auto md:right-0 max-w-[200px] m-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded z-10'
         >
           {clientErrors.map((err, index) => (
             <p key={index}>{err}</p>
           ))}
         </div>
-      ) : null}
+      )}
     </form>
   );
 };
