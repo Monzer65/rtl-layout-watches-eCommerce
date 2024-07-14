@@ -1,3 +1,4 @@
+"use client";
 import { CartContext } from "@/app/contexts/CartContext";
 import { useContext } from "react";
 
@@ -25,30 +26,26 @@ const AddToCart = ({
     ? existingCartItem.quantity + quantity
     : quantity;
   return (
-    <>
-      {_id && image && title && shortDesc && price && (
-        <button
-          className='grow py-2 px-3 w-full bg-blue-400 rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-500 active:scale-95 disabled:bg-gray-200 disabled:text-black disabled:hover:text-black disabled:cursor-not-allowed'
-          onClick={() =>
-            dispatch({
-              type: "ADD_TO_CART",
-              payload: {
-                _id,
-                image,
-                title,
-                description: shortDesc,
-                price,
-                quantity,
-                status: true,
-              },
-            })
-          }
-          disabled={totalQuantity > maxQuantity}
-        >
-          {btnText}
-        </button>
-      )}
-    </>
+    <button
+      className='grow py-2 px-3 w-full bg-blue-400 rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-500 active:scale-95 disabled:bg-gray-200 disabled:text-black disabled:hover:text-black disabled:cursor-not-allowed'
+      onClick={() =>
+        dispatch({
+          type: "ADD_TO_CART",
+          payload: {
+            _id,
+            image,
+            title,
+            description: shortDesc,
+            price,
+            quantity,
+            status: true,
+          },
+        })
+      }
+      disabled={totalQuantity > maxQuantity}
+    >
+      {btnText}
+    </button>
   );
 };
 

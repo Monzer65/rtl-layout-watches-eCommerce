@@ -59,7 +59,7 @@ export async function getProducts(
       })),
     }));
 
-    return { products, totalPages };
+    return { products, totalPages, totalCount };
   } catch (error) {
     console.error("Error fetching products:", error);
     return { error: "Failed to fetch products" };

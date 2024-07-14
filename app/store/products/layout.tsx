@@ -14,7 +14,7 @@ export default function ProductsLayout({
 }>) {
   return (
     <div className={`pt-0 md:pt-[8.5rem] pb-4 relative`}>
-      <BreadCrumb />
+      {/* <BreadCrumb /> */}
       {children}
     </div>
   );

@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/app/components/admin/BreadCrumbs";
 import Carousel from "@/app/components/store/products/Carousel";
 import BasicInfo from "@/app/components/store/products/productDetail/BasicInfo";
 import DetailInfo from "@/app/components/store/products/productDetail/DetailInfo";
@@ -8,6 +9,7 @@ import Reviews from "@/app/components/store/products/productDetail/Reviews";
 import { reviews } from "@/app/data";
 import { getProductById } from "@/app/lib/data_products";
 import { Product } from "@/app/lib/definitions";
+import { HomeIcon } from "@heroicons/react/24/outline";
 import { Suspense } from "react";
 
 const ProductDetail = async ({ params }: { params: { id: string } }) => {
@@ -27,6 +29,24 @@ const ProductDetail = async ({ params }: { params: { id: string } }) => {
 
   return (
     <main className='px-8'>
+      <Breadcrumbs
+        breadcrumbs={[
+          {
+            label: "صفحه اصلی",
+            href: "/store",
+            icon: <HomeIcon />,
+          },
+          {
+            label: "محصولات",
+            href: `/store/products`,
+          },
+          {
+            label: `${product.name}`,
+            href: `/admin-area/store/products/${product._id}`,
+            active: true,
+          },
+        ]}
+      />
       <div className='grid md:flex justify-center gap-4'>
         <Carousel images={product.images} />
         <BasicInfo
