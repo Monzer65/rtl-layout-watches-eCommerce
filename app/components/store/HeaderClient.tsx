@@ -195,11 +195,11 @@ const HeaderClient = ({
           >
             <ShoppingBagIcon className='h-6 w-6 text-gray-500' />
             <p className='md:hidden lg:block'>سبد خرید </p>
-            {cartItems.length && (
+            {cartItems.length ? (
               <span className='absolute right-[calc(50%_-_2.25rem)] md:right-0 md:top-0 w-6 h-6 flex items-center justify-center bg-red-600 text-white text-xs rounded-full'>
                 {cartItems.length}
               </span>
-            )}
+            ) : null}
           </Link>
           <Link
             href={"/"}

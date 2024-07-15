@@ -779,109 +779,6 @@ const CreateProductForm = () => {
             })}
           </div>
         </div>
-        {/* <div className='mb-4'>
-          <label htmlFor='images' className='block font-semibold mb-1'>
-            لینک تصاویر
-          </label>
-
-          {imageUrls.map((url, index) => (
-            <div key={index} className='flex items-center gap-4 mb-1'>
-              <button
-                type='button'
-                className='text-red-500'
-                onClick={() => removeImageUrl(index)}
-              >
-                <span className='sr-only'>افزودن لینک تصویر</span>
-                <XMarkIcon className='w-6' />
-              </button>
-              <input
-                type='text'
-                name='images'
-                value={url}
-                readOnly
-                className='p-1 rounded border'
-              />
-            </div>
-          ))}
-
-          <label
-            htmlFor='ImageInput'
-            className='flex justify-between items-center gap-4 font-semibold mb-1'
-          >
-            <span className='sr-only'>افزودن تصویر</span>
-            <input
-              type='text'
-              name='imageInput'
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addImageUrl(e.currentTarget.value);
-                  e.currentTarget.value = "";
-                }
-              }}
-              placeholder='لینک تصویر را وارد کنید و دکمه انتر را بزنید'
-              className='w-full p-2 border rounded'
-            />
-            <button
-              type='button'
-              onClick={(e) => {
-                e.preventDefault();
-                const input = document.querySelector(
-                  'input[name="imageInput"]'
-                ) as HTMLInputElement;
-                addImageUrl(input.value);
-                input.value = "";
-              }}
-              className=''
-            >
-              <span className='sr-only'>افزودن لینک تصویر</span>
-              <PlusCircleIcon className='w-10 text-blue-600' />
-            </button>
-          </label>
-        </div>
-        <div className='mb-4'>
-          <label htmlFor='file' className='block font-semibold mb-1'>
-            فایل تصاویر
-          </label>
-          <input
-            type='file'
-            accept='image/'
-            multiple
-            name='file'
-            id='file'
-            onChange={addImageFile}
-            className='w-full p-2 border rounded'
-            required
-          />
-
-          <div className='flex gap-2 flex-wrap [&>*]:border '>
-            {imageFiles.map((img, index) => {
-              const url = URL.createObjectURL(img);
-              return (
-                <div key={index} className='relative'>
-                  <Image
-                    src={url}
-                    alt={""}
-                    width={100}
-                    height={100}
-                    className='object-cover'
-                  />
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault;
-                      removeImageFile(index);
-                    }}
-                    type='button'
-                    className='absolute top-0 right-0 text-red-600 bg-slate-300 bg-opacity-45'
-                  >
-                    <XMarkIcon className='w-6' />{" "}
-                    <span className='sr-only'>حذف تصویر</span>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div> */}
       </div>
 
       <div className='flex items-center gap-4'>
@@ -911,7 +808,7 @@ const CreateProductForm = () => {
         </div>
       )}
 
-      {clientErrors && (
+      {clientErrors.length ? (
         <div
           id='amount-error'
           aria-live='polite'
@@ -921,7 +818,7 @@ const CreateProductForm = () => {
             <p key={index}>{err}</p>
           ))}
         </div>
-      )}
+      ) : null}
     </form>
   );
 };

@@ -1,18 +1,26 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 
-interface RangeInputProps {
-  min: number;
-  max: number;
-}
-
-const PriceRange: React.FC<RangeInputProps> = ({ min, max }) => {
-  const [range, setRange] = useState({ start: min, end: max });
+const PriceRange = ({
+  range,
+  setRange,
+}: {
+  range: { start: number; end: number };
+  setRange: Dispatch<SetStateAction<{ start: number; end: number }>>;
+}) => {
   const progressBarRef = useRef<HTMLDivElement>(null);
   const startRangeRef = useRef<HTMLInputElement>(null);
   const endRangeRef = useRef<HTMLInputElement>(null);
   const startPriceRef = useRef<HTMLInputElement>(null);
   const endPriceRef = useRef<HTMLInputElement>(null);
+  let min = 0;
+  let max = 100;
 
   const updateProgressBar = useCallback(() => {
     if (
@@ -25,7 +33,7 @@ const PriceRange: React.FC<RangeInputProps> = ({ min, max }) => {
       const widthPercentage = ((range.end - range.start) / (max - min)) * 100;
       progressBarRef.current.style.width = `${widthPercentage}%`;
     }
-  }, [max, min, range.end, range.start]);
+  }, [min, max, range.end, range.start]);
 
   useEffect(() => {
     updateProgressBar();
