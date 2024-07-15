@@ -51,9 +51,9 @@ export default async function StoreLayout({
     <CartProvider>
       <div className={`pt-0 pb-16 md:pb-0 relative ${notonaskh.className}`}>
         <div className='sticky top-0 right-0 left-0 md:hidden z-10 py-2 shadow-md bg-white'>
-          <Search placeholder='جستجو...' />
+          <Search placeholder='جستجوی نام محصول...' />
         </div>
-        <Header logo={logo} />
+        <Header />
         {modal}
         {children}
         <Footer

@@ -17,15 +17,11 @@ interface OpenedOptions {
 const FilterOptions = () => {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
   const [openedOptions, setOpenedOptions] = useState<OpenedOptions>({});
-  const [range, setRange] = useState({ start: 0, end: 100 });
-
+  let max = 100000000;
+  const [range, setRange] = useState({ start: 0, end: max });
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { replace, push } = useRouter();
-
-  const [query, setQuery] = useState(
-    searchParams.get("query")?.toString() || ""
-  );
+  const { replace } = useRouter();
 
   const handleOptionChange = (parent: string, value: string) => {
     setSelectedOptions((prevState) => ({
@@ -49,18 +45,39 @@ const FilterOptions = () => {
       }
     });
 
-    queryParams.set("min-price", String(range.start));
-    queryParams.set("max-price", String(range.end));
+    const sanitizedRange = {
+      start: Math.max(0, Math.min(range.start, max)),
+      end: Math.max(0, Math.min(range.end, max)),
+    };
 
-    replace(`${pathname}?${queryParams.toString()}`);
+    if (sanitizedRange.start <= sanitizedRange.end) {
+      queryParams.set("min-price", String(sanitizedRange.start));
+      queryParams.set("max-price", String(sanitizedRange.end));
+    } else {
+      queryParams.delete("min-price");
+      queryParams.delete("max-price");
+    }
+
+    replace(`${pathname}?${queryParams.toString()}`, { scroll: false });
   };
 
   const handleClearFilters = () => {
-    const queryParams = new URLSearchParams();
+    const queryParams = new URLSearchParams(searchParams);
+
+    // List of filter-related parameters to clear
+    const filterParams = [
+      "min-price",
+      "max-price",
+      ...Object.keys(selectedOptions),
+    ];
+
+    filterParams.forEach((param) => queryParams.delete(param));
+
     setSelectedOptions({});
     setOpenedOptions({});
-    setRange({ start: 0, end: 100 });
-    replace(`${pathname}?`);
+    setRange({ start: 0, end: max });
+
+    replace(`${pathname}?${queryParams.toString()}`, { scroll: false });
   };
 
   const handleToggleOptions = (parent: string) => {
@@ -72,7 +89,7 @@ const FilterOptions = () => {
 
   useEffect(() => {
     const initialSelectedOptions: SelectedOptions = {};
-    const initialRange = { start: 0, end: 100 };
+    const initialRange = { start: 0, end: max };
     const initialOpenedOptions: OpenedOptions = {};
 
     searchParams.forEach((value, key) => {
@@ -80,22 +97,42 @@ const FilterOptions = () => {
         initialSelectedOptions[key] = value.split(",");
         initialOpenedOptions[key] = true;
       } else if (key === "min-price") {
-        initialRange.start = parseInt(value);
+        const minPrice = parseInt(value);
+        if (minPrice >= 0 && minPrice <= max) {
+          initialRange.start = minPrice;
+        }
       } else if (key === "max-price") {
-        initialRange.end = parseInt(value);
+        const maxPrice = parseInt(value);
+        if (maxPrice >= 0 && maxPrice <= max) {
+          initialRange.end = maxPrice;
+        }
       }
     });
 
     setSelectedOptions(initialSelectedOptions);
     setRange(initialRange);
     setOpenedOptions(initialOpenedOptions);
-  }, [searchParams]);
+  }, [max, searchParams]);
 
   return (
-    <div className='relative pb-10'>
+    <div className=' pb-10'>
+      <div className='flex gap-2 sticky top-14 right-1/2 z-30 my-2 bg-white w-full'>
+        <button
+          className='px-2 py-1 flex-1 rounded-md bg-gray-700 text-white hover:bg-gray-800'
+          onClick={handleApplyFilters}
+        >
+          اعمال فیلتر
+        </button>
+        <button
+          className='px-2 py-1 flex-1 rounded-md bg-pink-800 text-white hover:bg-red-900'
+          onClick={handleClearFilters}
+        >
+          حذف فیلتر
+        </button>
+      </div>
       <PriceRange range={range} setRange={setRange} />
       {Object.entries(options).map(([parent, values]) => (
-        <div key={parent} className='bg-gray-100 p-2 mb-2'>
+        <div key={parent} className='bg-white p-2 mb-1'>
           <div
             onClick={() => handleToggleOptions(parent)}
             className='flex justify-between items-center cursor-pointer'
@@ -112,7 +149,11 @@ const FilterOptions = () => {
               {values.map((value) => (
                 <div
                   key={value}
-                  className='m-[0.125rem] mr-1 block min-h-[1.5rem] ps-[1.5rem]'
+                  className={`m-[0.125rem] mr-1 block min-h-[1.5rem] ps-[1.5rem] hover:bg-gray-100 ${
+                    selectedOptions[parent]?.includes(value)
+                      ? "bg-gray-100"
+                      : "bg-inherit"
+                  }`}
                 >
                   <input
                     type='checkbox'
@@ -133,20 +174,6 @@ const FilterOptions = () => {
           )}
         </div>
       ))}
-      <div className='flex gap-2 sticky bottom-0 right-1/2'>
-        <button
-          className='px-2 py-1 flex-1 rounded-md bg-blue-600 text-white hover:bg-blue-700'
-          onClick={handleApplyFilters}
-        >
-          اعمال فیلتر
-        </button>
-        <button
-          className='px-2 py-1 flex-1 rounded-md bg-red-600 text-white hover:bg-red-700'
-          onClick={handleClearFilters}
-        >
-          حذف فیلتر
-        </button>
-      </div>
     </div>
   );
 };

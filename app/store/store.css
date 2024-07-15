@@ -1,10 +1,17 @@
 .filters::-webkit-scrollbar {
-  display: none;
   width: 10px;
   height: 10px;
 }
-.filters:hover::-webkit-scrollbar {
-  display: block;
+
+.filters::-webkit-scrollbar-track-piece:end {
+  background: transparent;
+  margin-bottom: 10px;
+}
+
+.filters::-webkit-scrollbar-track-piece:start {
+  background: transparent;
+
+  margin-top: 10px;
 }
 
 .filters::-webkit-scrollbar-track {
@@ -14,9 +21,15 @@
 }
 
 .filters::-webkit-scrollbar-thumb {
+  display: none;
+  margin-block: 2rem;
   background: #727272;
   border-radius: 100vh;
-  border: 3px solid #f6f7ed;
+  border: 2px solid #f6f7ed;
+}
+
+.filters:hover::-webkit-scrollbar-thumb {
+  display: block;
 }
 
 .filters::-webkit-scrollbar-thumb:hover {

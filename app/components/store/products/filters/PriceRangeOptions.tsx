@@ -20,7 +20,7 @@ const PriceRange = ({
   const startPriceRef = useRef<HTMLInputElement>(null);
   const endPriceRef = useRef<HTMLInputElement>(null);
   let min = 0;
-  let max = 100;
+  let max = 100000000;
 
   const updateProgressBar = useCallback(() => {
     if (
@@ -83,7 +83,7 @@ const PriceRange = ({
   };
 
   return (
-    <div className='relative w-full pb-8 overflow-hidden'>
+    <div className='relative w-full pb-8 overflow-hidden my-2'>
       <div className='absolute w-full bottom-2 h-[10px] bg-gray-400 rounded-full'></div>
       <div
         ref={progressBarRef}

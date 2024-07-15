@@ -66,11 +66,11 @@ const FiltersAndSort = ({
         onClick={() => setOpenFilters(false)}
       ></div>
       <div
-        className={`filters fixed inset-x-0 lg:block transition-all duration-500 ${
+        className={`filters overflow-y-scroll fixed inset-x-0 lg:block transition-all duration-500 ${
           openFilters ? "max-h-[350px] bottom-0" : "max-h-0 -bottom-44"
         } bg-white lg:bg-none lg:max-w-[350px] min-h-[50px] lg:max-h-[500px] lg:sticky lg:top-36 lg:right-0 z-40 lg:z-auto overflow-y-auto px-2 [&>*:not(:last-child)]:border-b lg:border border-gray-600 lg:rounded-xl`}
       >
-        <div className='flex justify-between py-4 sticky top-0 bg-white z-10'>
+        <div className='flex justify-between py-4 sticky top-0 bg-white z-30'>
           <h3 className='text-xl font-semibold'>فیلترها</h3>
           <button onClick={() => setOpenFilters(false)} className='lg:hidden'>
             <XMarkIcon className='w-8 hover:animate-[wiggle_1s_ease-in-out_infinite] hover:text-red-500' />

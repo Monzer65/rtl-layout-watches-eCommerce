@@ -12,6 +12,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
   const { replace } = useRouter();
 
   const handleSearch = useDebouncedCallback((term) => {
+    new URLSearchParams();
     const params = new URLSearchParams(searchParams);
     params.set("page", "1");
     if (term) {
@@ -54,8 +55,9 @@ export default function Search({ placeholder }: { placeholder: string }) {
       />
       <button
         type='submit'
-        className='absolute right-3 top-[50%] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900'
+        className='py-1 px-2 rounded-md mr-1 text-gray-500 peer-focus:text-gray-900 flex items-center bg-inherit border'
       >
+        <span>جستجو</span>
         <MagnifyingGlassIcon className='h-4 w-4 md:h-6 md:w-6' />
       </button>
     </form>
