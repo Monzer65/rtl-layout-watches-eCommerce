@@ -578,6 +578,15 @@ export async function createProduct(
       price: price ? parseFloat(price as string) : null,
       buy_price: buy_price ? parseFloat(buy_price as string) : null,
       sale_price: sale_price ? parseFloat(sale_price as string) : null,
+      discount:
+        price && sale_price
+          ? Math.round(
+              ((parseFloat(price as string) -
+                parseFloat(sale_price as string)) /
+                parseFloat(price as string)) *
+                100
+            )
+          : 0,
       description: description ?? "",
       stock: stock ? Number(stock) : null,
       sales: 0,
@@ -589,6 +598,7 @@ export async function createProduct(
       releaseDate: releaseDate ? new Date(releaseDate as string) : null,
       tags: tagsToArray,
       reviews: [],
+      avgRating: 0,
       createdAt: new Date(),
     });
   } catch (error) {
@@ -875,6 +885,15 @@ export async function updateProduct(
           price: price ? parseFloat(price as string) : null,
           buy_price: buy_price ? parseFloat(buy_price as string) : null,
           sale_price: sale_price ? parseFloat(sale_price as string) : null,
+          discount:
+            price && sale_price
+              ? Math.round(
+                  ((parseFloat(price as string) -
+                    parseFloat(sale_price as string)) /
+                    parseFloat(price as string)) *
+                    100
+                )
+              : 0,
           short_description: short_description ?? "",
           description: description ?? "",
           stock: stock ? Number(stock) : null,
@@ -887,6 +906,14 @@ export async function updateProduct(
           releaseDate: releaseDate ? new Date(releaseDate as string) : null,
           tags: tagsToArray,
           reviews: reviews,
+
+          avgRating:
+            reviews.length > 0
+              ? reviews.reduce(
+                  (sum: any, review: any) => sum + review.rating,
+                  0
+                ) / reviews.length
+              : 0,
           updatedAt: new Date(),
         },
       }

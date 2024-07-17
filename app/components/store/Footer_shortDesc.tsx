@@ -9,8 +9,8 @@ const ShortDesc = ({
 }: {
   namadImages: { src: StaticImageData; url: string }[];
 }) => {
-  const dotsRef = useRef<HTMLSpanElement>(null);
-  const moreTextRef = useRef<HTMLSpanElement>(null);
+  const dotsRef = useRef<HTMLElement>(null);
+  const moreTextRef = useRef<HTMLParagraphElement>(null);
   const [showMore, setShowMore] = useState(false);
 
   const toggleTextVisibility = () => {
@@ -24,7 +24,7 @@ const ShortDesc = ({
           <h2 className='font-bold text-xl sm:text-2xl'>
             فروشگاه اینترنتی ایکس
           </h2>
-          <p
+          <div
             className={`leading-7 text-justify ${!showMore ? "truncated" : ""}`}
           >
             فروشگاه ایکس مرجع تخصصی نقد و بررسی و خرید اینترنتی ساعت مچی ، زیور
@@ -35,9 +35,11 @@ const ShortDesc = ({
             کاردین ، پوما ، اینگرسول و غیره تنوع بی‌نظیر و انتخاب های فراوانی را
             در اختیار خریداران عزیز قرار می‌دهد.{" "}
             <span ref={dotsRef}>{!showMore ? "..." : ""}</span>
-            <span
+            <p
               ref={moreTextRef}
-              className={`overflow-hidden ${showMore ? "h-full" : "h-0 grid"}`}
+              className={`overflow-hidden transition-maxHeight duration-500 ${
+                showMore ? "max-h-[900px]" : "max-h-0"
+              }`}
             >
               {" "}
               فرایند انتخاب و خرید ساعت به عنوان کالایی به شدت تخصصی، همواره
@@ -60,8 +62,8 @@ const ShortDesc = ({
               قیمت‌ و بهترین خدمات را فراهم آورد. برای کسب اطلاعات بیشتر صفحه
               درباره واچ آنلاین را مطالعه نمایید یا از طریق لینک های زیر به
               محصولات مورد نظر خود دسترسی بیابید.
-            </span>
-          </p>
+            </p>
+          </div>
         </div>
         <button
           onClick={toggleTextVisibility}

@@ -11,13 +11,26 @@ const ProductsPage = async ({
 }: {
   searchParams?: {
     query?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    sort?: string;
     page?: string;
   };
 }) => {
   const query = searchParams?.query || "";
+  const minPrice = searchParams?.minPrice || "";
+  const maxPrice = searchParams?.maxPrice || "";
+  const sort = searchParams?.sort || "";
   const currentPage = Number(searchParams?.page) || 1;
   const pageSize = 2;
-  const data = await getProducts(query, currentPage, pageSize);
+  const data = await getProducts(
+    query,
+    minPrice,
+    maxPrice,
+    sort,
+    currentPage,
+    pageSize
+  );
   const products = data.products as Product[];
   return (
     <main className='px-8 pt-4 md:pt-12 lg:pt-4'>

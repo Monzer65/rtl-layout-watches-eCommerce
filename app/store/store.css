@@ -87,3 +87,8 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 100vh;
   border: 3px solid #f6f7ed;
 }
+
+/* .text-accordion {
+  height: auto;
+  height: calc-size(auto);
+} */

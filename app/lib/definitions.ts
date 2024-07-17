@@ -31,6 +31,7 @@ export type Product = {
   price: number;
   buy_price: number;
   sale_price: number;
+  discount: number;
   short_description: string;
   description: string;
   stock: number;
@@ -60,9 +61,18 @@ export type Product = {
   releaseDate: Date;
   tags: string[];
   reviews: Review[];
+  avgRating: number;
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type SortObject =
+  | { sale_price: number }
+  | { discount: number }
+  | { avgRating: number }
+  | { createdAt: number }
+  | { sales: number }
+  | undefined;
 
 export type FieldProduct = {
   _id: string;

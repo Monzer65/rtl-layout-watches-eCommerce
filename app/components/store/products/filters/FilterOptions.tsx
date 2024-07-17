@@ -36,6 +36,8 @@ const FilterOptions = () => {
 
   const handleApplyFilters = () => {
     const queryParams = new URLSearchParams(searchParams);
+    queryParams.set("page", "1");
+    queryParams.set("sort", "");
 
     Object.entries(selectedOptions).forEach(([parent, values]) => {
       if (values.length > 0) {
@@ -51,11 +53,11 @@ const FilterOptions = () => {
     };
 
     if (sanitizedRange.start <= sanitizedRange.end) {
-      queryParams.set("min-price", String(sanitizedRange.start));
-      queryParams.set("max-price", String(sanitizedRange.end));
+      queryParams.set("minPrice", String(sanitizedRange.start));
+      queryParams.set("maxPrice", String(sanitizedRange.end));
     } else {
-      queryParams.delete("min-price");
-      queryParams.delete("max-price");
+      queryParams.delete("minPrice");
+      queryParams.delete("maxPrice");
     }
 
     replace(`${pathname}?${queryParams.toString()}`, { scroll: false });
@@ -66,8 +68,8 @@ const FilterOptions = () => {
 
     // List of filter-related parameters to clear
     const filterParams = [
-      "min-price",
-      "max-price",
+      "minPrice",
+      "maxPrice",
       ...Object.keys(selectedOptions),
     ];
 
@@ -96,12 +98,12 @@ const FilterOptions = () => {
       if (key in options) {
         initialSelectedOptions[key] = value.split(",");
         initialOpenedOptions[key] = true;
-      } else if (key === "min-price") {
+      } else if (key === "minPrice") {
         const minPrice = parseInt(value);
         if (minPrice >= 0 && minPrice <= max) {
           initialRange.start = minPrice;
         }
-      } else if (key === "max-price") {
+      } else if (key === "maxPrice") {
         const maxPrice = parseInt(value);
         if (maxPrice >= 0 && maxPrice <= max) {
           initialRange.end = maxPrice;

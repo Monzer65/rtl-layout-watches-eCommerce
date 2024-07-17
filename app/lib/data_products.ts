@@ -1,7 +1,7 @@
 import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 import clientPromise from "./dbConnection";
 import { unstable_noStore as noStore } from "next/cache";
-import { FieldProduct, Product, Review } from "./definitions";
+import { FieldProduct, Product, Review, SortObject } from "./definitions";
 
 let client: MongoClient;
 let db: Db;
@@ -21,6 +21,12 @@ export async function init() {
 
 export async function getProducts(
   query: string,
+  // models: string[],
+  // manufacturers: string[],
+  // features: string[],
+  minPrice: string,
+  maxPrice: string,
+  sort: string,
   currentPage: number,
   pageSize: number
 ) {
@@ -30,23 +36,70 @@ export async function getProducts(
     if (!col) await init();
 
     const skip = (currentPage - 1) * pageSize;
-    const searchQuery = query
-      ? {
-          $or: [
-            { name: { $regex: new RegExp(query, "i") } },
-            { brand: { $regex: new RegExp(query, "i") } },
-            // Add more fields here if needed
-          ],
-        }
-      : {};
+    const queryObject: any = {};
 
-    const totalCount = await col.countDocuments(searchQuery);
+    if (query) {
+      queryObject.$or = [
+        { name: { $regex: new RegExp(query, "i") } },
+        { brand: { $regex: new RegExp(query, "i") } },
+        // Add more fields here if needed
+      ];
+    }
+
+    // if (models && models.length) {
+    //   queryObject.models = { $in: models };
+    // }
+
+    // if (manufacturers && manufacturers.length) {
+    //   queryObject.manufacturers = { $in: manufacturers };
+    // }
+
+    // if (features && features.length) {
+    //   queryObject.features = { $elemMatch: features };
+    // }
+
+    if (minPrice && maxPrice) {
+      queryObject.sale_price = {
+        $gt: parseFloat(minPrice),
+        $lt: parseFloat(maxPrice),
+      };
+    }
+
+    let sortObject = {};
+
+    if (sort) {
+      switch (sort) {
+        case "ارزانترین":
+          sortObject = { sale_price: 1, createdAt: -1 };
+          break;
+        case "گرانترین":
+          sortObject = { sale_price: -1, createdAt: -1 };
+          break;
+        case "بیشترین تخفیف":
+          sortObject = { discount: -1, avgRating: -1, createdAt: -1 };
+          break;
+        case "بالاترین امتیاز":
+          sortObject = { avgRating: -1, discount: -1, createdAt: -1 };
+          break;
+        case "جدیدترین":
+          sortObject = { createdAt: -1 };
+          break;
+        case "پرفروشترین":
+          sortObject = { sales: -1, createdAt: -1 };
+          break;
+        default:
+          sortObject = { createdAt: -1 };
+      }
+    }
+
+    const totalCount = await col.countDocuments(queryObject);
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const result = await col
-      .find(searchQuery)
+      .find(queryObject)
       .skip(skip)
       .limit(pageSize)
+      .sort(sortObject)
       .toArray();
 
     // Convert ObjectIds to string for _id in each product and each review
@@ -88,6 +141,8 @@ export async function getFieldProducts() {
       updatedAt: 1,
       deliveryMethod: 1,
       sales: 1,
+      discount: 1,
+      avgRating: 1,
     };
 
     const [wonderDealsProducts, latestProducts, mostSoldProducts] =
@@ -149,6 +204,7 @@ export async function getProductById(id: string) {
         price: result.price,
         buy_price: result.buy_price,
         sale_price: result.sale_price,
+        discount: result.discount,
         short_description: result.short_description,
         description: result.description,
         stock: result.stock,
@@ -183,6 +239,7 @@ export async function getProductById(id: string) {
             userId: review.userId.toString(),
           };
         }),
+        avgRating: result.avgRating,
         createdAt: result.createdAt,
         updatedAt: result.updatedAt,
       };
