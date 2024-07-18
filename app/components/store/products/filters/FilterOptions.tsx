@@ -3,7 +3,7 @@
 import { options } from "@/app/lib/productFilterOptions";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import PriceRange from "./PriceRangeOptions";
 
 interface SelectedOptions {
@@ -14,7 +14,11 @@ interface OpenedOptions {
   [key: string]: boolean;
 }
 
-const FilterOptions = () => {
+const FilterOptions = ({
+  setOpenFilters,
+}: {
+  setOpenFilters: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
   const [openedOptions, setOpenedOptions] = useState<OpenedOptions>({});
   let max = 100000000;
@@ -35,6 +39,7 @@ const FilterOptions = () => {
   };
 
   const handleApplyFilters = () => {
+    setOpenFilters(false);
     const queryParams = new URLSearchParams(searchParams);
     queryParams.set("page", "1");
     queryParams.set("sort", "");
@@ -64,6 +69,7 @@ const FilterOptions = () => {
   };
 
   const handleClearFilters = () => {
+    setOpenFilters(false);
     const queryParams = new URLSearchParams(searchParams);
 
     // List of filter-related parameters to clear
@@ -133,49 +139,57 @@ const FilterOptions = () => {
         </button>
       </div>
       <PriceRange range={range} setRange={setRange} />
-      {Object.entries(options).map(([parent, values]) => (
-        <div key={parent} className='bg-white p-2 mb-1'>
-          <div
-            onClick={() => handleToggleOptions(parent)}
-            className='flex justify-between items-center cursor-pointer'
-          >
-            <h3 className='cursor-pointer'>{parent}</h3>
-            <ChevronLeftIcon
-              className={`w-5 ${
-                openedOptions[parent] ? "rotate-90" : "rotate-0"
-              }`}
-            />
-          </div>
-          {openedOptions[parent] && (
-            <div>
-              {values.map((value) => (
-                <div
-                  key={value}
-                  className={`m-[0.125rem] mr-1 block min-h-[1.5rem] ps-[1.5rem] hover:bg-gray-100 ${
-                    selectedOptions[parent]?.includes(value)
-                      ? "bg-gray-100"
-                      : "bg-inherit"
-                  }`}
-                >
-                  <input
-                    type='checkbox'
-                    id={parent + value}
-                    checked={selectedOptions[parent]?.includes(value)}
-                    onChange={() => handleOptionChange(parent, value)}
-                    className=" relative float-left -ms-[1.5rem] me-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-gray-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-checkbox before:shadow-transparent before:content-[''] checked:border-gray-500 checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ms-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-blue-500 checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-black/60 focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-black/60 focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-checkbox checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ms-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-blue-500 checked:focus:after:bg-transparent rtl:float-right dark:border-neutral-400 dark:checked:border-primary dark:checked:bg-primary focus:outline-none"
-                  />
-                  <label
-                    htmlFor={parent + value}
-                    className='inline-block ps-[0.15rem] hover:cursor-pointer'
-                  >
-                    {value}
-                  </label>
-                </div>
-              ))}
+      {Object.entries(options).map(([parent, values]) => {
+        const labelMap: { [key: string]: string } = {
+          brands: "برندها",
+          genders: "جنسیت",
+          // Add more mappings as needed
+        };
+        return (
+          <div key={parent} className='bg-white p-2 mb-1'>
+            <div
+              onClick={() => handleToggleOptions(parent)}
+              className='flex justify-between items-center cursor-pointer'
+            >
+              <h3 className='cursor-pointer'>{labelMap[parent] || parent}</h3>
+              <ChevronLeftIcon
+                className={`w-5 ${
+                  openedOptions[parent] ? "rotate-90" : "rotate-0"
+                }`}
+              />
             </div>
-          )}
-        </div>
-      ))}
+            {openedOptions[parent] && (
+              <div>
+                {values.map((value) => (
+                  <div
+                    key={value}
+                    className={`m-[0.125rem] mr-1 block min-h-[1.5rem] ps-[1.5rem] hover:bg-gray-100 ${
+                      selectedOptions[parent]?.includes(value)
+                        ? "bg-gray-100"
+                        : "bg-inherit"
+                    }`}
+                  >
+                    <input
+                      type='checkbox'
+                      id={parent + value}
+                      checked={selectedOptions[parent]?.includes(value)}
+                      onChange={() => handleOptionChange(parent, value)}
+                      className=" relative float-left -ms-[1.5rem] me-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-gray-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-checkbox before:shadow-transparent before:content-[''] checked:border-gray-500 checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ms-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-blue-500 checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-black/60 focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-black/60 focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-checkbox checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ms-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-blue-500 checked:focus:after:bg-transparent rtl:float-right dark:border-neutral-400 dark:checked:border-primary dark:checked:bg-primary focus:outline-none"
+                    />
+                    <label
+                      htmlFor={parent + value}
+                      className='inline-block ps-[0.15rem] hover:cursor-pointer'
+                    >
+                      {value}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <p className='p-2'>سایر فیلترها اینجا قرار میگیرد</p>
     </div>
   );
 };

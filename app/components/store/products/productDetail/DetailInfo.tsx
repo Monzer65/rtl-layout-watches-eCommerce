@@ -57,7 +57,17 @@ const DetailInfo = ({
           </tr>
           <tr>
             <th>رنگ قاب</th>
-            <td>{caseColor}</td>
+            <td>
+              {/* {caseColor} */}
+              <div
+                style={{
+                  width: "30px",
+                  height: "15px",
+                  backgroundColor: caseColor,
+                  border: "1px solid #ccc",
+                }}
+              />
+            </td>
           </tr>
           <tr>
             <th>جنس بند</th>
@@ -65,11 +75,31 @@ const DetailInfo = ({
           </tr>
           <tr>
             <th>رنگ بند</th>
-            <td>{bandColor}</td>
+            <td>
+              {/* {bandColor}{" "} */}
+              <div
+                style={{
+                  width: "30px",
+                  height: "15px",
+                  backgroundColor: bandColor,
+                  border: "1px solid #ccc",
+                }}
+              />
+            </td>
           </tr>
           <tr>
             <th>رنگ عقربه</th>
-            <td>{dialColor}</td>
+            <td>
+              {/* {dialColor} */}
+              <div
+                style={{
+                  width: "30px",
+                  height: "15px",
+                  backgroundColor: dialColor,
+                  border: "1px solid #ccc",
+                }}
+              />
+            </td>
           </tr>
           <tr>
             <th>محرکه</th>

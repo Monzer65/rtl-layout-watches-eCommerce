@@ -1,19 +1,21 @@
 import Image from "next/image";
 import bannerBg from "@/public/images/advertising-banner-background.jpeg";
 import Link from "next/link";
+import Logo from "../../Logo";
 
 const Banner = () => {
   return (
     <Link
       href={"/"}
-      className='py-2 px-8 flex justify-between items-center bg-orange-100'
+      className='py-1 px-8 flex gap2 justify-center items-center bg-white border-b border-b-gray-400'
     >
-      <p className='font-bold text-sm sm:text-base lg:text-xl px-2 py-1 text-black '>
-        بنر تبلیغات
+      <p className='font-bold text-sm sm:text-base lg:text-xl px-2 py-1 text-gray-600 '>
+        فروشگاه اینترنتی ساعت
       </p>
-      <div className='text-sm sm:text-base lg:text-xl  px-2 py-1 text-black '>
+      <Logo />
+      {/* <div className='text-sm sm:text-base lg:text-xl  px-2 py-1 text-white '>
         Prompt logos here
-      </div>
+      </div> */}
     </Link>
   );
 };

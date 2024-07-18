@@ -12,10 +12,5 @@ export default function ProductsLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div className={`pt-0 md:pt-[8.5rem] pb-4 relative`}>
-      {/* <BreadCrumb /> */}
-      {children}
-    </div>
-  );
+  return <div className={`pt-0 md:pt-[8.5rem] pb-4 relative`}>{children}</div>;
 }

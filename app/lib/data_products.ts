@@ -1,7 +1,7 @@
 import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 import clientPromise from "./dbConnection";
 import { unstable_noStore as noStore } from "next/cache";
-import { FieldProduct, Product, Review, SortObject } from "./definitions";
+import { FieldProduct, Product, Review } from "./definitions";
 
 let client: MongoClient;
 let db: Db;
@@ -21,11 +21,11 @@ export async function init() {
 
 export async function getProducts(
   query: string,
-  // models: string[],
-  // manufacturers: string[],
-  // features: string[],
+  wonderDeals: string,
   minPrice: string,
   maxPrice: string,
+  brands: string,
+  genders: string,
   sort: string,
   currentPage: number,
   pageSize: number
@@ -46,17 +46,21 @@ export async function getProducts(
       ];
     }
 
-    // if (models && models.length) {
-    //   queryObject.models = { $in: models };
-    // }
+    if (wonderDeals === "true") {
+      queryObject.wonderDeal = true;
+    } else if (wonderDeals === "false") {
+      queryObject.wonderDeal = false;
+    }
 
-    // if (manufacturers && manufacturers.length) {
-    //   queryObject.manufacturers = { $in: manufacturers };
-    // }
+    if (brands && brands.length) {
+      const brandArray = brands.split(",");
+      queryObject["brand"] = { $in: brandArray };
+    }
 
-    // if (features && features.length) {
-    //   queryObject.features = { $elemMatch: features };
-    // }
+    if (genders && genders.length) {
+      const genderArray = genders.split(",");
+      queryObject["gender"] = { $in: genderArray };
+    }
 
     if (minPrice && maxPrice) {
       queryObject.sale_price = {
@@ -94,6 +98,10 @@ export async function getProducts(
 
     const totalCount = await col.countDocuments(queryObject);
     const totalPages = Math.ceil(totalCount / pageSize);
+
+    // if (Object.keys(queryObject).length === 0) {
+    //   return { products: [], totalPages, totalCount: 0 };
+    // }
 
     const result = await col
       .find(queryObject)

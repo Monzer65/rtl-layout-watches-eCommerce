@@ -15,13 +15,35 @@ const productsPage = async ({
 }: {
   searchParams?: {
     query?: string;
+    wonderDeals?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    brands?: string;
+    genders?: string;
+    sort?: string;
     page?: string;
   };
 }) => {
   const query = searchParams?.query || "";
+  const wonderDeals = searchParams?.wonderDeals || "";
+  const minPrice = searchParams?.minPrice || "";
+  const maxPrice = searchParams?.maxPrice || "";
+  const brands = searchParams?.brands || "";
+  const genders = searchParams?.genders || "";
+  const sort = searchParams?.sort || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const pageSize = 10;
-  const data = await getProducts(query, currentPage, pageSize);
+  const pageSize = 2;
+  const data = await getProducts(
+    query,
+    wonderDeals,
+    minPrice,
+    maxPrice,
+    brands,
+    genders,
+    sort,
+    currentPage,
+    pageSize
+  );
   const products = data.products as Product[];
 
   return (

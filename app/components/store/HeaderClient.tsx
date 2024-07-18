@@ -22,6 +22,7 @@ import { usePathname } from "next/navigation";
 import Spinner from "../Spinner";
 import { useFormStatus } from "react-dom";
 import { logout } from "@/app/lib/actions";
+import Banner from "./home/Banner";
 
 const HeaderClient = ({
   session,
@@ -73,6 +74,9 @@ const HeaderClient = ({
         open ? "top-0" : "top-auto"
       } bottom-0 md:bottom-auto inset-x-0 shadow-inner shadow-gray-300 md:shadow-[0_3px_5px_rgba(50,50,50,0.75)] bg-white z-10`}
     >
+      {/* <div className='hidden md:block'>
+        <Banner />
+      </div> */}
       {open && (
         <nav className='md:hidden sticky inset-0 h-[calc(100%_-_4.25rem)] z-10 overflow-auto'>
           <Header_mobile_nav />

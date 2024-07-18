@@ -157,7 +157,7 @@ const WonderDeals = ({
         onMouseUp={handleDragEnd}
       >
         <Link
-          href={"/store/products?q=wonder-deals"}
+          href={"/store/products?wonderDeals=true"}
           className='slide flex flex-col items-center justify-center gap-1 md:gap-2 flex-none max-w-[120px] sm:max-w-[150px] md:max-w-[200px] text-[10px] sm:text-xs md:text-sm lg:text-base p-2 snap-end'
         >
           <Image
@@ -251,7 +251,7 @@ const WonderDeals = ({
 
         <div className='flex flex-col justify-center items-center flex-[0_0_auto] w-[100px] sm:w-[130px] md:w-[170px] text-[10px] sm:text-xs md:text-sm lg:text-base bg-gray-100 py-2 rounded-md shadow-lg shadow-red-900 ml-2 snap-start'>
           <Link
-            href={"/store/products?q=wonder-deals"}
+            href={"/store/products?wonderDeals=true"}
             className='grid gap-2 font-semibold'
           >
             <span>

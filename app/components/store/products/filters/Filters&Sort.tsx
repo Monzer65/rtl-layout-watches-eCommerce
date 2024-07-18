@@ -77,7 +77,7 @@ const FiltersAndSort = ({
             <XMarkIcon className='w-8 hover:animate-[wiggle_1s_ease-in-out_infinite] hover:text-red-500' />
           </button>
         </div>
-        <FilterOptions />
+        <FilterOptions setOpenFilters={setOpenFilters} />
       </div>
       <div className='w-full lg:col-start-2 lg:col-end-6 lg:absolute lg:-top-10'>
         <div className='flex justify-between mb-4'>
@@ -147,9 +147,7 @@ const FiltersAndSort = ({
               ))}
             </div>
           </div>
-          <p className='text-sm text-gray-400'>
-            {productsLength ? productsLength : "تعداد نامشخص"} کالا
-          </p>
+          <p className='text-sm text-gray-400'>{productsLength} کالا</p>
         </div>
       </div>
     </>

@@ -16,6 +16,7 @@ import Header from "../components/store/Header";
 import Footer from "../components/store/Footer";
 import Search from "../components/Search";
 import CartProvider from "../contexts/CartContext";
+import Banner from "../components/store/home/Banner";
 
 export const metadata: Metadata = {
   title: "فروشگاه ساعت",
@@ -50,6 +51,9 @@ export default async function StoreLayout({
   return (
     <CartProvider>
       <div className={`pt-0 pb-16 md:pb-0 relative ${notonaskh.className}`}>
+        {/* <div className='md:block'>
+          <Banner />
+        </div> */}
         <div className='sticky top-0 right-0 left-0 md:hidden z-10 py-2 shadow-md bg-white'>
           <Search placeholder='جستجوی نام محصول...' />
         </div>

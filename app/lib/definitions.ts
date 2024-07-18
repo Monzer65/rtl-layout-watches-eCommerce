@@ -66,14 +66,6 @@ export type Product = {
   updatedAt: Date;
 };
 
-export type SortObject =
-  | { sale_price: number }
-  | { discount: number }
-  | { avgRating: number }
-  | { createdAt: number }
-  | { sales: number }
-  | undefined;
-
 export type FieldProduct = {
   _id: string;
   name: string;
